@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html>
+<title>Insurance Policy Entry</title>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/sidenavStyle.css">
+<link rel="stylesheet" href="/static/topbarStyle.css">
+
+
+
+
+<body>
+<%-include('sidenav.ejs')%>
+
+<div class="main" id="container">
+<section id="content-tab1">
+		<div style="background-color:#173f5f;border-radius:5px;padding:10px;">
+			<a class="y" id="tab1-add">Add <i class="fas fa-plus-circle"></i></a>
+			<a class="y unactive" id="tab1-delete">Delete <i class="fas fa-trash-alt"></i></a>
+			<a class="y unactive" id="tab1-show">Show <i class="fas fa-file"></i></a>
+		</div>
+		<section id="add" class="tabsec">
+			<h1 style="text-align:Center;">Insurance Policy</h1>
+			<form>
+			<table>
+			    <tr>
+				<td>
+				    <p>User</p>
+				</td>
+				<td>
+				    <input type="text" value="<%=user.username%>" readonly/>
+				</td>
+				<td>
+				    <p>Date</p>
+				</td>
+				<td>
+				    <input type="Date" class="date" id="addDate"/>
+				</td>
+				<td>
+				    <p>Time</p>
+				</td>
+				<td>
+				    <input type="time" value="now" id="addTime"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Client Name</p>
+				</td>
+				<td >
+				    <input type="text" id="addClientName"/>
+				</td>
+				<td>
+				    <p>Policy Number</p>
+				</td>
+				<td >
+				    <input type="text" id="addIPNumber"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Insurance Company</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getICAccount(event)" id="addSupplierAccount"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such airline account!" id="addSupplierAccountDiv" class="canNotEdit" readonly/>
+				</td>
+				<td  style="text-align:left;">
+						<button class="showButton" onClick="return showAccounts();">Show</button>
+				</td>
+			    </tr>
+			  <tr>
+  				<td>
+  				    <p>Cost</p>
+  				</td>
+  				<td>
+  				    <input type="number" min="0" value="0" onchange="addUpdateDiscount(event)" id="addCost"/>
+  				</td>
+  				<td>
+  				    <p>Net</p>
+  				</td>
+  				<td>
+  				    <input type="number" min="0" value="0" onchange="addUpdateDiscount(event)" id="addNet"/>
+  				</td>
+			  </tr>
+			    <tr>
+				<td>
+				    <p>Discount Percentage</p>
+				</td>
+				<td>
+				    <input type="number" min="0" value="0" onchange="addUpdateDiscount(event)" id="addDiscountPercentage"/>
+				</td>
+				<td>
+				<p id="addDiscountPercentageAmount">Amount of discount :</p>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				<p id="addTotal">Total :</p>
+				</td>
+			    </tr>
+
+			    <tr>
+				<td>
+				    <p>Selling Price</p>
+				</td>
+				<td>
+				    <input type="number" min="0" value="0" onchange="addUpdateDiscount(event)" id="addSellingPrice"/>
+				</td>
+				<td>
+				<p id="addProfit">Profit :</p>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Expense Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getExpenseAccount(event)" id="addExpenseAccount"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such expense account!" id="addExpenseAccountDiv" class="canNotEdit" readonly/>
+				</td>
+				<td  style="text-align:left;">
+						<button class="showButton" onClick="return showAccounts();">Show</button>
+				</td>
+
+			    </tr>
+					<tr>
+				<td>
+						<p>Revenue Account</p>
+				</td>
+				<td>
+						<input type="text" onchange="getRevenueAccount(event)" id="addRevenueAccount"/>
+				</td>
+				<td>
+						<input type="text" value="There's no such Revenue account!" id="addRevenueAccountDiv" class="canNotEdit" readonly/>
+				</td>
+				<td  style="text-align:left;">
+						<button class="showButton" onClick="return showAccounts();">Show</button>
+				</td>
+
+					</tr>
+
+			    <tr>
+				<td>
+				    <p>Client Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getClientAccount(event)" id="addClientAccount"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such client account!" id="addClientAccountDiv" class="canNotEdit" readonly/>
+				</td>
+				<td  style="text-align:left;">
+						<button class="showButton" onClick="return showAccounts();">Show</button>
+				</td>
+
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Employer Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getEmployerAccount(event)" id="addEmployerAccount"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such employer account!" id="addEmployerAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Currency</p>
+				</td>
+				<td>
+				    <input type="text" id="addCurrencyCode" onchange="getCurrency(event)"/>
+				</td>
+				<td>
+						<input type="text" id="addCurrencyCodeDiv" readonly required class="canNotEdit" value="There's no such currency!"/>
+				</td>
+			    </tr>
+				<tr>
+					<td>
+						<p>Exchange Rate</p>
+					</td>
+					<td>
+						<input type="number" id="addExchangeRate"/>
+					</td>
+				</tr>
+
+				</tr>
+			    <tr>
+				<td>
+				    <p>Description</p>
+				</td>
+				<td >
+				    <input type="text" id="addDescription"/>
+				</td>
+			    </tr>
+			    <tr>
+				    <td><button class="button" onClick="return addIP();">Add</button></td>
+			   </tr>
+			</table>
+			</form>
+		</section>
+
+
+
+		<!--Delete-->
+
+
+
+
+		<section id="delete" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Insurance Policy</h1>
+			<form>
+			<table>
+			    <tr>
+				<td>
+				    <p>User</p>
+				</td>
+				<td>
+				    <input type="text" value="<%=user.username%>" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <p>Date</p>
+				</td>
+				<td>
+				    <input type="Date" class="date" id="deleteDate" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <p>Time</p>
+				</td>
+				<td>
+				    <input type="Time" id="deleteTime" readonly class="canNotEdit"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Policy ID</p>
+				</td>
+				<td>
+				    <input type="text" id="deleteID" onchange="show(event)"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Client Name</p>
+				</td>
+				<td >
+				    <input type="text"  id="deleteClientName" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <p>Policy Number</p>
+				</td>
+				<td >
+				    <input type="text"  id="deleteIPNumber" readonly class="canNotEdit"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Insurance Company</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getICAccount(event)" id="deleteSupplierAccount" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such airline account!" id="deleteSupplierAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Cost</p>
+				</td>
+				<td>
+				    <input type="number" min="0" value="0" onchange="deleteUpdateDiscount(event)" id="deleteCost" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <p>Net</p>
+				</td>
+				<td>
+				    <input type="number" min="0" value="0" onchange="deleteUpdateDiscount(event)" id="deleteNet" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				<p id="deleteTotal">Total :</p>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Discount Percentage</p>
+				</td>
+				<td>
+				    <input type="number" min="0" value="0" onchange="deleteUpdateDiscount(event)" id="deleteDiscountPercentage" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				<p id="deleteDiscountPercentageAmount">Amount of discount :</p>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				<p id="deleteTotal">Total :</p>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Selling Price</p>
+				</td>
+				<td>
+				    <input type="number" min="0" value="0" onchange="deleteUpdateDiscount(event)" id="deleteSellingPrice" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				<p id="deleteProfit">Profit :</p>
+				</td>
+			    </tr>
+					<tr>
+				<td>
+				    <p>Expense Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getExpenseAccount(event)" id="deleteExpenseAccount" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such expense account!" id="deleteExpenseAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+					<tr>
+				<td>
+						<p>Revenue Account</p>
+				</td>
+				<td>
+						<input type="text" onchange="getRevenueAccount(event)" id="deleteRevenueAccount" readonly class="canNotEdit"/>
+				</td>
+				<td>
+						<input type="text" value="There's no such Revenue account!" id="deleteRevenueAccountDiv" class="canNotEdit" readonly/>
+				</td>
+					</tr>
+			    <tr>
+				<td>
+				    <p>Client Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getClientAccount(event)" id="deleteClientAccount" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such client account!" id="deleteClientAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Employer Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getEmployerAccount(event)" id="deleteEmployerAccount" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such employer account!" id="deleteEmployerAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Currency</p>
+				</td>
+				<td>
+				    <input type="text" id="deleteCurrencyCode" onchange="getCurrency(event)" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <input type="text" id="deleteCurrencyCodeDiv" readonly required class="canNotEdit" value="There's no such currency!"/>
+				</td>
+			    </tr>
+					<tr>
+				<td>
+				    <p>Exchange Rate</p>
+				</td>
+				<td >
+				    <input type="Number" id="deleteExchangeRate" readonly class="canNotEdit"/>
+				</td>
+			    </tr>
+
+			    <tr>
+				<td>
+				    <p>Description</p>
+				</td>
+				<td >
+				    <input type="text"  id="deleteDescription" readonly class="canNotEdit"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Entry Number</p>
+				</td>
+				<td>
+				    <input type="text" id="deleteEntryNumber" readonly class="canNotEdit"/>
+				</td>
+			    </tr>
+        <tr>
+          <td><button class="button" onclick="return deleteProduct();">Delete</button></td>
+        </tr>
+			</table>
+			</form>
+
+		</section>
+
+
+
+		<!--show-->
+
+
+
+
+		<section id="show" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Insurance Policy</h1>
+			<form>
+			<table>
+			    <tr>
+				<td>
+				    <p>User</p>
+				</td>
+				<td>
+				    <input type="text" value="<%=user.username%>" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <p>Date</p>
+				</td>
+				<td>
+				    <input type="Date" class="date" id="showDate" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <p>Time</p>
+				</td>
+				<td>
+				    <input type="Time" id="showTime" readonly class="canNotEdit"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Policy ID</p>
+				</td>
+				<td>
+				    <input type="text" id="showID" onchange="show(event)"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Client Name</p>
+				</td>
+				<td >
+				    <input type="text"  id="showClientName" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <p>Policy Number</p>
+				</td>
+				<td >
+				    <input type="text"  id="showIPNumber" readonly class="canNotEdit"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Insurance Company</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getICAccount(event)" id="showSupplierAccount" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such airline account!" id="showSupplierAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Cost</p>
+				</td>
+				<td>
+				    <input type="number" min="0" value="0" onchange="showUpdateDiscount(event)" id="showCost" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <p>Net</p>
+				</td>
+				<td>
+				    <input type="number" min="0" value="0" onchange="showUpdateDiscount(event)" id="showNet" readonly class="canNotEdit"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Discount Percentage</p>
+				</td>
+				<td>
+				    <input type="number" min="0" value="0" onchange="showUpdateDiscount(event)" id="showDiscountPercentage" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				<p id="showDiscountPercentageAmount">Amount of discount :</p>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				<p id="showTotal">Total :</p>
+				</td>
+			    </tr>
+
+			    <tr>
+				<td>
+				    <p>Selling Price</p>
+				</td>
+				<td>
+				    <input type="number" min="0" value="0" onchange="showUpdateDiscount(event)" id="showSellingPrice" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				<p id="showProfit">Profit :</p>
+				</td>
+			    </tr>
+					<tr>
+				<td>
+				    <p>Expense Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getExpenseAccount(event)" id="showExpenseAccount" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such expense account!" id="showExpenseAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+					<tr>
+				<td>
+						<p>Revenue Account</p>
+				</td>
+				<td>
+						<input type="text" onchange="getRevenueAccount(event)" id="showRevenueAccount" readonly class="canNotEdit"/>
+				</td>
+				<td>
+						<input type="text" value="There's no such Revenue account!" id="showRevenueAccountDiv" class="canNotEdit" readonly/>
+				</td>
+					</tr>
+			    <tr>
+				<td>
+				    <p>Client Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getClientAccount(event)" id="showClientAccount" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such client account!" id="showClientAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Employer Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getEmployerAccount(event)" id="showEmployerAccount" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such employer account!" id="showEmployerAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Currency</p>
+				</td>
+				<td>
+				    <input type="text" id="showCurrencyCode" onchange="getCurrency(event)" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <input type="text" id="showCurrencyCodeDiv" readonly required class="canNotEdit" value="There's no such currency!"/>
+				</td>
+			    </tr>
+					<tr>
+				<td>
+				    <p>Exchange Rate</p>
+				</td>
+				<td >
+				    <input type="Number" id="showExchangeRate" readonly class="canNotEdit"/>
+				</td>
+			    </tr>
+
+			    <tr>
+				<td>
+				    <p>Description</p>
+				</td>
+				<td >
+				    <input type="text"  id="showDescription" readonly class="canNotEdit"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Entry Number</p>
+				</td>
+				<td>
+				    <input type="text" id="showEntryNumber" readonly class="canNotEdit"/>
+				</td>
+			    </tr>
+			</table>
+			</form>
+		</section>
+</div>
+
+<%-include('showAccounts.ejs')%>
+
+
+<script src="/static/jquery-min.js"></script>
+<script src="/static/frontendlib.js"></script>
+<script src="/static/topbarFunction.js"></script>
+
+<!--vainlia javascript-->
+<script>
+function addUpdateDiscount(event){
+	//Numbers
+	var cost=parseFloat(document.getElementById("addCost").value);
+	var net=parseFloat(document.getElementById("addNet").value);
+	var discountPercentage=parseFloat(document.getElementById("addDiscountPercentage").value);
+	var sellingPrice=parseFloat(document.getElementById("addSellingPrice").value);
+	//TEXTS
+	var total=document.getElementById("addTotal");
+	var profit=document.getElementById("addProfit");
+	var discountPercentageAmount=document.getElementById("addDiscountPercentageAmount");
+	//Operations
+	var a=net*discountPercentage/100;
+	var b=cost-a;
+	var c=sellingPrice-b;
+	//Updating
+  discountPercentageAmount.innerHTML="Amount of discount : "+a.toFixed(2);
+	total.innerHTML="Total : "+b.toFixed(2);
+	profit.innerHTML="Profit : "+c.toFixed(2);
+}
+function deleteUpdateDiscount(event){
+  //Numbers
+	var cost=parseFloat(document.getElementById("deleteCost").value);
+	var net=parseFloat(document.getElementById("deleteNet").value);
+	var discountPercentage=parseFloat(document.getElementById("deleteDiscountPercentage").value);
+	var sellingPrice=parseFloat(document.getElementById("deleteSellingPrice").value);
+	//TEXTS
+	var total=document.getElementById("deleteTotal");
+	var profit=document.getElementById("deleteProfit");
+	var discountPercentageAmount=document.getElementById("deleteDiscountPercentageAmount");
+	//Operations
+	var a=net*discountPercentage/100;
+	var b=cost-a;
+	var c=sellingPrice-b;
+	//Updating
+  discountPercentageAmount.innerHTML="Amount of discount : "+a.toFixed(2);
+	total.innerHTML="Total : "+b.toFixed(2);
+	profit.innerHTML="Profit : "+c.toFixed(2);
+}
+function showUpdateDiscount(event){
+  //Numbers
+	var cost=parseFloat(document.getElementById("showCost").value);
+	var net=parseFloat(document.getElementById("showNet").value);
+	var discountPercentage=parseFloat(document.getElementById("showDiscountPercentage").value);
+	var sellingPrice=parseFloat(document.getElementById("showSellingPrice").value);
+	//TEXTS
+	var total=document.getElementById("showTotal");
+	var profit=document.getElementById("showProfit");
+	var discountPercentageAmount=document.getElementById("showDiscountPercentageAmount");
+	//Operations
+	var a=net*discountPercentage/100;
+	var b=cost-a;
+	var c=sellingPrice-b;
+	//Updating
+  discountPercentageAmount.innerHTML="Amount of discount : "+a.toFixed(2);
+	total.innerHTML="Total : "+b.toFixed(2);
+	profit.innerHTML="Profit : "+c.toFixed(2);
+}
+
+
+function addIP(){
+	var cost=parseFloat(document.getElementById("addCost").value);
+	var net=parseFloat(document.getElementById("addNet").value);
+	var discountPercentage=parseFloat(document.getElementById("addDiscountPercentage").value);
+	var sellingPrice=parseFloat(document.getElementById("addSellingPrice").value);
+
+  var discountAmount=net*discountPercentage/100;
+	var total=cost-discountAmount;
+	var profit=sellingPrice-total;
+
+	var date=document.getElementById("addDate").value;
+	var time=document.getElementById("addTime").value;
+	var description=document.getElementById("addDescription").value;
+	var IPNumber=document.getElementById("addIPNumber").value;
+	var clientName=document.getElementById("addClientName").value;
+
+	if(date=="" || time=="" || description=="" || clientName=="" ||IPNumber==""){
+		alert("You can't leave blank inputs!");
+	}
+	else{
+		var productObj={
+			cost:cost,
+			net:net,
+			discountPercentage:discountPercentage,
+			sellingPrice:sellingPrice,
+			profit:profit,
+			total:total,
+			clientName:clientName,
+			IPNumber:IPNumber,
+			description:description
+    };
+		//there's something to edit here
+		var currencyCode=document.getElementById("addCurrencyCode").value;
+		var exchangeRate=document.getElementById("addExchangeRate").value;
+		var clientAccount=document.getElementById("addClientAccount").value;
+		var supplierAccount=document.getElementById("addSupplierAccount").value;
+		var employerAccount=document.getElementById("addEmployerAccount").value;
+		var expenseAccount=document.getElementById("addExpenseAccount").value;
+		var revenueAccount=document.getElementById("addRevenueAccount").value;
+
+		var product={
+			createdAt:date+' '+time,
+			currencyId:currencyCode,
+			exchangeRate:exchangeRate,
+			clientAccount:clientAccount,
+			supplierAccount:supplierAccount,
+			employerId:employerAccount,
+			revenueAccount:revenueAccount,
+			expenseAccount:expenseAccount,
+			productType:"IP",
+			productObj:productObj
+		};
+		var promises=[];
+		promises.push(ajaxPromise("api/currency/frontGet","POST","application/json",{id:currencyCode}));
+		promises.push(ajaxPromise("api/account/check","POST","application/json",{id:supplierAccount,type:"insuranceCompany"}));
+		promises.push(ajaxPromise("api/account/check","POST","application/json",{id:clientAccount,type:"client"}));
+		promises.push(ajaxPromise("api/employer/frontGet","POST","application/json",{id:employerAccount}));
+		promises.push(ajaxPromise("api/account/checkType","POST","application/json",{id:expenseAccount,type:"expenses"}));
+		promises.push(ajaxPromise("api/account/checkType","POST","application/json",{id:revenueAccount,type:"revenues"}));
+		Promise.all(promises).then((res)=>{
+			var flag=false;
+			for(var i=0;i<res.length;i++){
+				if(res[i].status!=200){
+					alert(res[i].responseText);
+					flag=true;
+				}
+			}
+			if(flag==false){
+				ajaxRequest("api/productI","POST","application/json",product,(res)=>{
+					if(res.status=="200"){
+						res=JSON.parse(res.responseText);
+						alert("Insurance Policy has been added successfully!");
+						alert("IP Number is "+res.id);
+						location.reload();
+					}
+					else{
+						alert(res.responseText);
+					}
+				});
+			}
+		});
+	}
+	return false;
+}
+
+
+
+function deleteProduct(){
+	var productID=document.getElementById("deleteID").value;
+	if(window.confirm("Are you sure that you want to delete it ?")){
+		ajaxRequest("api/productI","DELETE","application/json",{id:productID,productType:"IP"},(res)=>{
+			if(res.status==200){
+				alert(res.responseText);
+				location.reload();
+			}
+			else{
+				alert(res.responseText);
+			}
+		});
+	}
+	return false;
+}
+
+
+function show(e){
+  var targetID=e.target.id;
+  var tabID=targetID.slice(0,targetID.length-2);
+	var ticketNumber=document.getElementById(targetID).value;
+	ajaxRequest("api/productI/frontGet","POST","application/json",{id:ticketNumber,productType:"IP"},(res)=>{
+		if(res.status=="200"){
+			var res=JSON.parse(res.responseText);
+			var IPObj=JSON.parse(res.productObj);
+			document.getElementById(tabID+"Cost").value=parseFloat(IPObj.cost).toFixed(2);
+			document.getElementById(tabID+"Net").value=parseFloat(IPObj.net).toFixed(2);
+			document.getElementById(tabID+"DiscountPercentage").value=parseFloat(IPObj.discountPercentage).toFixed(2);
+			document.getElementById(tabID+"SellingPrice").value=parseFloat(IPObj.sellingPrice).toFixed(2);
+			var date=new Date(res.createdAt).toLocaleString().split(',');
+			var time=new Date(res.createdAt).toTimeString().split(' ')[0];;
+			date=date[0];
+			date=date.split('/');
+			date=date[2]+'-'+date[1]+'-'+date[0];
+			document.getElementById(tabID+"Date").value=date;
+			document.getElementById(tabID+"Time").value=time;
+			document.getElementById(tabID+"Description").value=IPObj.description;
+			document.getElementById(tabID+"IPNumber").value=IPObj.IPNumber;
+			document.getElementById(tabID+"ClientName").value=IPObj.clientName;
+
+			document.getElementById(tabID+"CurrencyCode").value=res.currencyId;
+			document.getElementById(tabID+"ExchangeRate").value=res.exchangeRate;
+			document.getElementById(tabID+"ClientAccount").value=res.clientAccount;
+			document.getElementById(tabID+"SupplierAccount").value=res.supplierAccount;
+			document.getElementById(tabID+"EmployerAccount").value=res.employerId;
+			document.getElementById(tabID+"ExpenseAccount").value=res.expenseAccount;
+			document.getElementById(tabID+"RevenueAccount").value=res.revenueAccount;
+			document.getElementById(tabID+"EntryNumber").value=res.entryId;
+		}
+		else{
+			alert(res.responseText);
+			document.getElementById(tabID+"Cost").value=0;
+			document.getElementById(tabID+"Net").value=0;
+			document.getElementById(tabID+"DiscountPercentage").value=0;
+			document.getElementById(tabID+"SellingPrice").value=0;
+			document.getElementById(tabID+"Date").value="";
+			document.getElementById(tabID+"Time").value="";
+			document.getElementById(tabID+"Description").value="";
+			document.getElementById(tabID+"IPNumber").value="";
+			document.getElementById(tabID+"ClientName").value="";
+
+			document.getElementById(tabID+"CurrencyCode").value="";
+			document.getElementById(tabID+"ExchangeRate").value="";
+			document.getElementById(tabID+"ClientAccount").value="";
+			document.getElementById(tabID+"SupplierAccount").value="";
+			document.getElementById(tabID+"EmployerAccount").value="";
+			document.getElementById(tabID+"ExpenseAccount").value="";
+			document.getElementById(tabID+"RevenueAccount").value="";
+			document.getElementById(tabID+"EntryNumber").value="";
+		}
+		var cost=document.getElementById(tabID+"Cost");
+		var ClientAccount=document.getElementById(tabID+"ClientAccount");
+		var SupplierAccount=document.getElementById(tabID+"SupplierAccount");
+		var EmployerAccount=document.getElementById(tabID+"EmployerAccount");
+		var expenseAccount=document.getElementById(tabID+"ExpenseAccount");
+		var revenueAccount=document.getElementById(tabID+"RevenueAccount");
+		var currency=document.getElementById(tabID+"CurrencyCode");
+		var event = new Event('change');
+		cost.dispatchEvent(event);
+		ClientAccount.dispatchEvent(event);
+		SupplierAccount.dispatchEvent(event);
+		EmployerAccount.dispatchEvent(event);
+		revenueAccount.dispatchEvent(event);
+		expenseAccount.dispatchEvent(event);
+		currency.dispatchEvent(event);
+
+	});
+
+
+}
+</script>
+</body>
+</html>

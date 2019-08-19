@@ -1,0 +1,99 @@
+.sidenav {
+  height: 100%;
+  width: 23%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #001E3B;
+  background-image: linear-gradient(#001E3B 0%, #001E3B 100%);
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+.sidenav-cont{
+  width: 90%;
+  float: right;
+}
+
+.sidenav a, .dropdown-btn {
+
+  text-decoration: none;
+  font-size: 18px;
+  color: white;
+  opacity: 0.7;
+  display: block;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+  border-bottom:1px solid #f3f3f3;
+  opacity: 1;
+  padding:4px;
+}
+.sidenav p{
+  text-decoration: none;
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #CCCCCC;
+  display: block;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+.active {
+  background-color: rgba(95, 38, 255, 0.4);
+  color: white;
+  border-top-left-radius: 40px;
+}
+
+.active::after {
+    font-weight: 900;
+    display: inline-block;
+    padding-right: 15px;
+    font-size: 180%;
+    color: #034171;
+}
+
+.dropdown-container {
+  display: none;
+  background-color: rgba(95, 38, 255, 0.4);
+  opacity: 0.7;
+}
+
+.fa-caret-down {
+  float: right;
+  padding-right: 8px;
+}
+
+.sidenav a:hover, .dropdown-btn:hover{
+  color:#20639b;
+  opacity: 1;
+}
+.active:hover{
+  background-color: rgba(53, 164, 255, 0.6);
+  border-top-left-radius: 40px;
+  border-bottom-left-radius: 0;
+  opacity: 1;
+}
+.dropdown-container a:hover{
+  background-color: rgba(53, 164, 255, 0.6);
+  color:#fff;
+  border-radius: 0;
+  opacity: 1;
+}
+.dropdown-container a:last-child:hover{
+}
+
+
+
+.main {
+  margin-left: 24%;
+}
+.sidenav .unactive{
+	  background:none;
+	  opacity: 1;
+
+}

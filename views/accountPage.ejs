@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html>
+<title>Accounts</title>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/sidenavStyle.css">
+<link rel="stylesheet" href="/static/topbarStyle.css">
+<style>
+#showAccounts{border:0.5px solid #000;border-collapse:collapse;margin:auto;text-align:Center;}
+#showAccounts td{border:0.5px solid #000;padding:15px;}
+</style>
+<body>
+<%-include('sidenav.ejs')%>
+<div class="main" id="container">
+<section id="content-tab1">
+		<div style="background-color:#173f5f;border-radius:5px;padding:10px;">
+			<a class="y" id="tab1-add">Add Account <i class="fas fa-plus-circle"></i></a>
+			<a class="y unactive" id="tab1-delete">Delete Account <i class="fas fa-trash-alt"></i></a>
+			<a class="y unactive" id="tab1-edit">Edit Account <i class="fas fa-edit"></i></a>
+			<a class="y unactive" id="tab1-show">Show Account <i class="fas fa-file"></i></a>
+		</div>
+		<section id="add" class="tabsec">
+			<h1 style="text-align:Center;">Add Account</h1>
+			<form>
+				<table>
+				    <tr>
+					<td>
+					    <p>ID</p>
+					</td>
+					<td>
+					    <input type="text" id="accountId"/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Name</p>
+					</td>
+					<td>
+					    <input type="text" id="accountName"/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Type</p>
+					</td>
+					<td>
+					    <select id="accountType">
+						<optgroup label="assets">
+							<option>currentAssets</option>
+							<option>nonCurrentAssets</option>
+						</optgroup>
+						<optgroup label="liabilities">
+							<option>currentLiabilities</option>
+							<option>nonCurrentLiabilities</option>
+							<option>shareholdersEquity</option>
+						</optgroup>
+						<option>revenues</option>
+						<option>expenses</option>
+					    </select>
+					</td>
+					<td style="text-align:center;">
+					    <p>Nature</p>
+					</td>
+					<td>
+					    <select id="accountNature">
+						<option>debit</option>
+						<option>credit</option>
+					    </select>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Major</p>
+					</td>
+					<td>
+						<input type="text" id="accountMajor"/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Characteristic</p>
+					</td>
+					<td>
+					   <select id="accountCharacter">
+						<option>cash</option>
+						<option>client</option>
+						<optgroup label="Suppliers">
+							<option>bsp</option>
+							<option>lowCost</option>
+							<option>insuranceCompany</option>
+							<option>umrah</option>
+							<option>hajj</option>
+						</optgroup>
+						<option>profit</option>
+						<option>other</option>
+					    </select>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Debit</p>
+					</td>
+					<td>
+						<input type="number" id="accountDebit"/>
+					</td>
+					<td style="text-align:center;">
+					    <p>Credit</p>
+					</td>
+					<td>
+						<input type="number" id="accountCredit"/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Currency</p>
+					</td>
+					<td>
+						<input type="text" id="accountCurrency" onchange="getCurrency(event)"/>
+					</td>
+					<td>
+						<input type="text" id="accountCurrencyDiv" readonly class="canNotEdit"/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Exchange Rate</p>
+					</td>
+					<td>
+						<input type="number" step=0.1 id="accountExchangeRate"/>
+					</td>
+				    </tr>
+				    <tr>
+					    <td><button class="button" onClick="return addAccount();">Add</button></td>
+				   </tr>
+				</table>
+			</form>
+		</section>
+
+
+
+
+		<!--Delete-->
+
+
+
+    <section id="delete" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Delete Account</h1>
+			<form>
+				<table>
+				    <tr>
+					<td>
+					    <p>ID</p>
+					</td>
+					<td>
+					    <input type="text" id="deleteID" onchange="show(event)"/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Name</p>
+					</td>
+					<td>
+					    <input type="text" id="deleteAccountName" class="canNotEdit" readonly/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Type</p>
+					</td>
+					<td>
+					    <select id="deleteAccountType" class="canNotEdit" readonly>
+						<optgroup label="assets">
+							<option>currentAssets</option>
+							<option>nonCurrentAssets</option>
+						</optgroup>
+						<optgroup label="liabilities">
+							<option>currentLiabilities</option>
+							<option>nonCurrentLiabilities</option>
+							<option>shareholdersEquity</option>
+						</optgroup>
+						<option>revenues</option>
+						<option>expenses</option>
+					    </select>
+					</td>
+					<td style="text-align:center;">
+					    <p>Nature</p>
+					</td>
+					<td>
+					    <select id="deleteAccountNature" class="canNotEdit" readonly>
+						<option>debit</option>
+						<option>credit</option>
+					    </select>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Major</p>
+					</td>
+					<td>
+						<input type="text" id="deleteAccountMajor" class="canNotEdit" readonly/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Characteristic</p>
+					</td>
+					<td>
+					    <select id="deleteAccountCharacter" class="canNotEdit" readonly>
+						<option>cash</option>
+						<option>client</option>
+						<optgroup label="Suppliers">
+							<option>bsp</option>
+							<option>lowCost</option>
+							<option>insuranceCompany</option>
+							<option>umrah</option>
+							<option>hajj</option>
+						</optgroup>
+						<option>profit</option>
+						<option>other</option>
+					    </select>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Debit</p>
+					</td>
+					<td>
+						<input type="number" id="deleteAccountDebit" class="canNotEdit" readonly/>
+					</td>
+					<td style="text-align:center;">
+					    <p>Credit</p>
+					</td>
+					<td>
+						<input type="number" id="deleteAccountCredit" class="canNotEdit" readonly/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Currency</p>
+					</td>
+					<td>
+						<input type="text" id="deleteAccountCurrency" onchange="getCurrency(event)" class="canNotEdit" readonly/>
+					</td>
+					<td>
+						<input type="text" id="deleteAccountCurrencyDiv" readonly class="canNotEdit"/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Exchange Rate</p>
+					</td>
+					<td>
+						<input type="number" step=0.1 id="deleteAccountExchangeRate" class="canNotEdit" readonly/>
+					</td>
+				    </tr>
+				    <tr>
+					    <td><button class="button" onClick="return deleteAccount();">delete</button></td>
+				   </tr>
+				</table>
+			</form>
+		</section>
+
+
+
+
+
+		<!--Edit-->
+
+
+
+
+
+		<section id="edit" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Edit Account</h1>
+			<form>
+				<table>
+				    <tr>
+					<td>
+					    <p>ID</p>
+					</td>
+					<td>
+					    <input type="text" id="editID" onchange="show(event)"/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Name</p>
+					</td>
+					<td>
+					    <input type="text" id="editAccountName"/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Type</p>
+					</td>
+					<td>
+					    <select id="editAccountType">
+						<optgroup label="assets">
+							<option>currentAssets</option>
+							<option>nonCurrentAssets</option>
+						</optgroup>
+						<optgroup label="liabilities">
+							<option>currentLiabilities</option>
+							<option>nonCurrentLiabilities</option>
+							<option>shareholdersEquity</option>
+						</optgroup>
+						<option>revenues</option>
+						<option>expenses</option>
+					    </select>
+					</td>
+					<td style="text-align:center;">
+					    <p>Nature</p>
+					</td>
+					<td>
+					    <select id="editAccountNature">
+						<option>debit</option>
+						<option>credit</option>
+					    </select>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Major</p>
+					</td>
+					<td>
+						<input type="text" id="editAccountMajor"/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Characteristic</p>
+					</td>
+					<td>
+					  <select id="editAccountCharacter">
+  						<option>cash</option>
+  						<option>client</option>
+  						<optgroup label="Suppliers">
+  							<option>bsp</option>
+  							<option>lowCost</option>
+								<option>insuranceCompany</option>
+								<option>umrah</option>
+								<option>hajj</option>
+  						</optgroup>
+  						<option>profit</option>
+  						<option>other</option>
+					  </select>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Debit</p>
+					</td>
+					<td>
+						<input type="number" id="editAccountDebit"/>
+					</td>
+					<td style="text-align:center;">
+					    <p>Credit</p>
+					</td>
+					<td>
+						<input type="number" id="editAccountCredit"/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Currency</p>
+					</td>
+					<td>
+						<input type="text" id="editAccountCurrency" onchange="getCurrency(event)"/>
+					</td>
+					<td>
+						<input type="text" id="editAccountCurrencyDiv"/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Exchange Rate</p>
+					</td>
+					<td>
+						<input type="number" step=0.1 id="editAccountExchangeRate"/>
+					</td>
+				    </tr>
+				    <tr>
+					    <td><button class="button" onClick="return editAccount();">Edit</button></td>
+				   </tr>
+				</table>
+			</form>
+		</section>
+
+
+
+
+    <!--Show-->
+
+
+
+		<section id="show" class="tabsec" style="display:none;">
+			<table id="showAccounts">
+			</table>
+			<button onclick="showAll();" class="button">Show</button>
+		</section>
+  </section>
+</div>
+
+
+
+
+<script src="/static/jquery-min.js"></script>
+<script src="/static/frontendlib.js"></script>
+<script src="/static/topbarFunction.js"></script>
+<!--vainlia javascript-->
+<script>
+function addAccount(){
+	var obj={};
+	obj.id=document.getElementById("accountId").value;
+	obj.name=document.getElementById("accountName").value;
+	obj.major=document.getElementById("accountMajor").value;
+	obj.type=document.getElementById("accountType").value;
+	obj.accountNature=document.getElementById("accountNature").value;
+	obj.character=document.getElementById("accountCharacter").value;
+	obj.debit=parseFloat(document.getElementById("accountDebit").value);
+	obj.credit=parseFloat(document.getElementById("accountCredit").value);
+	obj.exchangeRate=parseFloat(document.getElementById("accountExchangeRate").value);
+	obj.currencyId=document.getElementById("accountCurrency").value;
+	if(obj.id=="" || obj.name=="" || obj.major=="" || obj.type=="" || obj.accountNature=="" || obj.character=="" || isNaN(obj.debit) || isNaN(obj.credit) || isNaN(obj.exchangeRate)){alert("Fill the blank fields!");}
+	else{
+		ajaxPromise("api/currency/frontGet","POST","application/json",{id:obj.currencyId}).then((res)=>{
+			if(res.status==200){
+				ajaxRequest('api/account',"POST","application/json",obj,function(res){
+					if(res.status==200){
+						alert("Account has been inserted successfully!");
+					}
+					else{
+						alert(res.responseText);
+					}
+				});
+			}
+			else{
+				alert(res.responseText);
+			}
+
+
+		});
+	}
+	return false;
+}
+
+
+function editAccount(){
+	var obj={};
+	obj.id=document.getElementById("editID").value;
+	obj.name=document.getElementById("editAccountName").value;
+	obj.major=document.getElementById("editAccountMajor").value;
+	obj.type=document.getElementById("editAccountType").value;
+	obj.accountNature=document.getElementById("editAccountNature").value;
+	obj.character=document.getElementById("editAccountCharacter").value;
+	obj.debit=parseFloat(document.getElementById("editAccountDebit").value);
+	obj.credit=parseFloat(document.getElementById("editAccountCredit").value);
+	obj.exchangeRate=parseFloat(document.getElementById("editAccountExchangeRate").value);
+	obj.currencyId=document.getElementById("editAccountCurrency").value;
+  if(obj.id=="" || obj.accountName=="" || obj.accountMajor=="" || obj.accountType=="" || obj.accountNature=="" || obj.accountCharacter=="" || isNaN(obj.debit) || isNaN(obj.credit) || isNaN(obj.exchangeRate)){alert("Fill the blank fields!");}
+	else{
+		var promises=[];
+		promises.push(ajaxPromise("api/currency/frontGet","POST","application/json",{id:obj.currencyId}));
+		Promise.all(promises).then((res)=>{
+			if(res[0].status==200){
+				ajaxRequest('api/account',"PUT","application/json",obj,(res)=>{
+					if(res.status==200){alert(res.responseText);}
+					else{
+						res=JSON.parse(res.responseText);
+						alert(res.errors[0].message);
+					}
+				});
+			}
+			else{
+				alert(res[0].responseText);
+			}
+		});
+	}
+	return false;
+}
+
+function deleteAccount(){
+	var accountBetterId=document.getElementById("deleteID").value;
+	if(window.confirm("Are you sure that you want to delete it?")){
+		ajaxRequest('api/account',"DELETE","application/json",{id:accountBetterId},function(res){
+			alert(res.responseText);
+		});
+	}
+	return false;
+}
+
+
+function show(e){
+  var targetID=e.target.id;
+  var tabID=targetID.slice(0,targetID.length-2);
+	var accountBetterId=document.getElementById(targetID).value;
+
+
+	ajaxRequest('api/account/frontGet',"POST","application/json",{id:accountBetterId},function(res){
+		if(res.status==200){
+			res=JSON.parse(res.responseText);
+      document.getElementById(tabID+"AccountName").value=res.name;
+			document.getElementById(tabID+"AccountType").value=res.type;
+			document.getElementById(tabID+"AccountNature").value=res.accountNature;
+			document.getElementById(tabID+"AccountMajor").value=res.major;
+			document.getElementById(tabID+"AccountCharacter").value=res.character;
+			document.getElementById(tabID+"AccountDebit").value=parseFloat(res.debit);
+			document.getElementById(tabID+"AccountCredit").value=parseFloat(res.credit);
+			document.getElementById(tabID+"AccountCurrency").value=res.currencyId;
+			document.getElementById(tabID+"AccountExchangeRate").value=res.exchangeRate;
+    }
+		else{
+		alert(res.responseText);
+    document.getElementById(tabID+"AccountName").value="";
+    document.getElementById(tabID+"AccountType").value="";
+    document.getElementById(tabID+"AccountNature").value="";
+    document.getElementById(tabID+"AccountMajor").value="";
+    document.getElementById(tabID+"AccountCharacter").value="";
+    document.getElementById(tabID+"AccountDebit").value=0;
+    document.getElementById(tabID+"AccountCredit").value=0;
+    document.getElementById(tabID+"AccountCurrency").value="";
+    document.getElementById(tabID+"AccountExchangeRate").value=0;
+		}
+		var currency=document.getElementById(tabID+"AccountCurrency");
+		var event = new Event('change');
+		currency.dispatchEvent(event);
+
+
+	});
+	return false;
+}
+
+
+function showAll(){
+	ajaxRequest('api/account',"GET","application/json",{},function(res){
+		if(res.status==200){
+			var accounts=JSON.parse(res.responseText);
+			var a={};
+			for(var i=0;i<accounts.length;i++){
+				var type=accounts[i].type;
+				var major=accounts[i].major;
+				if(a[type]){
+					if(a[type][major]){
+						a[type][major].push(accounts[i]);
+					}
+					else{
+						a[type][major]=[accounts[i]];
+					}
+				}
+				else{
+					a[type]={};
+					a[type][major]=[accounts[i]];
+				}
+
+			}
+			var show=document.getElementById("showAccounts");
+			show.innerHTML="<tr><td>Account Name</td><td>Account ID</td></tr>";
+			//hardcode .-.
+			var tr=document.createElement("tr");
+			var td=document.createElement("td");
+			var typeHead=document.createElement("td");
+			typeHead.innerHTML="Assets";
+			tr.appendChild(typeHead);
+			tr.appendChild(td);
+			show.appendChild(tr);
+			var tr=document.createElement("tr");
+			var td=document.createElement("td");
+			var minorTypeHead=document.createElement("td");
+			minorTypeHead.innerHTML="Current Assets";
+			tr.appendChild(minorTypeHead);
+			tr.appendChild(td);
+			show.appendChild(tr);
+			if(a.currentAssets){
+				var keys=Object.keys(a.currentAssets);
+				for(var j=0;j<keys.length;j++){
+					var tr=document.createElement("tr");
+					var td=document.createElement("td");
+					var majorHead=document.createElement("td");
+					majorHead.innerHTML=keys[j];
+					tr.appendChild(majorHead);
+					tr.appendChild(td);
+					show.appendChild(tr);
+					var m=a.currentAssets[keys[j]];
+					for(var k=0;k<m.length;k++){
+						var tr=document.createElement("tr");
+						var accountName=document.createElement("td");
+						var accountNumber=document.createElement("td");
+						accountNumber.innerHTML=m[k].id;
+						accountName.innerHTML=m[k].name;
+						tr.appendChild(accountName);
+						tr.appendChild(accountNumber);
+						show.appendChild(tr);
+					}
+				}
+			}
+			var tr=document.createElement("tr");
+			var td=document.createElement("td");
+			var minorTypeHead=document.createElement("td");
+			minorTypeHead.innerHTML="Non Current Assets";
+			tr.appendChild(minorTypeHead);
+			tr.appendChild(td);
+			show.appendChild(tr);
+			if(a.nonCurrentAssets){
+				var keys=Object.keys(a.nonCurrentAssets);
+				for(var j=0;j<keys.length;j++){
+					var tr=document.createElement("tr");
+					var td=document.createElement("td");
+					var majorHead=document.createElement("td");
+					majorHead.innerHTML=keys[j];
+					tr.appendChild(majorHead);
+					tr.appendChild(td);
+					show.appendChild(tr);
+					var m=a.nonCurrentAssets[keys[j]];
+					for(var k=0;k<m.length;k++){
+						var tr=document.createElement("tr");
+						var accountName=document.createElement("td");
+						var accountNumber=document.createElement("td");
+						accountNumber.innerHTML=m[k].id;
+						accountName.innerHTML=m[k].name;
+						tr.appendChild(accountName);
+						tr.appendChild(accountNumber);
+						show.appendChild(tr);
+					}
+				}
+			}
+
+			var tr=document.createElement("tr");
+			var td=document.createElement("td");
+			var typeHead=document.createElement("td");
+			typeHead.innerHTML="Liabilities";
+			tr.appendChild(typeHead);
+			tr.appendChild(td);
+			show.appendChild(tr);
+			var tr=document.createElement("tr");
+			var td=document.createElement("td");
+			var minorTypeHead=document.createElement("td");
+			minorTypeHead.innerHTML="Current Liabilities";
+			tr.appendChild(minorTypeHead);
+			tr.appendChild(td);
+			show.appendChild(tr);
+			if(a.currentLiabilities){
+				var keys=Object.keys(a.currentLiabilities);
+				for(var j=0;j<keys.length;j++){
+					var tr=document.createElement("tr");
+					var td=document.createElement("td");
+					var majorHead=document.createElement("td");
+					majorHead.innerHTML=keys[j];
+					tr.appendChild(majorHead);
+					tr.appendChild(td);
+					show.appendChild(tr);
+					var m=a.currentLiabilities[keys[j]];
+					for(var k=0;k<m.length;k++){
+						var tr=document.createElement("tr");
+						var accountName=document.createElement("td");
+						var accountNumber=document.createElement("td");
+						accountNumber.innerHTML=m[k].id;
+						accountName.innerHTML=m[k].name;
+						tr.appendChild(accountName);
+						tr.appendChild(accountNumber);
+						show.appendChild(tr);
+					}
+				}
+			}
+
+			var tr=document.createElement("tr");
+			var td=document.createElement("td");
+			var minorTypeHead=document.createElement("td");
+			minorTypeHead.innerHTML="Non Current Liabilities";
+			tr.appendChild(minorTypeHead);
+			tr.appendChild(td);
+			show.appendChild(tr);
+			if(a.nonCurrentLiabilities){
+				var keys=Object.keys(a.nonCurrentLiabilities);
+				for(var j=0;j<keys.length;j++){
+					var tr=document.createElement("tr");
+					var td=document.createElement("td");
+					var majorHead=document.createElement("td");
+					majorHead.innerHTML=keys[j];
+					tr.appendChild(majorHead);
+					tr.appendChild(td);
+					show.appendChild(tr);
+					var m=a.nonCurrentLiabilities[keys[j]];
+					for(var k=0;k<m.length;k++){
+						var tr=document.createElement("tr");
+						var accountName=document.createElement("td");
+						var accountNumber=document.createElement("td");
+						accountNumber.innerHTML=m[k].id;
+						accountName.innerHTML=m[k].name;
+						tr.appendChild(accountName);
+						tr.appendChild(accountNumber);
+						show.appendChild(tr);
+					}
+				}
+			}
+			var tr=document.createElement("tr");
+			var td=document.createElement("td");
+			var minorTypeHead=document.createElement("td");
+			minorTypeHead.innerHTML="Shareholders Equity";
+			tr.appendChild(minorTypeHead);
+			tr.appendChild(td);
+			show.appendChild(tr);
+			if(a.shareholdersEquity){
+				var keys=Object.keys(a.shareholdersEquity);
+				for(var j=0;j<keys.length;j++){
+					var tr=document.createElement("tr");
+					var td=document.createElement("td");
+					var majorHead=document.createElement("td");
+					majorHead.innerHTML=keys[j];
+					tr.appendChild(majorHead);
+					tr.appendChild(td);
+					show.appendChild(tr);
+					var m=a.shareholdersEquity[keys[j]];
+					for(var k=0;k<m.length;k++){
+						var tr=document.createElement("tr");
+						var accountName=document.createElement("td");
+						var accountNumber=document.createElement("td");
+						accountNumber.innerHTML=m[k].id;
+						accountName.innerHTML=m[k].name;
+						tr.appendChild(accountName);
+						tr.appendChild(accountNumber);
+						show.appendChild(tr);
+					}
+				}
+			}
+
+
+			var tr=document.createElement("tr");
+			var td=document.createElement("td");
+			var typeHead=document.createElement("td");
+			typeHead.innerHTML="Revenues";
+			tr.appendChild(typeHead);
+			tr.appendChild(td);
+			show.appendChild(tr);
+			if(a.revenues){
+				var keys=Object.keys(a.revenues);
+				for(var j=0;j<keys.length;j++){
+					var tr=document.createElement("tr");
+					var td=document.createElement("td");
+					var majorHead=document.createElement("td");
+					majorHead.innerHTML=keys[j];
+					tr.appendChild(majorHead);
+					tr.appendChild(td);
+					show.appendChild(tr);
+					var m=a.revenues[keys[j]];
+					for(var k=0;k<m.length;k++){
+						var tr=document.createElement("tr");
+						var accountName=document.createElement("td");
+						var accountNumber=document.createElement("td");
+						accountNumber.innerHTML=m[k].id;
+						accountName.innerHTML=m[k].name;
+						tr.appendChild(accountName);
+						tr.appendChild(accountNumber);
+						show.appendChild(tr);
+					}
+				}
+			}
+			var tr=document.createElement("tr");
+			var td=document.createElement("td");
+			var typeHead=document.createElement("td");
+			typeHead.innerHTML="Expenses";
+			tr.appendChild(typeHead);
+			tr.appendChild(td);
+			show.appendChild(tr);
+			if(a.expenses){
+				var keys=Object.keys(a.expenses);
+				for(var j=0;j<keys.length;j++){
+					var tr=document.createElement("tr");
+					var td=document.createElement("td");
+					var majorHead=document.createElement("td");
+					majorHead.innerHTML=keys[j];
+					tr.appendChild(majorHead);
+					tr.appendChild(td);
+					show.appendChild(tr);
+					var m=a.expenses[keys[j]];
+					for(var k=0;k<m.length;k++){
+						var tr=document.createElement("tr");
+						var accountName=document.createElement("td");
+						var accountNumber=document.createElement("td");
+						accountNumber.innerHTML=m[k].id;
+						accountName.innerHTML=m[k].name;
+						tr.appendChild(accountName);
+						tr.appendChild(accountNumber);
+						show.appendChild(tr);
+					}
+				}
+			}
+
+
+		}
+		else{
+			alert(responseText);
+		}
+
+	});
+	return false;
+
+}
+
+</script>
+</body>
+</html>

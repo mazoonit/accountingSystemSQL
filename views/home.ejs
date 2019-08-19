@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<title>Home</title>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/sidenavStyle.css">
+<body>
+<%-include('sidenav.ejs')%>
+
+
+<div class="main" id="container">
+<div style="text-align:center;">
+<h1 style="display:inline-block">Welcome</h1>
+<h1 style="display:inline-block;color:#001E3B"><%=user.username%></h1>
+</div>
+</div>
+
+
+
+
+<script src="/static/jquery-min.js"></script>
+<script src="/static/frontendlib.js"></script>
+</body>
+</html>

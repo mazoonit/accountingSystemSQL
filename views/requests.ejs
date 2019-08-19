@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html>
+<title>Requests</title>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="/static/style.css">
+<style>
+
+.sidenav {
+  height: 100%;
+  width: 23%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #001E3B;
+  background-image: linear-gradient(#001E3B 0%, #001E3B 100%);
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+.sidenav-cont{
+  width: 90%;
+  float: right;
+}
+
+.sidenav a, .dropdown-btn {
+
+  text-decoration: none;
+  font-size: 18px;
+  color: white;
+  opacity: 0.7;
+  display: block;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+  border-bottom:1px solid #f3f3f3;
+  opacity: 1;
+  padding:4px;
+}
+.sidenav p{
+  text-decoration: none;
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #CCCCCC;
+  display: block;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+img{
+  width: 50px;
+  height: auto;
+  vertical-align: middle;
+  padding-right: 15px;
+}
+
+.active {
+  background-color: rgba(95, 38, 255, 0.4);
+  color: white;
+  border-top-left-radius: 40px;
+}
+
+.active::after {
+    font-weight: 900;
+    display: inline-block;
+    padding-right: 15px;
+    font-size: 180%;
+    color: #034171;
+}
+
+.dropdown-container {
+  display: none;
+  background-color: rgba(95, 38, 255, 0.4);
+  opacity: 0.7;
+}
+
+.fa-caret-down {
+  float: right;
+  padding-right: 8px;
+}
+
+.sidenav a:hover, .dropdown-btn:hover{
+  color:#20639b;
+  opacity: 1;
+}
+.active:hover{
+  background-color: rgba(53, 164, 255, 0.6);
+  border-top-left-radius: 40px;
+  border-bottom-left-radius: 0;
+  opacity: 1;
+}
+.dropdown-container a:hover{
+  background-color: rgba(53, 164, 255, 0.6);
+  color:#fff;
+  border-radius: 0;
+  opacity: 1;
+}
+.dropdown-container a:last-child:hover{
+}
+
+
+
+.main {
+  margin-left:24%; 
+}
+.sidenav .unactive{
+	  background:none;
+	  opacity: 1;
+
+}
+.requestGo{
+	background-color: #1fc8db;
+	padding:10px 20px;
+
+}
+.ybutton{
+	display:inline-block;
+	background-color:rgba(53, 164, 255, 0.6);
+
+}
+.tabsec{background-color:#f3f3f3;padding:10px;border-radius:14px;}
+.unactive{background:#173f5f;}
+
+
+table,th,td{
+	border:none;
+	padding:0px;
+	margin:0;
+	text-align:center;
+}
+#temp table{text-align:right;}
+#temp td{text-align:right;}
+#temp{visibility: hidden;width:99%;display:none;}
+
+.printedReporthead{display:inline-block;margin:15px;}
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #temp, #temp * {
+    visibility: visible;
+  }
+  #temp{
+    position: absolute;
+    left: 0;
+    top: 0;
+    
+  }
+}
+a{background-color:#20639b;}
+.y{padding:10px;padding-left:30px;padding-right:30px;margin:0;cursor:pointer;color:#fff;}
+.y:hover{background-color:#20639b;}
+.canNotEdit{border:1px solid #20639b;}
+.canNotEdit:hover{border:1px solid #20639b;}
+button{margin:0;}
+</style>
+<body>
+<div class="sidenav">
+  <div class="sidenav-cont" id="menu">
+	  <p>Geekions</p>
+	  <a class="dropdown-btn unactive">System Settings<i class="fa fa-caret-down"></i></a>
+	  <div class="dropdown-container">
+		  <a href="accountPage" >Accounts</a>
+		  <a href="currency" >Currencies</a>
+		  <a href="user" >Users</a>
+		  <a href="employer" >Employers</a>
+	  </div>
+	  <a class="dropdown-btn unactive">Daily Entries<i class="fa fa-caret-down"></i></a>
+	  <div class="dropdown-container">
+		  <a href="dailyEntry" >Daily Entry</a>
+		  <a href="receiveEntry" >Recieve Entry</a>
+		  <a href="paymentEntry" >Payment Entry</a>
+	  </div>
+	  <a class="dropdown-btn unactive">Requests<i class="fa fa-caret-down"></i></a>
+	  <div class="dropdown-container">
+		  <a href="receiveRequest" >Recieve Request</a>
+		  <a href="paymentRequest" >Payment Request</a>
+		  <a href="requests" >Pending Requests</a>
+	  </div>
+	  <a class="dropdown-btn unactive">Airline Movement<i class="fa fa-caret-down"></i></a>
+	  <div class="dropdown-container">
+		  <a href="ticketEntry" >BSP Ticket</a>
+		  <a href="lowcostticketEntry" >Lowcost Ticket</a>
+	  </div>
+	  <a class="dropdown-btn unactive">Reports<i class="fa fa-caret-down"></i></a>
+	  <div class="dropdown-container">
+		  <a href="reports" >Accounting Reports</a>
+		  <a href="bspReports" >BSP Reports</a>
+		  <a href="lowcostReports" >Lowcost Reports</a>
+	  </div>
+	  <a href="logout">Logout</a>
+  </div>
+</div>
+
+<div class="main" id="container">
+<section id="content-tab1">
+		<div style="background-color:#173f5f;border-radius:5px;padding:10px;">
+			<a class="y" id="tab1-add">Pending Requests</a>
+		</div>
+		<section id="add" class="tabsec">
+			<h1 style="text-align:center;">Pending Requests</h1>
+			<table>
+			<%for(var i=0;i<rows.length;i++){%>
+			<tr>
+			<td>
+			<a href="/request/<%=rows[i]['_id']%>" style="display:inline-block;background:none;">
+				<h3 style="display:inline-block;"><%=rows[i]["type"]%></h3>
+			</a>
+			</td>
+			<td>
+			<h3 style="display:inline-block;">From : <%=rows[i]["employer"].username%></h3>
+			</td>
+			<tr>
+			<%}%>
+			</table>
+		</section>
+</section>
+</div>
+
+
+
+<script src="/static/jquery-min.js"></script>
+<script src="/static/frontendlib.js"></script>
+
+<!--jquery for sidebar bardo-->
+<script>
+$(document).ready(function(){
+        $('.date').val(new Date().toISOString().substr(0, 10));
+	$(".y").click(function(){
+		var id=$(this).attr("id");
+		id=id.split('-');
+		console.log(id);
+		$("#content-"+id[0]+" section").hide();
+		$(this).removeClass("unactive").siblings().addClass("unactive");
+		$("#content-"+id[0]+" #"+id[1]).fadeIn(1000);
+	});
+});
+function printPartOfPage($elementId) {
+    var body = $("body").detach();
+    document.body = document.createElement("body");
+    var clone = $elementId.clone();
+    clone.appendTo($("body"));
+    clone.show(); // In case the content was hidden
+    window.print();
+    $("html body").remove();
+    body.appendTo($("html"));
+}
+
+</script>
+<!--vainlia javascript-->
+<script>
+function addRequest(){
+	var executionDate=document.getElementById("addExecutionDate").value;
+	var endDate=document.getElementById("addEndDate").value;
+	var executionPrice=document.getElementById("addExecutionPrice").value;
+	var amount=document.getElementById("addAmount").value;
+	var totalAmount=document.getElementById("addTotalAmount").value;
+	var remainingAmount=document.getElementById("addRemainingAmount").value;
+	var clientName=document.getElementById("addClientName").value;
+	var description=document.getElementById("addDescription").value;
+	var requestBody={};
+	requestBody.executionDate=executionDate;
+	requestBody.endDate=endDate;
+	requestBody.executionPrice=executionPrice;
+	requestBody.amount=amount;
+	requestBody.totalAmount=totalAmount;
+	requestBody.remainingAmount=remainingAmount;
+	requestBody.clientName=clientName;
+	requestBody.description=description;
+	var reqObj={};
+	reqObj.requestBody=requestBody;
+	reqObj.type="receiveRequest";
+	ajaxRequest('request/insert',"POST","application/json",reqObj,(res)=>{
+		alert(res.responseText);
+	});
+	return false;
+}
+function editShow(){
+	var user=document.getElementById("editUser");
+	var executionDate=document.getElementById("editExecutionDate");
+	var endDate=document.getElementById("editEndDate");
+	var executionPrice=document.getElementById("editExecutionPrice");
+	var amount=document.getElementById("editAmount");
+	var totalAmount=document.getElementById("editTotalAmount");
+	var remainingAmount=document.getElementById("editRemainingAmount");
+	var clientName=document.getElementById("editClientName");
+	var description=document.getElementById("editDescription");
+	var editRequestNumber=document.getElementById("editRequestNumber").value;
+	ajaxRequest('request/getRequest',"POST","application/json",{betterId:editRequestNumber},(res)=>{
+		if(res.status==200){
+			res=JSON.parse(res.responseText);
+			if(res.type!="receiveRequest" || res.status!="pending"){
+				alert("Request Not Found!");
+				executionPrice.value=0;
+				amount.value=0;
+				totalAmount.value=0;
+				remainingAmount.value=0;
+				clientName.value="";
+				description.value="";
+				executionDate.value="";
+				endDate.value="";
+				user.value="";
+			}
+			else{
+				var requestBody=JSON.parse(res.requestBody);
+				var date=new Date(requestBody.executionDate).toLocaleString().split(',');
+				var time=date[1];
+				date=date[0];
+				date=date.split('/');
+				date=date[2]+'-'+date[1]+'-'+date[0];
+				var date2=new Date(requestBody.endDate).toLocaleString().split(',');
+				var time=date2[1];
+				date2=date2[0];
+				date2=date2.split('/');
+				date2=date2[2]+'-'+date2[1]+'-'+date2[0];
+				executionDate.value=date;
+				endDate.value=date2;
+				executionPrice.value=requestBody.executionPrice;
+				amount.value=requestBody.amount;
+				totalAmount.value=requestBody.totalAmount;
+				remainingAmount.value=requestBody.remainingAmount;
+				clientName.value=requestBody.clientName;
+				description.value=requestBody.description;
+				user.value=res.employer.username;
+			}
+		
+		}
+		else{
+			alert(res.responseText);
+			executionPrice.value=0;
+			amount.value=0;
+			totalAmount.value=0;
+			remainingAmount.value=0;
+			clientName.value="";
+			description.value="";
+			executionDate.value="";
+			endDate.value="";
+			user.value="";
+
+		}
+
+	});
+	
+
+}
+function edit(){
+	var editRequestNumber=document.getElementById("editRequestNumber").value;
+	var executionDate=document.getElementById("editExecutionDate").value;
+	var endDate=document.getElementById("editEndDate").value;
+	var executionPrice=document.getElementById("editExecutionPrice").value;
+	var amount=document.getElementById("editAmount").value;
+	var totalAmount=document.getElementById("editTotalAmount").value;
+	var remainingAmount=document.getElementById("editRemainingAmount").value;
+	var clientName=document.getElementById("editClientName").value;
+	var description=document.getElementById("editDescription").value;
+	var requestBody={};
+	requestBody.executionDate=executionDate;
+	requestBody.endDate=endDate;
+	requestBody.executionPrice=executionPrice;
+	requestBody.amount=amount;
+	requestBody.totalAmount=totalAmount;
+	requestBody.remainingAmount=remainingAmount;
+	requestBody.clientName=clientName;
+	requestBody.description=description;
+	var obj={
+		requestBody:requestBody,
+		betterId:editRequestNumber	
+	}
+	
+	ajaxRequest('request/update',"POST","application/json",obj,(res)=>{
+		alert(res.responseText);
+	});
+	return false;
+}
+function deleteRequest(){
+	var deleteRequestNumber=document.getElementById("deleteRequestNumber").value;
+	ajaxRequest('request/delete',"POST","application/json",{betterId:deleteRequestNumber},(res)=>{
+		alert(res.responseText);
+	});
+	return false;
+}
+function printShow(){
+	var showRequestNumber=document.getElementById("showRequestNumber").value;
+	ajaxRequest('request/getRequest',"POST","application/json",{betterId:showRequestNumber},(res)=>{
+		if(res.status!=200){
+				alert(res.responseText);}
+		else{
+			res=JSON.parse(res.responseText);
+			if(res.type=="receiveRequest"){
+				var requestBody=JSON.parse(res.requestBody);
+				var date=new Date(res.date).toLocaleString().split(',');
+				var time=date[1];
+				date=date[0];
+				date=date.split('/');
+				date=date[2]+'-'+date[1]+'-'+date[0];
+				var temp=document.getElementById("temp");
+				temp.style.display="block";
+				var printClientName=document.getElementById("printClientName");
+				printClientName.innerHTML="<strong>اسم العميل : </strong>"+requestBody.clientName;
+				var dateTable=document.getElementById("printDate");
+				dateTable.innerHTML="<strong>التاريخ : </strong>"+new Date(res.date).toLocaleString().split(',')[0];
+				var printDescription=document.getElementById("printDescription");
+				printDescription.innerHTML="<strong>البيان و نوع الخدمة : </strong>"+requestBody.description;
+				var printAmount=document.getElementById("printAmount");
+				printAmount.innerHTML="<strong>القيمة الموردة : </strong>"+requestBody.amount;
+				var printRemainingAmount=document.getElementById("printRemainingAmount");
+				printRemainingAmount.innerHTML="<strong>المبلغ المتبقي : </strong>"+requestBody.remainingAmount;
+				var printTotalAmount=document.getElementById("printTotalAmount");
+				printTotalAmount.innerHTML="<strong>المبلغ الاجمالي : </strong>"+requestBody.totalAmount;
+				var printExecutionPrice=document.getElementById("printExecutionPrice");
+				printExecutionPrice.innerHTML="<strong>مبلغ التنفيذ : </strong>"+requestBody.executionPrice;
+				var printEmployer=document.getElementById("printEmployer");
+				printEmployer.innerHTML="<strong>اسم الموظف : </strong>"+res.employer.username;
+				var printExecutionDate=document.getElementById("printExecutionDate");
+				printExecutionDate.innerHTML="<strong>تاريخ التنفيد : </strong>"+new Date(requestBody.executionDate).toLocaleString().split(',')[0];
+				var printEndDate=document.getElementById("printEndDate");
+				printEndDate.innerHTML="<strong>تاريخ نهاية الخدمة : </strong>"+new Date(requestBody.endDate).toLocaleString().split(',')[0];
+				window.print();
+			}
+			else{
+				alert("Request Not Found!");
+			}
+		}
+
+	});
+	return false;
+}
+
+//sidebar things
+
+var dropdown = document.getElementsByClassName("dropdown-btn");
+var i;
+
+for (i = 0; i < dropdown.length; i++) {
+  dropdown[i].addEventListener("click", function() {
+	  this.classList.toggle("active");
+	  var dropdownContent = this.nextElementSibling;
+	  dropdownContent.classList.remove("unactive");
+	  if (dropdownContent.style.display === "block") {
+		  dropdownContent.style.display = "none";
+		
+	  } else {
+	  dropdownContent.style.display = "block";
+	  }
+  });
+}
+</script>
+</body>
+</html>

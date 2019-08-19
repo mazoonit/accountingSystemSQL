@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html>
+<title>Airline Reports</title>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/sidenavStyle.css">
+<link rel="stylesheet" href="/static/topbarStyle.css">
+
+<style>
+#accountReportTemplate{
+	border:0.5px solid #000;
+	border-collapse:collapse;
+	width:100%;
+}
+#accountReportTemplate td{
+	text-align:center;
+	border:0.5px solid #000;
+}
+#employerReportTemplate{
+	border:0.5px solid #000;
+	border-collapse:collapse;
+	width:100%;
+}
+#employerReportTemplate td{
+	text-align:center;
+	border:0.5px solid #000;
+}
+
+#CombinedBSPReportTemplate{
+	border:0.5px solid #000;
+	border-collapse:collapse;
+	width:100%;
+}
+#CombinedBSPReportTemplate td{
+	text-align:center;
+	border:0.5px solid #000;
+
+}
+
+.printedReporthead{display:inline-block;margin:15px;}
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #temp, #temp * {
+    visibility: visible;
+  }
+  #temp{
+    position: absolute;
+    left: 0;
+    top: 0;
+
+  }
+}
+</style>
+<body>
+  <%-include('sidenav.ejs')%>
+<div class="main" id="container">
+<section id="content-tab1">
+		<div style="background-color:#173f5f;border-radius:5px;padding:10px;">
+			<a class="y" id="tab1-BSPAirlineReport">BSP Airline Report</a>
+			<a class="y unactive" id="tab1-BSPAllReport">Combined BSP Report</a>
+			<a class="y unactive" id="tab1-employerReport">BSP Employer Report</a>
+
+		</div>
+		<section id="BSPAirlineReport" class="tabsec">
+			<h1 style="text-align:Center;">BSP Airline Report</h1>
+			<form>
+				<table>
+				    <tr>
+					<td>
+					    <p>Airline Number</p>
+					</td>
+					<td>
+					    <input type="text" id="Account" onchange="getBSPAccount(event)"/>
+					</td>
+					<td>
+					    <input type="text" value="There's no such airline account!" id="AccountDiv" readonly/>
+					</td>
+					<td>
+							<button class="showButton" onClick="return showAccounts();">Show</button>
+					</td>
+
+				    </tr>
+				    <tr>
+					<td>
+					    <p>From</p>
+					</td>
+					<td>
+					    <input type="Date" id="fromDate"/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>To</p>
+					</td>
+					<td>
+					    <input type="Date" id="toDate"/>
+					</td>
+				    </tr>
+				    <tr>
+					    <td><button class="button" onClick="return getBspReport();">Get Report</button></td>
+				   </tr>
+				</table>
+			</form>
+		</section>
+
+
+		<section id="BSPAllReport" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">BSB All Report</h1>
+			<form>
+				<table>
+				    <tr>
+					<td>
+					    <p>From</p>
+					</td>
+					<td>
+					    <input type="Date" id="BSPAllFromDate"/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>To</p>
+					</td>
+					<td>
+					    <input type="Date" id="BSBAllToDate"/>
+					</td>
+				    </tr>
+				    <tr>
+					    <td><button class="button" onClick="return getBSBAllReport();">Get Report</button></td>
+				   </tr>
+				</table>
+			</form>
+
+		</section>
+
+		<!--Delete-->
+		<section id="employerReport" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Employer Report</h1>
+			<form>
+				<table>
+				    <tr>
+					<td>
+					    <p>Employer Account</p>
+					</td>
+					<td>
+					    <input type="text" onchange="getEmployerAccount(event)" id="employerAccount"/>
+					</td>
+					<td>
+					    <input type="text" value="There's no such employer account!" id="employerAccountDiv"readonly/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>From</p>
+					</td>
+					<td>
+					    <input type="Date" id="employerFromDate"/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>To</p>
+					</td>
+					<td>
+					    <input type="Date" id="employerToDate"/>
+					</td>
+				    </tr>
+				    <tr>
+					    <td><button class="button" onClick="return getEmployerReport();">Get Report</button></td>
+				   </tr>
+				</table>
+			</form>
+		</section>
+		<!--Print-->
+		<section id="print" class="tabsec" style="display:none;">
+		</section>
+</section>
+</div>
+<!--bsp airline report-->
+<table style="width:100%;display:none;" id="accountReportTemplate" dir="rtl">
+  <col>
+  <colgroup span="3"></colgroup>
+  <colgroup span="3"></colgroup>
+  <tr>
+		<td colspan="1" scope="colgroup">م</td>
+    <td colspan="1" scope="colgroup">التاريخ</td>
+    <td colspan="1" scope="colgroup">اسم العميل</td>
+    <td colspan="1" scope="colgroup">رقم التذكرة</td>
+    <td colspan="1" scope="colgroup">اساس التذكرة</td>
+    <td colspan="1" scope="colgroup">الضريبة</td>
+    <td colspan="1" scope="colgroup">GIG</td>
+		<td colspan="1" scope="colgroup">عمولة الطيران</td>
+		<td colspan="1" scope="colgroup">ضريبة العمولة</td>
+    <td colspan="1" scope="colgroup">الاجمالي</td>
+		<td colspan="1" scope="colgroup">الربح</td>
+
+  </tr>
+</table>
+
+<!-- BSP ALL Report -->
+
+<table style="width:100%;display:none;" id="CombinedBSPReportTemplate" dir="rtl">
+  <col>
+  <colgroup span="3"></colgroup>
+  <colgroup span="3"></colgroup>
+  <tr>
+    <td colspan="1" scope="colgroup">م</td>
+    <td colspan="1" scope="colgroup">التاريخ</td>
+    <td colspan="1" scope="colgroup">اسم العميل</td>
+    <td colspan="1" scope="colgroup">خط الطيران</td>
+    <td colspan="1" scope="colgroup">رقم التذكرة</td>
+    <td colspan="1" scope="colgroup">اساس التذكرة</td>
+    <td colspan="1" scope="colgroup">الضريبة</td>
+    <td colspan="1" scope="colgroup">GIG</td>
+		<td colspan="1" scope="colgroup">عمولة الطيران</td>
+		<td colspan="1" scope="colgroup">ضريبة العمولة</td>
+    <td colspan="1" scope="colgroup">الاجمالي</td>
+		<td colspan="1" scope="colgroup">الربح</td>
+  </tr>
+</table>
+
+<!--employer report-->
+<table style="width:100%;display:none;" id="employerReportTemplate" dir="rtl">
+  <col>
+  <colgroup span="3"></colgroup>
+  <colgroup span="3"></colgroup>
+  <tr>
+		<td colspan="1" scope="colgroup">م</td>
+    <td colspan="1" scope="colgroup">التاريخ</td>
+    <td colspan="1" scope="colgroup">اسم العميل</td>
+    <td colspan="1" scope="colgroup">رقم التذكرة</td>
+    <td colspan="1" scope="colgroup">الاجمالي</td>
+    <td colspan="1" scope="colgroup">سعر البيع</td>
+		<td colspan="1" scope="colgroup">العمولة</td>
+  </tr>
+</table>
+
+
+
+
+
+<script src="/static/jquery-min.js"></script>
+<script src="/static/frontendlib.js"></script>
+<script src="/static/topbarFunction.js"></script>
+
+
+<!--vainlia javascript-->
+
+
+
+
+<script>
+function getBspReport(){
+	var account=document.getElementById("Account").value;
+	var accountName=document.getElementById("AccountDiv").value;
+	var fromDate=document.getElementById("fromDate").value;
+	var toDate=document.getElementById("toDate").value;
+	if(toDate==""||fromDate==""){alert("insert valid date!");}
+	else{
+		var obj={supplierAccount:account,fromDate:fromDate,toDate:toDate,productType:"bsp"};
+		ajaxRequest("api/product/getSupplierProducts","POST","application/json",obj,(res)=>{
+			if(res.status==200){
+				var accountReportTemplate=document.getElementById("accountReportTemplate");
+				var accountReportTemplate=accountReportTemplate.cloneNode(true);
+				accountReportTemplate.style.display="table";
+				res=JSON.parse(res.responseText);
+				var tickets=res;
+				var totals={cost:0,tax:0,gig:0,total:0,sellingPrice:0,profit:0,discountPercentageAmount:0,taxDiscount:0};
+				for(var i=0;i<tickets.length;i++){
+					console.log(res);
+					var ticketObj=JSON.parse(tickets[i].productObj);
+					//totals
+					totals.cost+=ticketObj.cost;
+					totals.tax+=ticketObj.taxA;
+					totals.gig+=ticketObj.gig;
+					totals.total+=ticketObj.total;
+					totals.taxDiscount+=((ticketObj.discountPercentage*ticketObj.cost/100)*5/100);
+					totals.profit+=ticketObj.profit;
+					totals.discountPercentageAmount+=(ticketObj.discountPercentage*ticketObj.cost/100);
+
+
+
+					var tr=document.createElement("tr");
+					var th1=document.createElement("td");
+					var th2=document.createElement("td");
+					var th3=document.createElement("td");
+					var th4=document.createElement("td");
+					var th5=document.createElement("td");
+					var th6=document.createElement("td");
+					var th7=document.createElement("td");
+					var th8=document.createElement("td");
+					var th9=document.createElement("td");
+					var th10=document.createElement("td");
+					var th11=document.createElement("td");
+
+					th1.innerHTML=i+1;
+					th2.innerHTML=tickets[i].createdAt.split("T")[0];
+					th3.innerHTML=ticketObj.passengerName;
+					th4.innerHTML=ticketObj.serialNumber;
+					th5.innerHTML=ticketObj.cost.toFixed(2);
+					th6.innerHTML=ticketObj.taxA.toFixed(2);
+					th7.innerHTML=ticketObj.gig.toFixed(2);
+					th8.innerHTML=(ticketObj.discountPercentage*ticketObj.cost/100).toFixed(2);
+					th9.innerHTML=((ticketObj.discountPercentage*ticketObj.cost/100)*5/100).toFixed(2);
+					th10.innerHTML=ticketObj.total.toFixed(2);
+					th11.innerHTML=ticketObj.profit.toFixed(2);
+
+					tr.appendChild(th1);
+					tr.appendChild(th2);
+					tr.appendChild(th3);
+					tr.appendChild(th4);
+					tr.appendChild(th5);
+					tr.appendChild(th6);
+					tr.appendChild(th7);
+					tr.appendChild(th8);
+					tr.appendChild(th9);
+					tr.appendChild(th10);
+					tr.appendChild(th11);
+
+					accountReportTemplate.appendChild(tr);
+				}
+				//adding totals
+				var tr=document.createElement("tr");
+				var th1=document.createElement("td");
+				var th2=document.createElement("td");
+				var th3=document.createElement("td");
+				var th4=document.createElement("td");
+				var th5=document.createElement("td");
+				var th6=document.createElement("td");
+				var th7=document.createElement("td");
+				var th8=document.createElement("td");
+				var th9=document.createElement("td");
+				var th10=document.createElement("td");
+				var th11=document.createElement("td");
+
+				th5.innerHTML=totals.cost.toFixed(2);
+				th6.innerHTML=totals.tax.toFixed(2);
+				th7.innerHTML=totals.gig.toFixed(2);
+				th8.innerHTML=totals.discountPercentageAmount.toFixed(2);
+				th9.innerHTML=totals.taxDiscount.toFixed(2);
+				th10.innerHTML=totals.total.toFixed(2);
+				th11.innerHTML=totals.profit.toFixed(2);
+				th5.style.backgroundColor="#ccc";
+				th6.style.backgroundColor="#ccc";
+				th7.style.backgroundColor="#ccc";
+				th8.style.backgroundColor="#ccc";
+				th9.style.backgroundColor="#ccc";
+				th10.style.backgroundColor="#ccc";
+				th11.style.backgroundColor="#ccc";
+
+				tr.appendChild(th1);
+				tr.appendChild(th2);
+				tr.appendChild(th3);
+				tr.appendChild(th4);
+				tr.appendChild(th5);
+				tr.appendChild(th6);
+				tr.appendChild(th7);
+				tr.appendChild(th8);
+				tr.appendChild(th9);
+				tr.appendChild(th10);
+				tr.appendChild(th11);
+				accountReportTemplate.appendChild(tr);
+
+
+				var reportDiv=document.createElement("div");
+				reportDiv.style.width='100%';
+
+				var intro=document.createElement("div");
+				intro.style.textAlign="center";
+				intro.dir="rtl";
+				var airLineHead=document.createElement("h1");
+				airLineHead.innerHTML="تقرير خط الطيران";
+				var fromDateh4=document.createElement("p");
+				fromDateh4.innerHTML="من تاريخ : "+fromDate;
+				fromDateh4.className+="printedReporthead";
+				var toDateh4=document.createElement("p");
+				toDateh4.innerHTML="الى تاريخ : "+toDate;
+				toDateh4.className+="printedReporthead";
+				var br=document.createElement("br");
+				var airLineName=document.createElement("p");
+				airLineName.innerHTML="اسم خط الطيران : "+accountName;
+				airLineName.className+="printedReporthead";
+				var bsp=document.createElement("p");
+				bsp.innerHTML="نوع الطيران : BSP ";
+				bsp.className+="printedReporthead";
+				/**
+				var x=document.createElement("IMG");
+				x.src="/static/images/img.png";
+				x.style.width="100%";
+				x.style.height="20%";
+				console.log(x);
+				intro.appendChild(x);
+				**/
+				intro.appendChild(airLineHead);
+				intro.appendChild(fromDateh4);
+				intro.appendChild(toDateh4);
+				intro.appendChild(br);
+				intro.appendChild(airLineName);
+				intro.appendChild(bsp);
+				reportDiv.appendChild(intro);
+				reportDiv.appendChild(accountReportTemplate);
+				reportDiv.id="temp";
+				document.body.append(reportDiv);
+				window.print();
+				var temp = document.getElementById("temp");
+				temp.parentNode.removeChild(temp);
+			}
+			else{alert(res.responseText);}
+
+
+		});
+	}
+
+
+	return false;
+}
+
+
+
+
+
+
+
+function getBSBAllReport(){
+	var fromDate=document.getElementById("BSPAllFromDate").value;
+	var toDate=document.getElementById("BSBAllToDate").value;
+	if(toDate==""||fromDate==""){alert("insert valid date!");}
+	else{
+		var obj={fromDate:fromDate,toDate:toDate,productType:"bsp"};
+		ajaxRequest("api/product/getAllProducts","POST","application/json",obj,(res)=>{
+			if(res.status==200){
+				var CombinedBSPReportTemplate=document.getElementById("CombinedBSPReportTemplate");
+				var CombinedBSPReportTemplate=CombinedBSPReportTemplate.cloneNode(true);
+				CombinedBSPReportTemplate.style.display="table";
+				res=JSON.parse(res.responseText);
+				var tickets=res;
+				var totals={cost:0,tax:0,gig:0,total:0,taxDiscount:0,profit:0,discountPercentageAmount:0};
+				for(var i=0;i<tickets.length;i++){
+					var ticketObj=JSON.parse(tickets[i].productObj);
+					//totals
+					totals.cost+=ticketObj.cost;
+					totals.tax+=ticketObj.taxA;
+					totals.gig+=ticketObj.gig;
+					totals.total+=ticketObj.total;
+					totals.taxDiscount+=((ticketObj.discountPercentage*ticketObj.cost/100)*5/100);
+					totals.profit+=ticketObj.profit;
+					totals.discountPercentageAmount+=(ticketObj.discountPercentage*ticketObj.cost/100);
+
+
+
+					var tr=document.createElement("tr");
+					var th1=document.createElement("td");
+					var th2=document.createElement("td");
+					var th3=document.createElement("td");
+					var th4=document.createElement("td");
+					var th5=document.createElement("td");
+					var th6=document.createElement("td");
+					var th7=document.createElement("td");
+					var th8=document.createElement("td");
+					var th9=document.createElement("td");
+					var th10=document.createElement("td");
+					var th11=document.createElement("td");
+					var th12=document.createElement("td");
+					th1.innerHTML=i+1;
+					th2.innerHTML=tickets[i].createdAt.split("T")[0];
+					th3.innerHTML=ticketObj.passengerName;
+					th4.innerHTML=tickets[i].supplierAccount.name;
+					th5.innerHTML=ticketObj.serialNumber;
+					th6.innerHTML=ticketObj.cost.toFixed(2);
+					th7.innerHTML=ticketObj.taxA.toFixed(2);
+					th8.innerHTML=ticketObj.gig.toFixed(2);
+					th9.innerHTML=(ticketObj.discountPercentage*ticketObj.cost/100).toFixed(2);
+					th10.innerHTML=((ticketObj.discountPercentage*ticketObj.cost/100)*5/100).toFixed(2);
+					th11.innerHTML=ticketObj.total.toFixed(2);
+					th12.innerHTML=ticketObj.profit.toFixed(2);
+					tr.appendChild(th1);
+					tr.appendChild(th2);
+					tr.appendChild(th3);
+					tr.appendChild(th4);
+					tr.appendChild(th5);
+					tr.appendChild(th6);
+					tr.appendChild(th7);
+					tr.appendChild(th8);
+					tr.appendChild(th9);
+					tr.appendChild(th10);
+					tr.appendChild(th11);
+					tr.appendChild(th12);
+					CombinedBSPReportTemplate.appendChild(tr);
+				}
+				//adding totals
+				var tr=document.createElement("tr");
+				var th1=document.createElement("td");
+				var th2=document.createElement("td");
+				var th3=document.createElement("td");
+				var th4=document.createElement("td");
+				var th5=document.createElement("td");
+				var th6=document.createElement("td");
+				var th7=document.createElement("td");
+				var th8=document.createElement("td");
+				var th9=document.createElement("td");
+				var th10=document.createElement("td");
+				var th11=document.createElement("td");
+				var th12=document.createElement("td");
+
+				th6.innerHTML=totals.cost.toFixed(2);
+				th7.innerHTML=totals.tax.toFixed(2);
+				th8.innerHTML=totals.gig.toFixed(2);
+				th9.innerHTML=totals.discountPercentageAmount.toFixed(2);
+				th10.innerHTML=totals.taxDiscount.toFixed(2);
+				th11.innerHTML=totals.total.toFixed(2);
+				th12.innerHTML=totals.profit.toFixed(2);
+				th6.style.backgroundColor="#ccc";
+				th7.style.backgroundColor="#ccc";
+				th8.style.backgroundColor="#ccc";
+				th9.style.backgroundColor="#ccc";
+				th10.style.backgroundColor="#ccc";
+				th11.style.backgroundColor="#ccc";
+				th12.style.backgroundColor="#ccc";
+
+				tr.appendChild(th1);
+				tr.appendChild(th2);
+				tr.appendChild(th3);
+				tr.appendChild(th4);
+				tr.appendChild(th5);
+				tr.appendChild(th6);
+				tr.appendChild(th7);
+				tr.appendChild(th8);
+				tr.appendChild(th9);
+				tr.appendChild(th10);
+				tr.appendChild(th11);
+				tr.appendChild(th12);
+				CombinedBSPReportTemplate.appendChild(tr);
+
+				var reportDiv=document.createElement("div");
+				reportDiv.style.width='100%';
+
+				var intro=document.createElement("div");
+				intro.style.textAlign="center";
+				intro.dir="rtl";
+				var airLineHead=document.createElement("h1");
+				airLineHead.innerHTML="تقرير خط الطيران المجمع";
+				var fromDateh4=document.createElement("p");
+				fromDateh4.innerHTML="من تاريخ : "+fromDate;
+				fromDateh4.className+="printedReporthead";
+				var toDateh4=document.createElement("p");
+				toDateh4.innerHTML="الى تاريخ : "+toDate;
+				toDateh4.className+="printedReporthead";
+				var br=document.createElement("br");
+				var bsp=document.createElement("p");
+				bsp.innerHTML="نوع الطيران : BSP ";
+				bsp.className+="printedReporthead";
+				/**
+				var x=document.createElement("IMG");
+				x.src="/static/images/img.png";
+				x.style.width="100%";
+				x.style.height="20%";
+				console.log(x);
+				intro.appendChild(x);
+				**/
+				intro.appendChild(airLineHead);
+				intro.appendChild(fromDateh4);
+				intro.appendChild(toDateh4);
+				intro.appendChild(br);
+				intro.appendChild(bsp);
+				reportDiv.appendChild(intro);
+				reportDiv.appendChild(CombinedBSPReportTemplate);
+				reportDiv.id="temp";
+				document.body.append(reportDiv);
+				window.print();
+				var temp = document.getElementById("temp");
+				temp.parentNode.removeChild(temp);
+			}
+			else{alert(res.responseText);}
+
+
+		});
+	}
+
+
+	return false;
+}
+
+
+
+
+
+function getEmployerReport(){
+	var account=document.getElementById("employerAccount").value;
+	var accountName=document.getElementById("employerAccountDiv").value;
+	var fromDate=document.getElementById("employerFromDate").value;
+	var toDate=document.getElementById("employerToDate").value;
+	if(toDate==""||fromDate==""){alert("insert valid date!");}
+	else{
+		var obj={employerId:account,fromDate:fromDate,toDate:toDate,productType:"bsp"};
+		ajaxRequest("api/product/getEmployerProducts","POST","application/json",obj,(res)=>{
+			if(res.status==200){
+				var employerReportTemplate=document.getElementById("employerReportTemplate");
+				var employerReportTemplate=employerReportTemplate.cloneNode(true);
+				employerReportTemplate.style.display="table";
+				res=JSON.parse(res.responseText);
+				var tickets=res;
+				var totals={total:0,sellingPrice:0,profit:0};
+
+				for(var i=0;i<tickets.length;i++){
+					var ticketObj=JSON.parse(tickets[i].productObj);
+					//totals
+					totals.total+=ticketObj.total;
+					totals.sellingPrice+=ticketObj.sellingPrice;
+					totals.profit+=ticketObj.profit;
+
+					var tr=document.createElement("tr");
+					var th1=document.createElement("td");
+					var th2=document.createElement("td");
+					var th3=document.createElement("td");
+					var th4=document.createElement("td");
+					var th5=document.createElement("td");
+					var th6=document.createElement("td");
+					var th7=document.createElement("td");
+					th1.innerHTML=i+1;
+					th2.innerHTML=tickets[i].createdAt.split("T")[0];
+					th3.innerHTML=ticketObj.passengerName;
+					th4.innerHTML=ticketObj.serialNumber;
+					th5.innerHTML=ticketObj.total.toFixed(2);
+					th6.innerHTML=ticketObj.sellingPrice.toFixed(2);
+					th7.innerHTML=ticketObj.profit.toFixed(2);
+
+					tr.appendChild(th1);
+					tr.appendChild(th2);
+					tr.appendChild(th3);
+					tr.appendChild(th4);
+					tr.appendChild(th5);
+					tr.appendChild(th6);
+					tr.appendChild(th7);
+					employerReportTemplate.appendChild(tr);
+				}
+				//totals
+				var tr=document.createElement("tr");
+				var th1=document.createElement("td");
+				var th2=document.createElement("td");
+				var th3=document.createElement("td");
+				var th4=document.createElement("td");
+				var th5=document.createElement("td");
+				var th6=document.createElement("td");
+				var th7=document.createElement("td");
+				th5.innerHTML=ticketObj.total.toFixed(2);
+				th6.innerHTML=ticketObj.sellingPrice.toFixed(2);
+				th7.innerHTML=ticketObj.profit.toFixed(2);
+				th5.style.backgroundColor="#ccc";
+				th6.style.backgroundColor="#ccc";
+				th7.style.backgroundColor="#ccc";
+
+				tr.appendChild(th1);
+				tr.appendChild(th2);
+				tr.appendChild(th3);
+				tr.appendChild(th4);
+				tr.appendChild(th5);
+				tr.appendChild(th6);
+				tr.appendChild(th7);
+				employerReportTemplate.appendChild(tr);
+
+				var reportDiv=document.createElement("div");
+				reportDiv.style.width='100%';
+
+				var intro=document.createElement("div");
+				intro.style.textAlign="center";
+				intro.dir="rtl";
+				var airLineHead=document.createElement("h1");
+				airLineHead.innerHTML="تقرير مبيعات موظف";
+				var fromDateh4=document.createElement("p");
+				fromDateh4.innerHTML="من تاريخ : "+fromDate;
+				fromDateh4.className+="printedReporthead";
+				var toDateh4=document.createElement("p");
+				toDateh4.innerHTML="الى تاريخ : "+toDate;
+				toDateh4.className+="printedReporthead";
+				var br=document.createElement("br");
+				var airLineName=document.createElement("p");
+				airLineName.innerHTML="اسم الموظف : "+accountName;
+				airLineName.className+="printedReporthead";
+				/**
+				var x=document.createElement("IMG");
+				x.src="/static/images/img.png";
+				x.style.width="100%";
+				x.style.height="20%";
+				console.log(x);
+				intro.appendChild(x);
+				**/
+				intro.appendChild(airLineHead);
+				intro.appendChild(fromDateh4);
+				intro.appendChild(toDateh4);
+				intro.appendChild(br);
+				intro.appendChild(airLineName);
+
+				reportDiv.appendChild(intro);
+				reportDiv.appendChild(employerReportTemplate);
+				reportDiv.id="temp";
+				document.body.append(reportDiv);
+				window.print();
+				var temp = document.getElementById("temp");
+				temp.parentNode.removeChild(temp);
+			}
+			else{alert(res.responseText);}
+
+
+		});
+	}
+
+
+	return false;
+}
+</script>
+</body>
+</html>

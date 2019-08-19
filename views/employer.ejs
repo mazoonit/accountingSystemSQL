@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<title>Currencies</title>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/sidenavStyle.css">
+<link rel="stylesheet" href="/static/topbarStyle.css">
+<style>
+#showAllDiv{border-collapse:collapse;}
+#showAllDiv td{border:1px solid #000;padding:15px;}
+</style>
+<body>
+<%-include('sidenav.ejs')%>
+<div class="main" id="container">
+<section id="content-tab1">
+		<div style="background-color:#173f5f;border-radius:5px;padding:10px;">
+			<a class="y" id="tab1-add">Add <i class="fas fa-plus-circle"></i></a>
+			<a class="y unactive" id="tab1-delete">Delete <i class="fas fa-trash-alt"></i></a>
+			<a class="y unactive" id="tab1-edit">Edit <i class="fas fa-edit"></i></a>
+			<a class="y unactive" id="tab1-print">Show <i class="fas fa-file"></i></a>
+			<a class="y unactive" id="tab1-showAll">Show All <i class="fas fa-file"></i></a>
+		</div>
+		<section id="add" class="tabsec">
+			<h1 style="text-align:Center;">Employer</h1>
+			<form>
+			<table>
+			    <tr>
+				<td>
+				    <p>Name</p>
+				</td>
+				<td colspan="6">
+				    <input type="text" id="addName"/>
+				</td>
+
+			    </tr>
+			    <tr>
+				    <td><button class="button" onClick="return addEmployer();">Add</button></td>
+			   </tr>
+			</table>
+			</form>
+		</section>
+
+
+
+		<!--Edit-->
+
+
+
+		<section id="edit" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Employer</h1>
+			<form>
+			<table>
+			    <tr>
+				<td>
+				    <p>ID</p>
+				</td>
+				<td>
+				    <input type="text" onchange="show(event);" id="editID"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Name</p>
+				</td>
+				<td colspan="6">
+				    <input type="text" id="editName"/>
+				</td>
+			    </tr>
+			    <tr>
+				    <td><button class="button" onClick="return editEmployer();">Edit</button></td>
+			   </tr>
+			</table>
+			</form>
+		</section>
+
+
+		<!--Delete-->
+
+
+    <section id="delete" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Employer</h1>
+			<form>
+			<table>
+			    <tr>
+				<td>
+				    <p>ID</p>
+				</td>
+				<td>
+				    <input type="text" onchange="show(event);" id="deleteID"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Name</p>
+				</td>
+				<td colspan="6">
+				    <input type="text" id="deleteName" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+			    <tr>
+				    <td><button class="button" onClick="return deleteEmployer();">Delete</button></td>
+			   </tr>
+			</table>
+			</form>
+		</section>
+
+
+		<!--Print-->
+
+
+
+		<section id="print" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Employer</h1>
+			<form>
+			<table>
+			    <tr>
+				<td>
+				    <p>ID</p>
+				</td>
+				<td>
+				    <input type="text" id="showID" onchange="show(event)"/>
+				</td>
+			    </tr>
+			  <tr>
+    				<td>
+    				    <p>Name</p>
+    				</td>
+    				<td colspan="6">
+    				    <input type="text" id="showName" class="canNotEdit" readonly/>
+    				</td>
+			  </tr>
+			</table>
+			</form>
+		</section>
+
+
+    <!--show all-->
+		<section id="showAll" class="tabsec" style="display:none;">
+			<table id="showAllDiv" style="text-align:center;margin:auto;"></table>
+			<button onClick="showAll()" class="button">Show</button>
+		</section>
+</section>
+</div>
+
+
+
+<script src="/static/jquery-min.js"></script>
+<script src="/static/frontendlib.js"></script>
+<script src="/static/topbarFunction.js"></script>
+
+<!--vainlia javascript-->
+<script>
+
+function addEmployer(){
+	var name=document.getElementById("addName").value;
+	var EmployerObj={name:name};
+	ajaxRequest("api/employer","POST","application/json",EmployerObj,(res)=>{
+		if(res.status==200){
+			alert("Employer has been added successfully!");
+		}
+		else{
+			alert(res.responseText);
+		}
+	});
+	return false;
+}
+
+
+
+function show(e){
+  var targetID=e.target.id;
+  var tabID=targetID.slice(0,targetID.length-2);
+	var employerId=document.getElementById(targetID).value;
+	var name=document.getElementById(tabID+"Name");
+
+	ajaxRequest("api/employer/frontGet","POST","application/json",{id:employerId},(res)=>{
+		if(res.status==200){
+			res=JSON.parse(res.responseText);
+			name.value=res.name;
+		}
+		else{
+			alert(res.responseText);
+			name.value="";
+		}
+	});
+	return false;
+}
+
+
+
+function deleteEmployer(){
+	var employerId=document.getElementById("deleteID").value;
+	if(window.confirm("Are you sure that you want to delete ?")){
+		ajaxRequest("api/employer","DELETE","application/json",{id:employerId},(res)=>{
+			alert(res.responseText);
+		});
+	}
+	return false;
+}
+
+
+
+function editEmployer(){
+	var employerId=document.getElementById("editID").value;
+	var name=document.getElementById("editName").value;
+	var obj={id:employerId,name:name};
+	ajaxRequest("api/employer","PUT","application/json",obj,(res)=>{
+		alert(res.responseText);
+	});
+	return false;
+}
+
+
+
+function showAll(){
+	ajaxRequest("api/employer","GET","application/json",{},(res)=>{
+		if(res.status==200){
+			var showAllDiv=document.getElementById("showAllDiv");
+			showAllDiv.innerHTML="<tr><td>Seq</td><td>Name</td><td>ID</td></tr>";
+			res=JSON.parse(res.responseText);
+			for(var i=0;i<res.length;i++){
+				var tr=document.createElement("tr");
+				var th1=document.createElement("td");
+				var th2=document.createElement("td");
+				var th3=document.createElement("td");
+				th1.innerHTML=i+1;
+				th2.innerHTML=res[i].name;
+				th3.innerHTML=res[i].id;
+				tr.appendChild(th1);
+				tr.appendChild(th2);
+				tr.appendChild(th3);
+				showAllDiv.appendChild(tr);
+
+			}
+		}
+		else{
+			alert(res.responseText);
+		}
+	});
+
+
+}
+</script>
+</body>
+</html>

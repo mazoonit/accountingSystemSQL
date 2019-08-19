@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html>
+<title>Daily Entry</title>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/sidenavStyle.css">
+<style>
+.requestGo{
+	background-color: #1fc8db;
+	padding:10px 20px;
+
+}
+.ybutton{
+	display:inline-block;
+	background-color:rgba(53, 164, 255, 0.6);
+
+}
+.tabsec{background-color:#f3f3f3;padding:10px;border-radius:14px;overflow-x: auto;}
+.unactive{background:#173f5f;}
+
+
+table,th,td{
+	border:none;
+	padding:0;
+	margin:0;
+	text-align:center;
+}
+#dailyEntryTable{
+	border:1px solid #000;
+	border-collapse:collapse;
+	width:100%;
+	padding:0;
+}
+#dailyEntryTable td{
+	border:1px solid #000;
+}
+#dailyEntryTable input{width:90%;}
+#deleteDailyEntryTable{
+	border:1px solid #000;
+	border-collapse:collapse;
+	width:100%;
+}
+#deleteDailyEntryTable td{
+	border:1px solid #000;
+}
+#deleteDailyEntryTable input{width:90%;}
+#editDailyEntryTable{
+	border:1px solid #000;
+	border-collapse:collapse;
+	width:100%;
+}
+#editDailyEntryTable td{
+	border:1px solid #000;
+}
+#editDailyEntryTable input{width:90%;}
+#temp tr{border:1px solid #000;}
+#temp td{border:1px solid #000;}
+#temp table{border:1px solid #000;border-collapse:collapse;}
+#showDailyEntryTable{
+	border:1px solid #000;
+	border-collapse:collapse;
+	width:100%;
+}
+#showDailyEntryTable td{
+	border:1px solid #000;
+}
+#showDailyEntryTable input{width:90%;}
+
+.printedReporthead{display:inline-block;margin:15px;}
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #temp, #temp * {
+    visibility: visible;
+  }
+  #temp{
+    position: absolute;
+    left: 0;
+    top: 0;
+
+  }
+}
+a{background-color:#20639b;}
+.y{padding:10px;padding-left:30px;padding-right:30px;margin:0;cursor:pointer;color:#fff;}
+.y:hover{background-color:#20639b;}
+.canNotEdit{border:1px solid #20639b;}
+.canNotEdit:hover{border:1px solid #20639b;}
+.cashButton{background:#173f5f; cursor:pointer;color:#fff;padding:3px; margin:3px;border-radius:5px;}
+button{margin:0;}
+</style>
+<body>
+  <%-include('sidenav.ejs')%>
+<div class="main" id="container">
+<section id="content-tab1">
+		<div style="background-color:#173f5f;border-radius:5px;padding:10px;">
+			<a class="y" id="tab1-add">Add <i class="fas fa-plus-circle"></i></a>
+			<a class="y unactive" id="tab1-edit">Edit <i class="fas fa-sync-alt"></i></a>
+			<a class="y unactive" id="tab1-delete">Delete <i class="fas fa-trash-alt"></i></a>
+			<a class="y unactive" id="tab1-print">Show <i class="fas fa-file"></i></a>
+		</div>
+		<section id="add" class="tabsec">
+			<h1 style="text-align:Center;">Daily Entry</h1>
+			<div style="margin:auto;">
+				<table>
+				    <tr>
+					<td>
+					    <p>User</p>
+					</td>
+					<td>
+					    <input type="text" value="<%=user.username%>" class="canNotEdit" readonly/>
+					</td>
+					<td>
+					    <p>Date</p>
+					</td>
+					<td>
+					    <input type="Date" class="date" id="add_dateEntry" required/>
+					</td>
+					<td>
+					    <p>Time</p>
+					</td>
+					<td>
+					    <input type="Time" id="add_timeEntry" value='now' required />
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Entry Number</p>
+					</td>
+					<td>
+					    <input type="text" value="" class="canNotEdit" readonly/>
+					</td>
+					<td><a onclick="return cashMove()" class="cashButton">Cash Move</a></td>
+				    </tr>
+				</table>
+			<form>
+				<table id="dailyEntryTable">
+					<tr>
+						<td style="width:5%;"><p>ACC ID</p></td>
+						<td style="width:10%;"><p>Account Name</p></td>
+						<td style="width:5%;"><p>Currency Code</p></td>
+						<td style="width:5%;"><p>Currency Name</p></td>
+						<td style="width:10%;"><p>Receive</p></td>
+						<td style="width:10%;"><p>Payment</p></td>
+						<td style="width:10%;"><p>Invoice</p></td>
+						<td style="width:10%;"><p>Rate</p></td>
+						<td style="width:10%;"><p>Debit</p></td>
+						<td style="width:10%;"><p>Credit</p></td>
+						<td style="width:15%;"><p>Description</p></td>
+					</tr>
+					<tr id="add_tr_0">
+						<td>
+							<input type="string" required id="add_accountId_0" onchange="getAccount(event)">
+						</td>
+						<td>
+							<input type="string" required readonly id="add_accountId_0Div">
+						</td>
+						<td>
+							<input type="string" required id="add_currency_0" onchange="getCurrency(event)">
+						</td>
+						<td>
+							<input type="string" required readonly id="add_currency_0Div">
+						</td>
+						<td>
+							<input type="string" readonly required id="add_receive_0">
+						</td>
+						<td>
+							<input type="string" readonly required id="add_payment_0">
+						</td>
+						<td>
+							<input type="string" readonly required id="add_invoice_0">
+						</td>
+						<td>
+							<input type="number" min="0" onchange="addBalance();" required id="add_rate_0">
+						</td>
+
+						<td>
+				<input type="number" min="0" required onchange="addBalance();"id="add_debit_0">
+						</td>
+						<td>
+				<input type="number" min="0" required onchange="addBalance();"id="add_credit_0">
+						</td>
+						<td>
+							<input type="string" required id="add_description_0">
+						</td>
+					</tr>
+				</table>
+				<h4 style="display:inline-block;" id="addTotalDebitText">Total Debit : 0</h4>
+				<h4 style="display:inline-block;" id="addTotalCreditText">Total Credit : 0</h4>
+				<button style="display:inline-block;" onclick="return addLine()">Add Line</button>
+				<button style="display:inline-block;" onclick="return deleteLine()">Delete Line</button>
+				<button style="display:block" onclick="return addEntry();" class="button">Add</button>
+			</form>
+			</div>
+		</section>
+
+
+
+		<!--edit section-->
+
+
+
+		<section id="edit" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Daily Entry</h1>
+			<div style="margin:auto;">
+				<p id="editUserId" style="display:none;"></p>
+				<table>
+				    <tr>
+					<td>
+					    <p>User</p>
+					</td>
+					<td>
+					    <input type="text" value="" id="editUser" class="canNotEdit" readonly/>
+					</td>
+					<td>
+					    <p>Date</p>
+					</td>
+					<td>
+					    <input type="Date" class="canNotEdit" id="editDate" readonly/>
+					</td>
+					<td>
+					    <p>Time</p>
+					</td>
+					<td>
+					    <input type="Time" id="editTime" readonly class="canNotEdit"/>
+					</td>
+
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Entry Number</p>
+					</td>
+					<td>
+					    <input type="text" onchange="editEntrySearch(event)" id="editEntryNumber"/>
+					</td>
+				    </tr>
+				</table>
+			<form>
+				<table id="editDailyEntryTable">
+					<tr>
+						<td style="width:5%;"><p>ACC ID</p></td>
+						<td style="width:10%;"><p>Account Name</p></td>
+						<td style="width:5%;"><p>Currency Code</p></td>
+						<td style="width:5%;"><p>Currency Name</p></td>
+						<td style="width:10%;"><p>Receive</p></td>
+						<td style="width:10%;"><p>Payment</p></td>
+						<td style="width:10%;"><p>Invoice</p></td>
+						<td style="width:10%;"><p>Rate</p></td>
+						<td style="width:10%;"><p>Debit</p></td>
+						<td style="width:10%;"><p>Credit</p></td>
+						<td style="width:15%;"><p>Description</p></td>
+					</tr>
+					<tr id="edit_tr_0">
+						<td>
+							<input type="string" required id="edit_accountId_0" onchange="getAccount(event)">
+						</td>
+						<td>
+							<input type="string" required readonly id="edit_accountId_0Div">
+						</td>
+						<td>
+							<input type="string" required id="edit_currency_0">
+						</td>
+						<td>
+							<input type="string" required readonly id="edit_currency_0Div">
+						</td>
+						<td>
+							<input type="string" readonly required id="edit_receive_0">
+						</td>
+						<td>
+							<input type="string" readonly required id="edit_payment_0">
+						</td>
+						<td>
+							<input type="string" readonly required id="edit_invoice_0">
+						</td>
+						<td>
+							<input type="number" min="0" onchange="editBalance();" required id="edit_rate_0">
+						</td>
+
+						<td>
+				<input type="number" min="0" required onchange="editBalance();"id="edit_debit_0">
+						</td>
+						<td>
+				<input type="number" min="0" required onchange="editBalance();"id="edit_credit_0">
+						</td>
+						<td>
+							<input type="string" required id="edit_description_0">
+						</td>
+					</tr>
+				</table>
+				<h4 style="display:inline-block;" id="editTotalDebitText">Total Debit : 0</h4>
+				<h4 style="display:inline-block;" id="editTotalCreditText">Total Credit : 0</h4>
+				<button style="display:inline-block;" onclick="return addLineEdit(event)">Add Line</button>
+				<button style="display:inline-block;" onclick="return deleteLineEdit()">Delete Line</button>
+				<button style="display:block" onclick="return editEntry();" class="button">Edit</button>
+			</form>
+			</div>
+
+		</section>
+		<section id="delete" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Daily Entry</h1>
+			<div style="margin:auto;">
+				<table id="deleteDailyEntry">
+				    <tr>
+					<td>
+					    <p>User</p>
+					</td>
+					<td>
+					    <input type="text" value="" id="deleteUser" class="canNotEdit" readonly/>
+					</td>
+					<td>
+					    <p>Date</p>
+					</td>
+					<td>
+					    <input type="Date" class="canNotEdit"  id="deleteDate" readonly/>
+					</td>
+					<td>
+					    <p>Time</p>
+					</td>
+					<td>
+					    <input type="time" class="canNotEdit" id="deleteTime" readonly/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Entry Number</p>
+					</td>
+					<td>
+					    <input type="text" onchange="entrySearch(event)" id="deleteEntryNumber"/>
+					</td>
+				    </tr>
+				</table>
+			<form>
+				<table id="deleteDailyEntryTable">
+					<tr>
+						<td style="width:5%;"><p>ACC ID</p></td>
+						<td style="width:10%;"><p>Account Name</p></td>
+						<td style="width:5%;"><p>Currency Code</p></td>
+						<td style="width:5%;"><p>Currency Name</p></td>
+						<td style="width:10%;"><p>Receive</p></td>
+						<td style="width:10%;"><p>Payment</p></td>
+						<td style="width:10%;"><p>Invoice</p></td>
+						<td style="width:10%;"><p>Rate</p></td>
+						<td style="width:10%;"><p>Debit</p></td>
+						<td style="width:10%;"><p>Credit</p></td>
+						<td style="width:15%;"><p>Description</p></td>
+					</tr>
+					<tr id="delete_tr_0">
+						<td>
+							<input type="string" required id="delete_accountId_0" onchange="getAccount(event)">
+						</td>
+						<td>
+							<input type="string" required readonly id="delete_accountId_0Div">
+						</td>
+						<td>
+							<input type="string" required onchange="getCurrency(event)" id="delete_currency_0">
+						</td>
+						<td>
+							<input type="string" required readonly id="delete_currency_0Div">
+						</td>
+						<td>
+							<input type="string" readonly required id="delete_receive_0">
+						</td>
+						<td>
+							<input type="string" readonly required id="delete_payment_0">
+						</td>
+						<td>
+							<input type="string" readonly required id="delete_invoice_0">
+						</td>
+						<td>
+							<input type="number" min="0" onchange="deleteBalance();" required id="delete_rate_0">
+						</td>
+
+						<td>
+				<input type="number" min="0" required onchange="deleteBalance();"id="delete_debit_0">
+						</td>
+						<td>
+				<input type="number" min="0" required onchange="deleteBalance();"id="delete_credit_0">
+						</td>
+						<td>
+							<input type="string" required id="delete_description_0">
+						</td>
+					</tr>
+				</table>
+				<h4 style="display:inline-block;" id="deleteTotalDebitText">Total Debit : 0</h4>
+				<h4 style="display:inline-block;" id="deleteTotalCreditText">Total Credit : 0</h4>
+				<button style="display:block" onclick="return deleteEntry();" class="button">Delete</button>
+			</form>
+			</div>
+		</section>
+		<section id="print" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Daily Entry</h1>
+			<div style="margin:auto;">
+				<table id="showDailyEntry">
+				    <tr>
+					<td>
+					    <p>User</p>
+					</td>
+					<td>
+					    <input type="text" value="" id="showUser" class="canNotEdit" readonly/>
+					</td>
+					<td>
+					    <p>Date</p>
+					</td>
+					<td>
+					    <input type="Date" class="canNotEdit"  id="showDate" readonly/>
+					</td>
+					<td>
+					    <p>Time</p>
+					</td>
+					<td>
+					    <input type="time" class="canNotEdit" id="showTime" readonly/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Entry Number</p>
+					</td>
+					<td>
+					    <input type="text" onchange="showEntrySearch(event)" id="showEntryNumber"/>
+					</td>
+				    </tr>
+				</table>
+			<form>
+				<table id="showDailyEntryTable">
+					<tr>
+						<td style="width:5%;"><p>ACC ID</p></td>
+						<td style="width:10%;"><p>Account Name</p></td>
+						<td style="width:5%;"><p>Currency Code</p></td>
+						<td style="width:5%;"><p>Currency Name</p></td>
+						<td style="width:10%;"><p>Receive</p></td>
+						<td style="width:10%;"><p>Payment</p></td>
+						<td style="width:10%;"><p>Invoice</p></td>
+						<td style="width:10%;"><p>Rate</p></td>
+						<td style="width:10%;"><p>Debit</p></td>
+						<td style="width:10%;"><p>Credit</p></td>
+						<td style="width:15%;"><p>Description</p></td>
+					</tr>
+					<tr id="show_tr_0">
+						<td>
+							<input type="string" required id="show_accountId_0" onchange="getAccount(event)">
+						</td>
+						<td>
+							<input type="string" required readonly id="show_accountId_0Div">
+						</td>
+						<td>
+							<input type="string" required onchange="getCurrency(event)" id="show_currency_0">
+						</td>
+						<td>
+							<input type="string" required readonly id="show_currency_0Div">
+						</td>
+						<td>
+							<input type="string" readonly required id="show_receive_0">
+						</td>
+						<td>
+							<input type="string" readonly required id="show_payment_0">
+						</td>
+						<td>
+							<input type="string" readonly required id="show_invoice_0">
+						</td>
+						<td>
+							<input type="number" min="0" onchange="showBalance();" required id="show_rate_0">
+						</td>
+
+						<td>
+				<input type="number" min="0" required onchange="showBalance();"id="show_debit_0">
+						</td>
+						<td>
+				<input type="number" min="0" required onchange="showBalance();"id="show_credit_0">
+						</td>
+						<td>
+							<input type="string" required id="show_description_0">
+						</td>
+					</tr>
+				</table>
+				<h4 style="display:inline-block;" id="showTotalDebitText">Total Debit : 0</h4>
+				<h4 style="display:inline-block;" id="showTotalCreditText">Total Credit : 0</h4>
+				<button style="display:block" onclick="return showEntry();" class="button">Print</button>
+			</form>
+			</div>
+
+		</section>
+
+</section>
+</div>
+
+<table style="width:100%;display:none;" id="accountReportTemplate" dir="rtl">
+  <col>
+  <colgroup span="3"></colgroup>
+  <colgroup span="3"></colgroup>
+  <tr style="border:1px solid #000;">
+    <td colspan="1" scope="colgroup">دائن</td>
+    <td colspan="1" scope="colgroup">مدين</td>
+    <td colspan="1" scope="colgroup">المعادل</td>
+    <td colspan="1" scope="colgroup">العملة</td>
+    <td colspan="1" scope="colgroup">رقم الايصال</td>
+    <td colspan="1" scope="colgroup">اذن توريد</td>
+    <td colspan="1" scope="colgroup">رقم الحساب</td>
+		<td colspan="1" scope="colgroup">اسم الحساب</td>
+    <td colspan="1" scope="colgroup">الوصف</td>
+  </tr>
+</table>
+
+<script src="/static/jquery-min.js"></script>
+<script src="/static/frontendlib.js"></script>
+<script src="/static/topbarFunction.js"></script>
+
+<!--vainlia javascript-->
+<script>
+
+let lineCount=1;
+let deleteLineCount=1;
+let editLineCount=1;
+let showLineCount=1;
+let cashFlag=false;
+
+
+
+//add line
+function addLine(){
+	var table=document.getElementById("dailyEntryTable");
+	obj={};
+	var tr=document.createElement("tr");
+	tr.id="add_tr_"+lineCount;
+	obj.td1=document.createElement("td");
+	obj.td2=document.createElement("td");
+	obj.td3=document.createElement("td");
+	obj.td4=document.createElement("td");
+	obj.td5=document.createElement("td");
+	obj.td6=document.createElement("td");
+	obj.td7=document.createElement("td");
+	obj.td8=document.createElement("td");
+	obj.td9=document.createElement("td");
+	obj.td10=document.createElement("td");
+	obj.td11=document.createElement("td");
+
+	obj.td1.innerHTML='<input type="string" required onchange="getAccount(event)" id="add_accountId_'+lineCount+'"/>';
+	obj.td2.innerHTML='<input type="string" readonly required id="add_accountId_'+lineCount+'Div"/>';
+	obj.td3.innerHTML='<input type="string" required onchange="getCurrency(event)" id="add_currency_'+lineCount+'"/>';
+	obj.td4.innerHTML='<input type="string" required readonly id="add_currency_'+lineCount+'Div"/>';
+	obj.td5.innerHTML='<input type="string" readonly required id="add_receive_'+lineCount+'"/>';
+	obj.td6.innerHTML='<input type="string" readonly required id="add_payment_'+lineCount+'"/>';
+	obj.td7.innerHTML='<input type="string" readonly required id="add_invoice_'+lineCount+'"/>';
+	obj.td8.innerHTML='<input type="string" onchange="addBalance()" required id="add_rate_'+lineCount+'"/>';
+	obj.td9.innerHTML='<input type="number" min=0 onchange="addBalance()"required id="add_debit_'+lineCount+'"/>';
+	obj.td10.innerHTML='<input type="number" min=0 required onchange="addBalance()" id="add_credit_'+lineCount+'"/>';
+	obj.td11.innerHTML='<input type="string" required id="add_description_'+lineCount+'"/>';
+	for(var property in obj){
+		tr.appendChild(obj[property]);
+	}
+	table.childNodes[1].appendChild(tr);
+	lineCount+=1;
+	return false;
+}
+function addLineCash(){
+	var table=document.getElementById("dailyEntryTable");
+	obj={};
+	var tr=document.createElement("tr");
+	tr.id="add_tr_"+lineCount;
+	obj.td1=document.createElement("td");
+	obj.td2=document.createElement("td");
+	obj.td3=document.createElement("td");
+	obj.td4=document.createElement("td");
+	obj.td5=document.createElement("td");
+	obj.td6=document.createElement("td");
+	obj.td7=document.createElement("td");
+	obj.td8=document.createElement("td");
+	obj.td9=document.createElement("td");
+	obj.td10=document.createElement("td");
+	obj.td11=document.createElement("td");
+
+	obj.td1.innerHTML='<input type="string" readonly onchange="getAccount(event)" id="add_accountId_'+lineCount+'"/>';
+	obj.td2.innerHTML='<input type="string" readonly  id="add_accountId_'+lineCount+'Div"/>';
+	obj.td3.innerHTML='<input type="string" readonly onchange="getCurrency(event)" id="add_currency_'+lineCount+'"/>';
+	obj.td4.innerHTML='<input type="string" readonly id="add_currency_'+lineCount+'Div"/>';
+	obj.td5.innerHTML='<input type="string" readonly  id="add_receive_'+lineCount+'"/>';
+	obj.td6.innerHTML='<input type="string" readonly required id="add_payment_'+lineCount+'"/>';
+	obj.td7.innerHTML='<input type="string" readonly required id="add_invoice_'+lineCount+'"/>';
+	obj.td8.innerHTML='<input type="string" onchange="addBalance()" readonly id="add_rate_'+lineCount+'"/>';
+	obj.td9.innerHTML='<input type="number" min=0 onchange="addBalance()"readonly id="add_debit_'+lineCount+'"/>';
+	obj.td10.innerHTML='<input type="number" min=0 readonly onchange="addBalance()" id="add_credit_'+lineCount+'"/>';
+	obj.td11.innerHTML='<input type="string" id="add_description_'+lineCount+'"/>';
+	for(var property in obj){
+		tr.appendChild(obj[property]);
+	}
+	table.childNodes[1].appendChild(tr);
+	lineCount+=1;
+	return false;
+}
+function deleteLine(){
+	if(lineCount>=1){
+		var number=lineCount-1;
+		var tr=document.getElementById("add_tr_"+number);
+		tr.parentElement.removeChild(tr);
+		lineCount-=1;
+		addBalance();
+
+	}
+	return false;
+}
+function cashMove(){
+	ajaxRequest("api/receipt/getPendingReceipts","GET","application/json",{},(res)=>{
+		if(res.status!="200"){alert(res.responseText);}
+		else{
+			res=JSON.parse(res.responseText);
+			if(res.length<=0){alert("There's no receipts yet!");}
+			else if(cashFlag==true){alert("Reload the page to get the cash move.");}
+			else{
+				var totalDebit=0;
+				var totalCredit=0;
+				var counter=0;
+				cashFlag=true;
+				console.log(lineCount);
+				for(var i=0;i<=lineCount;i++){
+					deleteLine();
+					console.log(i);
+				}
+				//deleteLine();
+				for(var i=0;i<res.length;i++){
+					counter+=1;
+					addLineCash();
+					var account=document.getElementById("add_accountId_"+i);
+					account.value=res[i].accountId;
+					var event = new Event('change');
+					account.dispatchEvent(event);
+					var currency=document.getElementById("add_currency_"+i);
+					currency.value=res[i].currencyId;
+					var event = new Event('change');
+					currency.dispatchEvent(event);
+					if(res[i].type=="receiveReceipt"){
+						var receive=document.getElementById("add_receive_"+i);
+						receive.value=res[i].id;
+						var debit=document.getElementById("add_debit_"+i);
+						debit.value=0;
+						var credit=document.getElementById("add_credit_"+i);
+						credit.value=res[i].amount;
+						totalDebit+=res[i].amount;
+					}
+					if(res[i].type=="paymentReceipt"){
+						var payment=document.getElementById("add_payment_"+i);
+						payment.value=res[i].id;
+						var credit=document.getElementById("add_credit_"+i);
+						credit.value=0;
+						var debit=document.getElementById("add_debit_"+i);
+						debit.value=res[i].amount;
+						totalCredit+=res[i].amount;
+					}
+					var description=document.getElementById("add_description_"+i);
+					description.value=res[i].description;
+					var rate=document.getElementById("add_rate_"+i);
+					rate.value=res[i].exchangeRate;
+			}
+				for(var i=0;i<res.length;i++){
+					addLineCash();
+					var account=document.getElementById("add_accountId_"+counter);
+					account.value=res[i].cashAccount;
+					var event = new Event('change');
+					account.dispatchEvent(event);
+					var currency=document.getElementById("add_currency_"+counter);
+					currency.value=res[i].currencyId;
+					var event = new Event('change');
+					currency.dispatchEvent(event);
+					if(res[i].type=="receiveReceipt"){
+						var receive=document.getElementById("add_receive_"+counter);
+						receive.value=res[i].id;
+						var credit=document.getElementById("add_credit_"+counter);
+						credit.value=0;
+						var debit=document.getElementById("add_debit_"+counter);
+						debit.value=res[i].amount;
+						totalCredit+=res[i].amount;
+					}
+					if(res[i].type=="paymentReceipt"){
+						var payment=document.getElementById("add_payment_"+counter);
+						payment.value=res[i].id;
+						var debit=document.getElementById("add_debit_"+counter);
+						debit.value=0;
+						var credit=document.getElementById("add_credit_"+counter);
+						credit.value=res[i].amount;
+						totalDebit+=res[i].amount;
+					}
+					var description=document.getElementById("add_description_"+counter);
+					description.value=res[i].description;
+					var rate=document.getElementById("add_rate_"+counter);
+					rate.value=res[i].exchangeRate;
+					counter+=1;
+			}
+			var totalDebitText=document.getElementById("addTotalDebitText");
+			totalDebitText.innerHTML="Total Debit : "+totalDebit;
+			var totalCreditText=document.getElementById("addTotalCreditText");
+			totalCreditText.innerHTML="Total Credit : "+totalCredit;
+			}
+		}
+	});
+	return false;
+}
+function addEntry(){
+	var date=document.getElementById("add_dateEntry").value;
+	var time=document.getElementById("add_timeEntry").value;
+	var cDate=new Date(date+' '+time).toLocaleString();
+	var bDate=date+' '+time;
+	console.log(bDate);
+	var obj={
+		move:{
+			notes:"notes",
+			createdAt:cDate
+	},
+	moveLines:[]};
+	var promises=[];
+	var totalCredit=0;
+	var totalDebit=0;
+	var accounts=[];
+	for(var i=0;i<lineCount;i++){
+		var move={};
+		var accountId=document.getElementById("add_accountId_"+i).value;
+		var currencyId=document.getElementById("add_currency_"+i).value;
+		var receive=document.getElementById("add_receive_"+i).value;
+		var payment=document.getElementById("add_payment_"+i).value;
+		var rate=parseFloat(document.getElementById("add_rate_"+i).value);
+		var debit=parseFloat(document.getElementById("add_debit_"+i).value);
+		var credit=parseFloat(document.getElementById("add_credit_"+i).value);
+		var descriptionMove=document.getElementById("add_description_"+i).value;
+		if(!credit){
+			credit=0;
+		}
+		if(!debit){
+			debit=0;
+		}
+		if(!rate){
+			rate=1;
+		}
+		move.accountId=accountId;
+		move.currencyId=currencyId;
+		if(receive==="" && payment ===""){
+		}
+		else if(receive===""){
+			move.receiptId=payment;
+		}
+		else{
+			move.receiptId=receive;
+		}
+		move.exchangeRate=rate;
+		move.debit=debit;
+		move.credit=credit;
+		move.notes=descriptionMove;
+		move.createdAt=bDate;
+		totalCredit+=credit*rate;
+		totalDebit+=debit*rate;
+		obj.moveLines.push(move);
+		if(accounts[accountId]){
+			accounts[accountId]["credit"]+=parseFloat(credit);
+			accounts[accountId]["debit"]+=parseFloat(debit);
+		}
+		else{
+			var accArrTemp=[];
+			accArrTemp["credit"]=credit;
+			accArrTemp["debit"]=debit;
+			accArrTemp["betterId"]=accountId;
+			accounts[accountId]=accArrTemp;
+		}
+		promises.push(ajaxPromise("api/currency/frontGet","POST","application/json",{id:currencyId})); //currency check
+		promises.push(ajaxPromise("api/account/frontGet","POST","application/json",{id:accountId})); //currency check
+
+	}
+	// var keys=Object.keys(accounts);
+	// for(var i=0;i<keys.length;i++){
+	// 	var credit=accounts[keys[i]]["credit"]; //credit
+	// 	var debit=accounts[keys[i]]["debit"]; //debit
+	// 	var betterId=accounts[keys[i]]["betterId"]; //id
+	// 	var accountObject={credit:credit,debit:debit,betterId:betterId};
+	// 	promises.push(ajaxPromise("account/checkCashAccount","POST","application/json",accountObject));
+	// }
+	Promise.all(promises).then((res)=>{
+		//validation
+		let flag=true;
+		for(var i=0;i<res.length;i++){
+			if(res[i].status!="200"){
+				flag=false;
+				alert(res[i].responseText);
+			}
+		}
+		if(totalDebit!=totalCredit){//checking for entry balance
+			flag=false;
+			alert("Imbalanced Entry");
+		}
+		for(var i=0;i<obj.moveLines.length;i++){//checking for move's description
+			if(obj.moveLines[i].notes===""){
+				flag=false;
+				alert("Move description is required!");}
+		}
+
+		//if flag true go add entry -- front-end validation --
+		if(flag==true){
+			ajaxRequest("api/entry","POST","application/json",{entry:obj},function(res){
+				if(res.status=="200"){
+					res=JSON.parse(res.responseText);
+					alert("Entry have been inserted successfully!");
+					alert("Entry Number is "+res.move.id+"!");
+					if(window.confirm("Do you want to print it ?")){
+						var accountReportTemplate=document.getElementById("accountReportTemplate");
+						var accountReportTemplate=accountReportTemplate.cloneNode(true);
+						accountReportTemplate.style.display="table";
+						var creditSum=0;
+						var debitSum=0;
+						var moves=res.moveLines;
+						for(var j=0;j<moves.length;j++){
+								var tr=document.createElement("tr");
+								var th1=document.createElement("td");
+								var th2=document.createElement("td");
+								var th3=document.createElement("td");
+								var th4=document.createElement("td");
+								var th5=document.createElement("td");
+								var th6=document.createElement("td");
+								var th7=document.createElement("td");
+								var th8=document.createElement("td");
+								var th9=document.createElement("td");
+								creditSum+=parseFloat(moves[j].credit);
+								debitSum+=parseFloat(moves[j].debit);
+								th2.innerHTML=moves[j].debit.toFixed(2);
+								th1.innerHTML=moves[j].credit.toFixed(2);
+								th3.innerHTML=moves[j].exchangeRate.toFixed(2);
+								th4.innerHTML=moves[j].currency.name;
+								if(moves[j].receipt){
+									if(moves[j].receipt.type=="paymentReceipt"){
+										th5.innerHTML=moves[j].receiptId;
+									}
+									else if(moves[j].receipt.type=="receiveReceipt"){
+										th6.innerHTML=moves[j].receiptId;
+									}
+								}
+								th7.innerHTML=moves[j].account.id;
+								th8.innerHTML=moves[j].account.name;
+								th9.innerHTML=moves[j].notes;
+								tr.appendChild(th1);
+								tr.appendChild(th2);
+								tr.appendChild(th3);
+								tr.appendChild(th4);
+								tr.appendChild(th5);
+								tr.appendChild(th6);
+								tr.appendChild(th7);
+								tr.appendChild(th8);
+								tr.appendChild(th9);
+
+								accountReportTemplate.appendChild(tr);
+							}
+							var tr=document.createElement("tr");
+							var td1=document.createElement("td");
+							var td2=document.createElement("td");
+							var td3=document.createElement("td");
+							td1.innerHTML=creditSum.toFixed(2);
+							td2.innerHTML=debitSum.toFixed(2);
+							td1.style="background-color:#ccc";
+							td2.style="background-color:#ccc";
+							tr.appendChild(td1);
+							tr.appendChild(td2);
+							accountReportTemplate.appendChild(tr);
+
+							var reportDiv=document.createElement("div");
+							reportDiv.style.width='100%';
+							var intro=document.createElement("div");
+							intro.style.textAlign="center";
+							intro.dir="rtl";
+							var balanceSheet=document.createElement("h1");
+							balanceSheet.innerHTML="قيود يومية تفصيلي";
+							balanceSheet.style="border:2px solid #000;box-shadow:2px 4px;display:table;padding:5px;padding-left:20px;padding-right:20px;text-align:Center; margin:Auto;";
+							var fromDateh4=document.createElement("p");
+							fromDateh4.innerHTML="رقم القيد : "+res.move.id;
+							fromDateh4.style.float="right";
+							fromDateh4.className+="printedReporthead";
+							var toDateh4=document.createElement("p");
+							toDateh4.innerHTML="تاريخ القيد : "+new Date(res.move.createdAt).toLocaleString().split(',')[0];
+							toDateh4.className+="printedReporthead";
+							toDateh4.style.float="left";
+							/**
+							var x=document.createElement("IMG");
+							x.src="/static/images/img.png";
+							x.style.width="100%";
+							x.style.height="20%";
+							console.log(x);
+							intro.appendChild(x);
+							**/
+							intro.appendChild(balanceSheet);
+							intro.appendChild(fromDateh4);
+							intro.appendChild(toDateh4);
+							reportDiv.appendChild(intro);
+							reportDiv.appendChild(accountReportTemplate);
+							reportDiv.id="temp";
+							document.body.append(reportDiv);
+							window.print();
+							var temp = document.getElementById("temp");
+							temp.parentNode.removeChild(temp);}
+							document.location.reload(true);
+				 }
+				else{
+					alert(res.responseText);
+				}
+			});
+		}
+	});
+	return false;
+}
+/**
+function addEntry(){
+	var descriptionEntry=document.getElementById("add_descriptionEntry").value;
+	var date=document.getElementById("add_dateEntry").value;
+	var time=document.getElementById("add_timeEntry").value;
+			ajaxRequest("entry/test","POST","application/json",{date:date,time:time},function(res){
+				alert(res);
+			});
+
+}
+**/
+function addBalance(){
+	var totalCredit=0;
+	var totalDebit=0;
+	for(var i=0;i<lineCount;i++){
+		var debit=document.getElementById("add_debit_"+i).value;
+		var credit=document.getElementById("add_credit_"+i).value;
+		var rate=document.getElementById("add_rate_"+i).value;
+		if(!debit){debit=0;}
+		if(!credit){credit=0;}
+		if(!rate){rate=1;}
+		totalCredit+=parseFloat(credit)*parseFloat(rate);
+		totalDebit+=parseFloat(debit)*parseFloat(rate);
+	}
+	var debitText=document.getElementById("addTotalDebitText");
+	var creditText=document.getElementById("addTotalCreditText");
+	debitText.innerHTML="Total Debit : "+totalDebit;
+	creditText.innerHTML="Total Credit : "+totalCredit;
+
+
+
+}
+//Delete things
+function addLineDelete(e){
+	var table=document.getElementById("deleteDailyEntryTable");
+	obj={};
+	var tr=document.createElement("tr");
+	tr.id="delete_tr_"+deleteLineCount;
+	obj.td1=document.createElement("td");
+	obj.td2=document.createElement("td");
+	obj.td3=document.createElement("td");
+	obj.td4=document.createElement("td");
+	obj.td5=document.createElement("td");
+	obj.td6=document.createElement("td");
+	obj.td7=document.createElement("td");
+	obj.td8=document.createElement("td");
+	obj.td9=document.createElement("td");
+	obj.td10=document.createElement("td");
+	obj.td11=document.createElement("td");
+
+	obj.td1.innerHTML='<input type="string" readonly onchange="getAccount(event)" id="delete_accountId_'+deleteLineCount+'"/>';
+
+	obj.td2.innerHTML='<input type="string" readonly required id="delete_accountId_'+deleteLineCount+'Div"/>';
+
+	obj.td3.innerHTML='<input type="string" readonly onchange="getCurrency(event)" id="delete_currency_'+deleteLineCount+'"/>';
+	obj.td4.innerHTML='<input type="string"  readonly id="delete_currency_'+deleteLineCount+'Div"/>';
+	obj.td5.innerHTML='<input type="string" readonly  id="delete_receive_'+deleteLineCount+'"/>';
+	obj.td6.innerHTML='<input type="string" readonly readonly id="delete_payment_'+deleteLineCount+'"/>';
+	obj.td7.innerHTML='<input type="string" readonly  id="delete_invoice_'+deleteLineCount+'"/>';
+	obj.td8.innerHTML='<input type="string" readonly onchange="addBalance()" required id="delete_rate_'+deleteLineCount+'"/>';
+	obj.td9.innerHTML='<input type="number" min=0 onchange="addBalance()"readonly id="delete_debit_'+deleteLineCount+'"/>';
+	obj.td10.innerHTML='<input type="number" min=0 readonly onchange="addBalance()" id="delete_credit_'+deleteLineCount+'"/>';
+	obj.td11.innerHTML='<input type="string" readonly id="delete_description_'+deleteLineCount+'"/>';
+	for(var property in obj){
+		tr.appendChild(obj[property]);
+	}
+	table.childNodes[1].appendChild(tr);
+	deleteLineCount+=1;
+	return false;
+}
+function deleteLineDelete(){
+	if(deleteLineCount>0){
+		var number=deleteLineCount-1;
+		var tr=document.getElementById("delete_tr_"+number);
+		tr.parentElement.removeChild(tr);
+		deleteLineCount-=1;
+	}
+	return false;
+}
+function deleteAllLines(){
+	var del=deleteLineCount;
+	for(var i=0;i<=del;i++){
+		deleteLineDelete();
+	}
+}
+function entrySearch(e){
+	var value=e.target.value;
+	ajaxRequest('api/entry/frontGet',"POST","application/json",{id:value},function(res){
+			//the condition will be edit bs ba3d ma afo2 shoya :"D
+		if(res.status=="200"){
+			var totalCredit=0;
+			var totalDebit=0;
+			res=JSON.parse(res.responseText);
+			//basics
+			var user=document.getElementById("deleteUser");
+			user.value=res.move.user.username;
+			var date=document.getElementById("deleteDate");
+			date.value=res.move.createdAt.split('T')[0];
+			var time=document.getElementById("deleteTime");
+			time.value=new Date(res.move.createdAt).toTimeString().split(' ')[0];
+			console.log(new Date(res.move.createdAt).toTimeString().split(' ')[0]); //cooool
+			//moves
+			var moveLines=res.moveLines;
+			deleteAllLines();
+			for(var i=0;i<moveLines.length;i++){
+				addLineDelete();
+				var account=document.getElementById("delete_accountId_"+i);
+				account.value=moveLines[i].account.id;
+				var event = new Event('change');
+				account.dispatchEvent(event);
+				var currency=document.getElementById("delete_currency_"+i);
+				currency.value=moveLines[i].currency.id;
+				var event = new Event('change');
+				currency.dispatchEvent(event);
+				if(moveLines[i].receipt){
+					if(moveLines[i].receipt.type=="paymentReceipt"){
+						var payment=document.getElementById("delete_payment_"+i);
+						payment.value=moveLines[i].receiptId;
+					}
+					else{
+						var receive=document.getElementById("delete_receive_"+i);
+						receive.value=moveLines[i].receiptId;
+					}
+
+				}
+				var rate=document.getElementById("delete_rate_"+i);
+				rate.value=moveLines[i].exchangeRate;
+				var debit=document.getElementById("delete_debit_"+i);
+				debit.value=moveLines[i].debit;
+				var credit=document.getElementById("delete_credit_"+i);
+				credit.value=moveLines[i].credit;
+				var description=document.getElementById("delete_description_"+i);
+				description.value=moveLines[i].notes;
+				totalDebit+=parseFloat(moveLines[i].debit);
+				totalCredit+=parseFloat(moveLines[i].credit);
+			}
+			var totalDebitText=document.getElementById("deleteTotalDebitText");
+			totalDebitText.innerHTML="Total Debit : "+totalDebit;
+			var totalCreditText=document.getElementById("deleteTotalCreditText");
+			totalCreditText.innerHTML="Total Credit : "+totalCredit;
+		}
+		else{
+			alert(res.responseText);
+			var user=document.getElementById("deleteUser");
+			user.value="";
+			var date=document.getElementById("deleteDate");
+			date.value="";
+			var time=document.getElementById("deleteTime");
+			time.value="";
+			deleteAllLines();
+			addLineDelete();
+			var totalDebitText=document.getElementById("deleteTotalDebitText");
+			totalDebitText.innerHTML="Total Debit : 0";
+			var totalCreditText=document.getElementById("deleteTotalCreditText");
+			totalCreditText.innerHTML="Total Credit : 0";
+
+
+		}
+	});
+
+}
+
+function deleteEntry(){
+	var entryId=document.getElementById("deleteEntryNumber").value;
+	if(window.confirm("are you sure you want to delete ?")){
+		ajaxRequest('api/entry',"DELETE","application/json",{id:entryId},function(res){
+			alert("Status : "+res.status+"\n"+"Message : "+res.responseText);
+		});
+	}
+	return false;
+}
+
+//edit
+//edit things
+function addLineEdit(e){
+	var table=document.getElementById("editDailyEntryTable");
+	obj={};
+	var tr=document.createElement("tr");
+	tr.id="edit_tr_"+editLineCount;
+	obj.td1=document.createElement("td");
+	obj.td2=document.createElement("td");
+	obj.td3=document.createElement("td");
+	obj.td4=document.createElement("td");
+	obj.td5=document.createElement("td");
+	obj.td6=document.createElement("td");
+	obj.td7=document.createElement("td");
+	obj.td8=document.createElement("td");
+	obj.td9=document.createElement("td");
+	obj.td10=document.createElement("td");
+	obj.td11=document.createElement("td");
+
+	obj.td1.innerHTML='<input type="string" required onchange="getAccount(event)" id="edit_accountId_'+editLineCount+'"/>';
+
+	obj.td2.innerHTML='<input type="string" readonly required id="edit_accountId_'+editLineCount+'Div"/>';
+
+	obj.td3.innerHTML='<input type="string" required onchange="getCurrency(event)" id="edit_currency_'+editLineCount+'"/>';
+	obj.td4.innerHTML='<input type="string" readonly required id="edit_currency_'+editLineCount+'Div"/>';
+	obj.td5.innerHTML='<input type="string" readonly required id="edit_receive_'+editLineCount+'"/>';
+	obj.td6.innerHTML='<input type="string" readonly required id="edit_payment_'+editLineCount+'"/>';
+	obj.td7.innerHTML='<input type="string" readonly required id="edit_invoice_'+editLineCount+'"/>';
+	obj.td8.innerHTML='<input type="string" onchange="editBalance()" required id="edit_rate_'+editLineCount+'"/>';
+	obj.td9.innerHTML='<input type="number" min=0 onchange="editBalance()"required id="edit_debit_'+editLineCount+'"/>';
+	obj.td10.innerHTML='<input type="number" min=0 required onchange="editBalance()" id="edit_credit_'+editLineCount+'"/>';
+	obj.td11.innerHTML='<input type="string" required id="edit_description_'+editLineCount+'"/>';
+	for(var property in obj){
+		tr.appendChild(obj[property]);
+	}
+	table.childNodes[1].appendChild(tr);
+	editLineCount+=1;
+	return false;
+}
+function deleteLineEdit(){
+	//delete line Edit
+	if(editLineCount>0){
+		var number=editLineCount-1;
+		var tr=document.getElementById("edit_tr_"+number);
+		tr.parentElement.removeChild(tr);
+		editLineCount-=1;
+		editBalance();
+	}
+	return false;
+}
+function editDeleteAllLines(){
+	var editdel=editLineCount;
+	for(var i=0;i<=editdel;i++){
+		deleteLineEdit();
+	}
+}
+function editBalance(){
+	var totalCredit=0;
+	var totalDebit=0;
+	for(var i=0;i<editLineCount;i++){
+		var debit=document.getElementById("edit_debit_"+i).value;
+		var credit=document.getElementById("edit_credit_"+i).value;
+		if(isNaN(parseFloat(credit))){}
+		else{totalCredit+=parseFloat(credit);}
+		if(isNaN(parseFloat(debit))){}
+		else{totalDebit+=parseFloat(debit);}
+
+
+	}
+	var debitText=document.getElementById("editTotalDebitText");
+	var creditText=document.getElementById("editTotalCreditText");
+	debitText.innerHTML="Total Debit : "+totalDebit;
+	creditText.innerHTML="Total Credit : "+totalCredit;
+}
+function editEntrySearch(e){
+	var value=e.target.value;
+	ajaxRequest('api/entry/frontGet',"POST","application/json",{id:value},function(res){
+			//the condition will be edit bs ba3d ma afo2 shoya :"D
+		if(res.status=="200"){
+			var totalCredit=0;
+			var totalDebit=0;
+			res=JSON.parse(res.responseText);
+			//basics
+			var user=document.getElementById("editUser");
+			user.value=res.move.user.username;
+			var date=document.getElementById("editDate");
+			date.value=res.move.createdAt.split('T')[0];
+			var time=document.getElementById("editTime");
+			time.value=new Date(res.move.createdAt).toTimeString().split(' ')[0];
+			console.log(new Date(res.move.createdAt).toTimeString().split(' ')[0]); //cooool
+			//moves
+			var moveLines=res.moveLines;
+			editDeleteAllLines();
+			for(var i=0;i<moveLines.length;i++){
+				addLineEdit();
+				var account=document.getElementById("edit_accountId_"+i);
+				account.value=moveLines[i].account.id;
+				var event = new Event('change');
+				account.dispatchEvent(event);
+				var currency=document.getElementById("edit_currency_"+i);
+				currency.value=moveLines[i].currency.id;
+				var event = new Event('change');
+				currency.dispatchEvent(event);
+				if(moveLines[i].receipt){
+					if(moveLines[i].receipt.type=="paymentReceipt"){
+						var payment=document.getElementById("edit_payment_"+i);
+						payment.value=moveLines[i].receiptId;
+					}
+					else{
+						var receive=document.getElementById("edit_receive_"+i);
+						receive.value=moveLines[i].receiptId;
+					}
+
+				}
+				var rate=document.getElementById("edit_rate_"+i);
+				rate.value=moveLines[i].exchangeRate;
+				var debit=document.getElementById("edit_debit_"+i);
+				debit.value=moveLines[i].debit;
+				var credit=document.getElementById("edit_credit_"+i);
+				credit.value=moveLines[i].credit;
+				var description=document.getElementById("edit_description_"+i);
+				description.value=moveLines[i].notes;
+				totalDebit+=parseFloat(moveLines[i].debit);
+				totalCredit+=parseFloat(moveLines[i].credit);
+			}
+			var totalDebitText=document.getElementById("editTotalDebitText");
+			totalDebitText.innerHTML="Total Debit : "+totalDebit;
+			var totalCreditText=document.getElementById("editTotalCreditText");
+			totalCreditText.innerHTML="Total Credit : "+totalCredit;
+		}
+		else{
+			alert(res.responseText);
+			var user=document.getElementById("editUser");
+			user.value="";
+			var date=document.getElementById("editDate");
+			date.value="";
+			var time=document.getElementById("editTime");
+			time.value="";
+			editDeleteAllLines();
+			addLineEdit();
+			var totalDebitText=document.getElementById("editTotalDebitText");
+			totalDebitText.innerHTML="Total Debit : 0";
+			var totalCreditText=document.getElementById("editTotalCreditText");
+			totalCreditText.innerHTML="Total Credit : 0";
+
+
+		}
+	});
+
+}
+function editEntry(){
+	var entryId=document.getElementById("editEntryNumber").value;
+	var date=document.getElementById("editDate").value;
+	var time=document.getElementById("editTime").value;
+	var cDate=new Date(date+' '+time).toLocaleString();
+	var bDate=date+' '+time;
+	var obj={
+		move:{
+			notes:"notes",
+			createdAt:cDate,
+			id:entryId
+	},
+	moveLines:[]};
+	var promises=[];
+	var totalCredit=0;
+	var totalDebit=0;
+	var accounts=[];
+	for(var i=0;i<editLineCount;i++){
+		var move={};
+		var accountId=document.getElementById("edit_accountId_"+i).value;
+		var currencyCode=document.getElementById("edit_currency_"+i).value;
+		var currencyName=document.getElementById("edit_currency_"+i+'Div').value;
+		var receive=document.getElementById("edit_receive_"+i).value;
+		var payment=document.getElementById("edit_payment_"+i).value;
+		var invoice=document.getElementById("edit_invoice_"+i).value;
+		var rate=parseFloat(document.getElementById("edit_rate_"+i).value);
+		var debit=parseFloat(document.getElementById("edit_debit_"+i).value);
+		var credit=parseFloat(document.getElementById("edit_credit_"+i).value);
+		var descriptionMove=document.getElementById("edit_description_"+i).value;
+		if(!credit){
+			credit=0;
+		}
+		if(!debit){
+			debit=0;
+		}
+		if(!rate){
+			rate=1;
+		}
+		move.accountId=accountId;
+		move.currencyId=currencyCode;
+		if(receive==="" && payment ===""){
+		}
+		else if(receive===""){
+			move.receiptId=payment;
+		}
+		else{
+			move.receiptId=receive;
+		}
+		move.moveId=entryId;
+		move.exchangeRate=rate;
+		move.debit=debit;
+		move.credit=credit;
+		move.notes=descriptionMove;
+		totalCredit+=credit*rate;
+		totalDebit+=debit*rate;
+		obj.moveLines.push(move);
+		promises.push(ajaxPromise("api/currency/frontGet","POST","application/json",{id:currencyCode})); //currency check
+		promises.push(ajaxPromise("api/account/frontGet","POST","application/json",{id:accountId})); //currency check
+		if(accounts[accountId]){
+			accounts[accountId]["credit"]+=credit;
+			accounts[accountId]["debit"]+=debit;
+
+		}
+		else{
+			var accArrTemp=[];
+			accArrTemp["credit"]=credit;
+			accArrTemp["debit"]=debit;
+			accArrTemp["betterId"]=accountId;
+			accounts[accountId]=accArrTemp;
+		}
+	}
+	// var keys=Object.keys(accounts);
+	// for(var i=0;i<keys.length;i++){
+	// 	var credit=accounts[keys[i]]["credit"]; //credit
+	// 	var debit=accounts[keys[i]]["debit"]; //debit
+	// 	var betterId=accounts[keys[i]]["betterId"]; //id
+	// 	var accountObject={credit:credit,debit:debit,betterId:betterId};
+	// 	promises.push(ajaxPromise("account/checkCashAccount","POST","application/json",accountObject));
+	// }
+	Promise.all(promises).then((res)=>{
+		let flag=true;
+		for(var i=0;i<res.length;i++){
+			if(res[i].status!="200"){
+				flag=false;
+				alert(res[i].responseText);
+			}
+		}
+		if(totalDebit!=totalCredit){//checking for entry balance
+			flag=false;
+			alert("Imbalanced Entry");
+		}
+		for(var i=0;i<obj.moveLines.length;i++){//checking for move's description
+			if(obj.moveLines[i].notes===""){
+				flag=false;
+				alert("Move description is required!");}
+		}
+		if(flag==true){
+			ajaxRequest("api/entry","PUT","application/json",{entry:obj},function(res){
+				if(res.status==200){
+					alert("Entry has been updated successfully");
+				}
+				else{
+					alert("Status : "+res.status+"\n"+"Message : "+res.responseText);
+				}
+			});
+		}
+	});
+	console.log(obj);
+	return false;
+}
+//show
+//show things
+function addLineshow(e){
+	var table=document.getElementById("showDailyEntryTable");
+	obj={};
+	var tr=document.createElement("tr");
+	tr.id="show_tr_"+showLineCount;
+	obj.td1=document.createElement("td");
+	obj.td2=document.createElement("td");
+	obj.td3=document.createElement("td");
+	obj.td4=document.createElement("td");
+	obj.td5=document.createElement("td");
+	obj.td6=document.createElement("td");
+	obj.td7=document.createElement("td");
+	obj.td8=document.createElement("td");
+	obj.td9=document.createElement("td");
+	obj.td10=document.createElement("td");
+	obj.td11=document.createElement("td");
+
+	obj.td1.innerHTML='<input type="string" readonly onchange="getAccount(event)" id="show_accountId_'+showLineCount+'"/>';
+
+	obj.td2.innerHTML='<input type="string" readonly required id="show_accountId_'+showLineCount+'Div"/>';
+
+	obj.td3.innerHTML='<input type="string" readonly onchange="getCurrency(event)" id="show_currency_'+showLineCount+'"/>';
+	obj.td4.innerHTML='<input type="string"  readonly id="show_currency_'+showLineCount+'Div"/>';
+	obj.td5.innerHTML='<input type="string" readonly required id="show_receive_'+showLineCount+'"/>';
+	obj.td6.innerHTML='<input type="string" readonly required id="show_payment_'+showLineCount+'"/>';
+	obj.td7.innerHTML='<input type="string" readonly required id="show_invoice_'+showLineCount+'"/>';
+	obj.td8.innerHTML='<input type="string" onchange="addBalance()" readonly id="show_rate_'+showLineCount+'"/>';
+	obj.td9.innerHTML='<input type="number" min=0 onchange="addBalance()"readonly id="show_debit_'+showLineCount+'"/>';
+	obj.td10.innerHTML='<input type="number" min=0 readonly onchange="addBalance()" id="show_credit_'+showLineCount+'"/>';
+	obj.td11.innerHTML='<input type="string" readonly id="show_description_'+showLineCount+'"/>';
+	for(var property in obj){
+		tr.appendChild(obj[property]);
+	}
+	table.childNodes[1].appendChild(tr);
+	showLineCount+=1;
+	return false;
+}
+function showLineshow(){
+	if(showLineCount>0){
+		var number=showLineCount-1;
+		var tr=document.getElementById("show_tr_"+number);
+		tr.parentElement.removeChild(tr);
+		showLineCount-=1;
+	}
+	return false;
+}
+function showAllLines(){
+	var del=showLineCount;
+	for(var i=0;i<=del;i++){
+		showLineshow();
+	}
+}
+
+
+
+function showEntrySearch(e){
+	var value=e.target.value;
+	ajaxRequest('api/entry/frontGet',"POST","application/json",{id:value},function(res){
+			//the condition will be edit bs ba3d ma afo2 shoya :"D
+		if(res.status=="200"){
+			var totalCredit=0;
+			var totalDebit=0;
+			res=JSON.parse(res.responseText);
+			//basics
+			var user=document.getElementById("showUser");
+			user.value=res.move.user.username;
+			var date=document.getElementById("showDate");
+			date.value=res.move.createdAt.split('T')[0];
+			var time=document.getElementById("showTime");
+			time.value=new Date(res.move.createdAt).toTimeString().split(' ')[0];
+			console.log(new Date(res.move.createdAt).toTimeString().split(' ')[0]); //cooool
+			//moves
+			var moveLines=res.moveLines;
+			showAllLines();
+			for(var i=0;i<moveLines.length;i++){
+				addLineshow();
+				var account=document.getElementById("show_accountId_"+i);
+				account.value=moveLines[i].account.id;
+				var event = new Event('change');
+				account.dispatchEvent(event);
+				var currency=document.getElementById("show_currency_"+i);
+				currency.value=moveLines[i].currency.id;
+				var event = new Event('change');
+				currency.dispatchEvent(event);
+				if(moveLines[i].receipt){
+					if(moveLines[i].receipt.type=="paymentReceipt"){
+						var payment=document.getElementById("show_payment_"+i);
+						payment.value=moveLines[i].receiptId;
+					}
+					else{
+						var receive=document.getElementById("show_receive_"+i);
+						receive.value=moveLines[i].receiptId;
+					}
+
+				}
+				var rate=document.getElementById("show_rate_"+i);
+				rate.value=moveLines[i].exchangeRate;
+				var debit=document.getElementById("show_debit_"+i);
+				debit.value=moveLines[i].debit;
+				var credit=document.getElementById("show_credit_"+i);
+				credit.value=moveLines[i].credit;
+				var description=document.getElementById("show_description_"+i);
+				description.value=moveLines[i].notes;
+				totalDebit+=parseFloat(moveLines[i].debit);
+				totalCredit+=parseFloat(moveLines[i].credit);
+			}
+			var totalDebitText=document.getElementById("showTotalDebitText");
+			totalDebitText.innerHTML="Total Debit : "+totalDebit;
+			var totalCreditText=document.getElementById("showTotalCreditText");
+			totalCreditText.innerHTML="Total Credit : "+totalCredit;
+		}
+		else{
+			alert(res.responseText);
+			var user=document.getElementById("showUser");
+			user.value="";
+			var date=document.getElementById("showDate");
+			date.value="";
+			var time=document.getElementById("showTime");
+			time.value="";
+			showAllLines();
+			addLineshow();
+			var totalDebitText=document.getElementById("showTotalDebitText");
+			totalDebitText.innerHTML="Total Debit : 0";
+			var totalCreditText=document.getElementById("showTotalCreditText");
+			totalCreditText.innerHTML="Total Credit : 0";
+
+
+		}
+	});
+
+}
+function showEntry(){
+	var showEntryNumber=document.getElementById("showEntryNumber").value;
+	ajaxRequest('api/entry/frontGet',"POST","application/json",{id:showEntryNumber},function(res){
+		if(res.status=="200"){
+			res=JSON.parse(res.responseText);
+			var accountReportTemplate=document.getElementById("accountReportTemplate");
+			var accountReportTemplate=accountReportTemplate.cloneNode(true);
+			accountReportTemplate.style.display="table";
+			var creditSum=0;
+			var debitSum=0;
+			var moves=res.moveLines;
+			for(var j=0;j<moves.length;j++){
+					var tr=document.createElement("tr");
+					var th1=document.createElement("td");
+					var th2=document.createElement("td");
+					var th3=document.createElement("td");
+					var th4=document.createElement("td");
+					var th5=document.createElement("td");
+					var th6=document.createElement("td");
+					var th7=document.createElement("td");
+					var th8=document.createElement("td");
+					var th9=document.createElement("td");
+					creditSum+=parseFloat(moves[j].credit);
+					debitSum+=parseFloat(moves[j].debit);
+					th2.innerHTML=moves[j].debit.toFixed(2);
+					th1.innerHTML=moves[j].credit.toFixed(2);
+					th3.innerHTML=moves[j].exchangeRate.toFixed(2);
+					th4.innerHTML=moves[j].currency.name;
+					if(moves[j].receipt){
+						if(moves[j].receipt.type=="paymentReceipt"){
+							th5.innerHTML=moves[j].receiptId;
+						}
+						else if(moves[j].receipt.type=="receiveReceipt"){
+							th6.innerHTML=moves[j].receiptId;
+						}
+					}
+					th7.innerHTML=moves[j].account.id;
+					th8.innerHTML=moves[j].account.name;
+					th9.innerHTML=moves[j].notes;
+					tr.appendChild(th1);
+					tr.appendChild(th2);
+					tr.appendChild(th3);
+					tr.appendChild(th4);
+					tr.appendChild(th5);
+					tr.appendChild(th6);
+					tr.appendChild(th7);
+					tr.appendChild(th8);
+					tr.appendChild(th9);
+
+					accountReportTemplate.appendChild(tr);
+				}
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				var td3=document.createElement("td");
+				td1.innerHTML=creditSum.toFixed(2);
+				td2.innerHTML=debitSum.toFixed(2);
+				td1.style="background-color:#ccc";
+				td2.style="background-color:#ccc";
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				accountReportTemplate.appendChild(tr);
+
+				var reportDiv=document.createElement("div");
+				reportDiv.style.width='100%';
+				var intro=document.createElement("div");
+				intro.style.textAlign="center";
+				intro.dir="rtl";
+				var balanceSheet=document.createElement("h1");
+				balanceSheet.innerHTML="قيود يومية تفصيلي";
+				balanceSheet.style="border:2px solid #000;box-shadow:2px 4px;display:table;padding:5px;padding-left:20px;padding-right:20px;text-align:Center; margin:Auto;";
+				var fromDateh4=document.createElement("p");
+				fromDateh4.innerHTML="رقم القيد : "+res.move.id;
+				fromDateh4.style.float="right";
+				fromDateh4.className+="printedReporthead";
+				var toDateh4=document.createElement("p");
+				toDateh4.innerHTML="تاريخ القيد : "+new Date(res.move.createdAt).toLocaleString().split(',')[0];
+				toDateh4.className+="printedReporthead";
+				toDateh4.style.float="left";
+				/**
+				var x=document.createElement("IMG");
+				x.src="/static/images/img.png";
+				x.style.width="100%";
+				x.style.height="20%";
+				console.log(x);
+				intro.appendChild(x);
+				**/
+				intro.appendChild(balanceSheet);
+				intro.appendChild(fromDateh4);
+				intro.appendChild(toDateh4);
+				reportDiv.appendChild(intro);
+				reportDiv.appendChild(accountReportTemplate);
+				reportDiv.id="temp";
+				document.body.append(reportDiv);
+				window.print();
+				var temp = document.getElementById("temp");
+				temp.parentNode.removeChild(temp);
+		}
+		else{alert(res.responseText);}
+	});
+	return false;
+}
+</script>
+</body>
+</html>

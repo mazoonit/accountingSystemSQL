@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html>
+<title>Umrah Entry</title>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/sidenavStyle.css">
+<link rel="stylesheet" href="/static/topbarStyle.css">
+
+
+
+
+<body>
+<%-include('sidenav.ejs')%>
+
+<div class="main" id="container">
+<section id="content-tab1">
+		<div style="background-color:#173f5f;border-radius:5px;padding:10px;">
+			<a class="y" id="tab1-add">Add <i class="fas fa-plus-circle"></i></a>
+			<a class="y unactive" id="tab1-delete">Delete <i class="fas fa-trash-alt"></i></a>
+			<a class="y unactive" id="tab1-show">Show <i class="fas fa-file"></i></a>
+		</div>
+		<section id="add" class="tabsec">
+			<h1 style="text-align:Center;">Umrah</h1>
+			<form>
+			<table>
+			  <tr>
+  				<td>
+  				    <p>User</p>
+  				</td>
+  				<td>
+  				    <input type="text" value="<%=user.username%>" readonly/>
+  				</td>
+  				<td>
+  				    <p>Date</p>
+  				</td>
+  				<td>
+  				    <input type="Date" class="date" id="addDate"/>
+  				</td>
+  				<td>
+  				    <p>Time</p>
+  				</td>
+  				<td>
+  				    <input type="time" value="now" id="addTime"/>
+  				</td>
+			  </tr>
+        <tr>
+          <td><p>Islamic Date</p></td>
+          <td><input type="text" id="addIslamicDate"/></td>
+          <td><p>Journey</p></td>
+          <td><input type="text" id="addJourney"/></td>
+        </tr>
+        <tr>
+          <td><p>Journey Date</p></td>
+          <td><input type="Date" id="addJourneyDate"/></td>
+          <td><p>Return Date</p></td>
+          <td><input type="Date" id="addReturnDate"/></td>
+        </tr>
+        <tr>
+          <td><p>Umrah Number</p></td>
+          <td><input type="text" class="canNotEdit" readonly/></td>
+          <td><p>Mode of travel</p></td>
+          <td><input type="text" id="addModeOfTravel"/></td>
+        </tr>
+        <tr>
+				<td>
+				    <p>Client Name</p>
+				</td>
+				<td>
+				    <input type="text" id="addFirstName" placeholder="First Name"/>
+				</td>
+        <td>
+				    <input type="text" id="addMiddleName" placeholder="Middle Name"/>
+				</td>
+        <td>
+				    <input type="text" id="addSurname" placeholder="Surname"/>
+				</td>
+			    </tr>
+        <tr>
+          <td><p>Passport Number</p></td>
+          <td><input type="text" id="addPassportNumber"/></td>
+          <td><p>National ID</p></td>
+          <td><input type="text" id="addNationalID"/></td>
+
+        </tr>
+        <tr>
+          <td><p>Realease Date</p></td>
+          <td><input type="Date" id="addReleaseDate"/></td>
+          <td><p>Expiration Date</p></td>
+          <td><input type="Date" id="addExpirationDate"/></td>
+        </tr>
+
+				<tr>
+					<td><p>Client Phones</p></td>
+					<td><input type="text" id="addMobilePhone" placeholder="Mobile Phone"/></td>
+					<td><input type="text" id="addTelephone" placeholder="Telephone"/></td>
+				</tr>
+
+        <tr>
+          <td><p>Delegate Name</p></td>
+          <td><input type="text" id="addDelegateName"/></td>
+          <td><p>Execution Company</p></td>
+          <td><input type="text" id="addExecutionCompany"/></td>
+        </tr>
+
+
+			  <tr>
+  				<td>
+  				    <p>Net</p>
+  				</td>
+  				<td>
+  				    <input type="number" min="0" value="0" id="addNet"/>
+  				</td>
+  				<td>
+  				    <p>Selling Price</p>
+  				</td>
+  				<td>
+  				    <input type="number" min="0" value="0" id="addSellingPrice"/>
+  				</td>
+			  </tr>
+        <tr>
+      <td>
+          <p>Umrah Supplier</p>
+      </td>
+      <td>
+          <input type="text" onchange="getUmrahAccount(event)" id="addSupplierAccount"/>
+      </td>
+      <td>
+          <input type="text" value="There's no such umrah supplier account!" id="addSupplierAccountDiv" class="canNotEdit" readonly/>
+      </td>
+			<td  style="text-align:left;">
+					<button class="showButton" onClick="return showAccounts();">Show</button>
+			</td>
+
+        </tr>
+			    <tr>
+				<td>
+				    <p>Expense Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getExpenseAccount(event)" id="addExpenseAccount"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such expense account!" id="addExpenseAccountDiv" class="canNotEdit" readonly/>
+				</td>
+				<td  style="text-align:left;">
+						<button class="showButton" onClick="return showAccounts();">Show</button>
+				</td>
+
+			    </tr>
+					<tr>
+				<td>
+						<p>Revenue Account</p>
+				</td>
+				<td>
+						<input type="text" onchange="getRevenueAccount(event)" id="addRevenueAccount"/>
+				</td>
+				<td>
+						<input type="text" value="There's no such Revenue account!" id="addRevenueAccountDiv" class="canNotEdit" readonly/>
+				</td>
+				<td  style="text-align:left;">
+						<button class="showButton" onClick="return showAccounts();">Show</button>
+				</td>
+
+					</tr>
+
+			    <tr>
+				<td>
+				    <p>Client Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getClientAccount(event)" id="addClientAccount"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such client account!" id="addClientAccountDiv" class="canNotEdit" readonly/>
+				</td>
+				<td  style="text-align:left;">
+						<button class="showButton" onClick="return showAccounts();">Show</button>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Employer Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getEmployerAccount(event)" id="addEmployerAccount"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such employer account!" id="addEmployerAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Currency</p>
+				</td>
+				<td>
+				    <input type="text" id="addCurrencyCode" onchange="getCurrency(event)"/>
+				</td>
+				<td>
+						<input type="text" id="addCurrencyCodeDiv" readonly required class="canNotEdit" value="There's no such currency!"/>
+				</td>
+			    </tr>
+				<tr>
+					<td>
+						<p>Exchange Rate</p>
+					</td>
+					<td>
+						<input type="number" id="addExchangeRate"/>
+					</td>
+				</tr>
+				</tr>
+			    <tr>
+				<td>
+				    <p>Notes</p>
+				</td>
+				<td >
+				    <input type="text" id="addNotes"/>
+				</td>
+			    </tr>
+			    <tr>
+				    <td><button class="button" onClick="return addUmrah();">Add</button></td>
+			   </tr>
+			</table>
+			</form>
+		</section>
+
+
+
+		<!--Delete-->
+
+
+
+
+		<section id="delete" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Umrah</h1>
+			<form>
+			<table>
+			  <tr>
+  				<td>
+  				    <p>User</p>
+  				</td>
+  				<td>
+  				    <input type="text" value="<%=user.username%>" readonly/>
+  				</td>
+  				<td>
+  				    <p>Date</p>
+  				</td>
+  				<td>
+  				    <input type="Date" class="date" id="deleteDate"/>
+  				</td>
+  				<td>
+  				    <p>Time</p>
+  				</td>
+  				<td>
+  				    <input type="time" value="now" id="deleteTime"/>
+  				</td>
+			  </tr>
+        <tr>
+          <td><p>Islamic Date</p></td>
+          <td><input type="text" id="deleteIslamicDate"/></td>
+          <td><p>Journey</p></td>
+          <td><input type="text" id="deleteJourney"/></td>
+        </tr>
+        <tr>
+          <td><p>Journey Date</p></td>
+          <td><input type="Date" id="deleteJourneyDate"/></td>
+          <td><p>Return Date</p></td>
+          <td><input type="Date" id="deleteReturnDate"/></td>
+        </tr>
+        <tr>
+          <td><p>Umrah Number</p></td>
+          <td><input type="text" class="canNotEdit" readonly/></td>
+          <td><p>Mode of travel</p></td>
+          <td><input type="text" id="deleteModeOfTravel"/></td>
+        </tr>
+        <tr>
+				<td>
+				    <p>Client Name</p>
+				</td>
+				<td>
+				    <input type="text" id="deleteFirstName" placeholder="First Name"/>
+				</td>
+        <td>
+				    <input type="text" id="deleteMiddleName" placeholder="Middle Name"/>
+				</td>
+        <td>
+				    <input type="text" id="deleteSurname" placeholder="Surname"/>
+				</td>
+			    </tr>
+        <tr>
+          <td><p>Passport Number</p></td>
+          <td><input type="text" id="deletePassportNumber"/></td>
+          <td><p>National ID</p></td>
+          <td><input type="text" id="deleteNationalID"/></td>
+
+        </tr>
+        <tr>
+          <td><p>Realease Date</p></td>
+          <td><input type="Date" id="deleteReleaseDate"/></td>
+          <td><p>Expiration Date</p></td>
+          <td><input type="Date" id="deleteExpirationDate"/></td>
+        </tr>
+				<tr>
+					<td><p>Client Phones</p></td>
+					<td><input type="text" id="deleteMobilePhone" placeholder="Mobile Phone"/></td>
+					<td><input type="text" id="deleteTelephone" placeholder="Telephone"/></td>
+				</tr>
+
+        <tr>
+          <td><p>Delegate Name</p></td>
+          <td><input type="text" id="deleteDelegateName"/></td>
+          <td><p>Execution Company</p></td>
+          <td><input type="text" id="deleteExecutionCompany"/></td>
+        </tr>
+
+
+			  <tr>
+  				<td>
+  				    <p>Net</p>
+  				</td>
+  				<td>
+  				    <input type="number" min="0" value="0" id="deleteNet"/>
+  				</td>
+  				<td>
+  				    <p>Selling Price</p>
+  				</td>
+  				<td>
+  				    <input type="number" min="0" value="0" id="deleteSellingPrice"/>
+  				</td>
+			  </tr>
+        <tr>
+      <td>
+          <p>Umrah Supplier</p>
+      </td>
+      <td>
+          <input type="text" onchange="getUmrahAccount(event)" id="deleteSupplierAccount"/>
+      </td>
+      <td>
+          <input type="text" value="There's no such umrah supplier account!" id="deleteSupplierAccountDiv" class="canNotEdit" readonly/>
+      </td>
+        </tr>
+			    <tr>
+				<td>
+				    <p>Expense Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getExpenseAccount(event)" id="deleteExpenseAccount"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such expense account!" id="deleteExpenseAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+					<tr>
+				<td>
+						<p>Revenue Account</p>
+				</td>
+				<td>
+						<input type="text" onchange="getRevenueAccount(event)" id="deleteRevenueAccount"/>
+				</td>
+				<td>
+						<input type="text" value="There's no such Revenue account!" id="deleteRevenueAccountDiv" class="canNotEdit" readonly/>
+				</td>
+					</tr>
+
+			    <tr>
+				<td>
+				    <p>Client Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getClientAccount(event)" id="deleteClientAccount"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such client account!" id="deleteClientAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Employer Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getEmployerAccount(event)" id="deleteEmployerAccount"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such employer account!" id="deleteEmployerAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Currency</p>
+				</td>
+				<td>
+				    <input type="text" id="deleteCurrencyCode" onchange="getCurrency(event)"/>
+				</td>
+				<td>
+						<input type="text" id="deleteCurrencyCodeDiv" readonly required class="canNotEdit" value="There's no such currency!"/>
+				</td>
+			    </tr>
+				<tr>
+					<td>
+						<p>Exchange Rate</p>
+					</td>
+					<td>
+						<input type="number" id="deleteExchangeRate"/>
+					</td>
+				</tr>
+				</tr>
+			    <tr>
+				<td>
+				    <p>Notes</p>
+				</td>
+				<td >
+				    <input type="text" id="deleteNotes"/>
+				</td>
+			    </tr>
+			    <tr>
+				    <td><button class="button" onClick="return deleteUmrah();">delete</button></td>
+			   </tr>
+			</table>
+			</form>
+
+		</section>
+
+
+
+		<!--show-->
+
+
+
+
+		<section id="show" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Umrah</h1>
+			<form>
+			<table>
+			  <tr>
+  				<td>
+  				    <p>User</p>
+  				</td>
+  				<td>
+  				    <input type="text" value="<%=user.username%>" readonly/>
+  				</td>
+  				<td>
+  				    <p>Date</p>
+  				</td>
+  				<td>
+  				    <input type="Date" class="date" id="showDate"/>
+  				</td>
+  				<td>
+  				    <p>Time</p>
+  				</td>
+  				<td>
+  				    <input type="time" value="now" id="showTime"/>
+  				</td>
+			  </tr>
+        <tr>
+          <td><p>Islamic Date</p></td>
+          <td><input type="text" id="showIslamicDate"/></td>
+          <td><p>Journey</p></td>
+          <td><input type="text" id="showJourney"/></td>
+        </tr>
+        <tr>
+          <td><p>Journey Date</p></td>
+          <td><input type="Date" id="showJourneyDate"/></td>
+          <td><p>Return Date</p></td>
+          <td><input type="Date" id="showReturnDate"/></td>
+        </tr>
+        <tr>
+          <td><p>Umrah Number</p></td>
+          <td><input type="text" class="canNotEdit" readonly/></td>
+          <td><p>Mode of travel</p></td>
+          <td><input type="text" id="showModeOfTravel"/></td>
+        </tr>
+        <tr>
+				<td>
+				    <p>Client Name</p>
+				</td>
+				<td>
+				    <input type="text" id="showFirstName" placeholder="First Name"/>
+				</td>
+        <td>
+				    <input type="text" id="showMiddleName" placeholder="Middle Name"/>
+				</td>
+        <td>
+				    <input type="text" id="showSurname" placeholder="Surname"/>
+				</td>
+			    </tr>
+        <tr>
+          <td><p>Passport Number</p></td>
+          <td><input type="text" id="showPassportNumber"/></td>
+          <td><p>National ID</p></td>
+          <td><input type="text" id="showNationalID"/></td>
+
+        </tr>
+        <tr>
+          <td><p>Realease Date</p></td>
+          <td><input type="Date" id="showReleaseDate"/></td>
+          <td><p>Expiration Date</p></td>
+          <td><input type="Date" id="showExpirationDate"/></td>
+        </tr>
+
+				<tr>
+					<td><p>Client Phones</p></td>
+					<td><input type="text" id="showMobilePhone" placeholder="Mobile Phone"/></td>
+					<td><input type="text" id="showTelephone" placeholder="Telephone"/></td>
+				</tr>
+
+        <tr>
+          <td><p>Delegate Name</p></td>
+          <td><input type="text" id="showDelegateName"/></td>
+          <td><p>Execution Company</p></td>
+          <td><input type="text" id="showExecutionCompany"/></td>
+        </tr>
+
+
+			  <tr>
+  				<td>
+  				    <p>Net</p>
+  				</td>
+  				<td>
+  				    <input type="number" min="0" value="0" id="showNet"/>
+  				</td>
+  				<td>
+  				    <p>Selling Price</p>
+  				</td>
+  				<td>
+  				    <input type="number" min="0" value="0" id="showSellingPrice"/>
+  				</td>
+			  </tr>
+        <tr>
+      <td>
+          <p>Umrah Supplier</p>
+      </td>
+      <td>
+          <input type="text" onchange="getUmrahAccount(event)" id="showSupplierAccount"/>
+      </td>
+      <td>
+          <input type="text" value="There's no such umrah supplier account!" id="showSupplierAccountDiv" class="canNotEdit" readonly/>
+      </td>
+        </tr>
+			    <tr>
+				<td>
+				    <p>Expense Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getExpenseAccount(event)" id="showExpenseAccount"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such expense account!" id="showExpenseAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+					<tr>
+				<td>
+						<p>Revenue Account</p>
+				</td>
+				<td>
+						<input type="text" onchange="getRevenueAccount(event)" id="showRevenueAccount"/>
+				</td>
+				<td>
+						<input type="text" value="There's no such Revenue account!" id="showRevenueAccountDiv" class="canNotEdit" readonly/>
+				</td>
+					</tr>
+
+			    <tr>
+				<td>
+				    <p>Client Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getClientAccount(event)" id="showClientAccount"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such client account!" id="showClientAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Employer Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getEmployerAccount(event)" id="showEmployerAccount"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such employer account!" id="showEmployerAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Currency</p>
+				</td>
+				<td>
+				    <input type="text" id="showCurrencyCode" onchange="getCurrency(event)"/>
+				</td>
+				<td>
+						<input type="text" id="showCurrencyCodeDiv" readonly required class="canNotEdit" value="There's no such currency!"/>
+				</td>
+			    </tr>
+				<tr>
+					<td>
+						<p>Exchange Rate</p>
+					</td>
+					<td>
+						<input type="number" id="showExchangeRate"/>
+					</td>
+				</tr>
+				</tr>
+			    <tr>
+				<td>
+				    <p>Notes</p>
+				</td>
+				<td >
+				    <input type="text" id="showNotes"/>
+				</td>
+			    </tr>
+			    <tr>
+				    <td><button class="button" onClick="return showUmrah();">show</button></td>
+			   </tr>
+			</table>
+			</form>
+		</section>
+</div>
+
+<%-include('showAccounts.ejs')%>
+
+
+<script src="/static/jquery-min.js"></script>
+<script src="/static/frontendlib.js"></script>
+<script src="/static/topbarFunction.js"></script>
+
+<!--vainlia javascript-->
+<script>
+function addUmrah(){
+	var net=parseFloat(document.getElementById("addNet").value);
+	var sellingPrice=parseFloat(document.getElementById("addSellingPrice").value);
+
+	var date=document.getElementById("addDate").value;
+	var time=document.getElementById("addTime").value;
+
+	var islamicDate=document.getElementById("addIslamicDate").value;
+	var journey=document.getElementById("addJourney").value;
+	var journeyDate=document.getElementById("addJourneyDate").value;
+	var returnDate=document.getElementById("addReturnDate").value;
+	var modeOfTravel=document.getElementById("addModeOfTravel").value;
+	var firstName=document.getElementById("addFirstName").value;
+	var middleName=document.getElementById("addMiddleName").value;
+	var surname=document.getElementById("addSurname").value;
+	var passportNumber=document.getElementById("addPassportNumber").value;
+	var nationalID=document.getElementById("addNationalID").value;
+	var releaseDate=document.getElementById("addReleaseDate").value;
+	var expirationDate=document.getElementById("addExpirationDate").value;
+	var mobilePhone=document.getElementById("addMobilePhone").value;
+	var telephone=document.getElementById("addTelephone").value;
+	var delegateName=document.getElementById("addDelegateName").value;
+	var executionCompany=document.getElementById("addExecutionCompany").value;
+
+
+	var notes=document.getElementById("addNotes").value;
+
+	if(date=="" || time=="" || notes==""){
+		alert("You can't leave blank inputs!");
+	}
+	else{
+		var productObj={
+			total:net,//3shan mn3mlsh new endpoint
+			sellingPrice:sellingPrice,
+			journeyDate:journeyDate,
+			returnDate:returnDate,
+			modeOfTravel:modeOfTravel,
+			firstName:firstName,
+			middleName:middleName,
+			surname:surname,
+			passportNumber:passportNumber,
+			nationalID:nationalID,
+			releaseDate:releaseDate,
+			expirationDate:expirationDate,
+			mobilePhone:mobilePhone,
+			telephone:telephone,
+			executionCompany};
+		//there's something to edit here
+		var currencyCode=document.getElementById("addCurrencyCode").value;
+		var exchangeRate=document.getElementById("addExchangeRate").value;
+		var clientAccount=document.getElementById("addClientAccount").value;
+		var supplierAccount=document.getElementById("addSupplierAccount").value;
+		var employerAccount=document.getElementById("addEmployerAccount").value;
+		var expenseAccount=document.getElementById("addExpenseAccount").value;
+		var revenueAccount=document.getElementById("addRevenueAccount").value;
+
+		var product={
+			date:date,
+			time:time,
+			description:notes,
+			currency:currencyCode,
+			exchangeRate:exchangeRate,
+			clientAccount:clientAccount,
+			supplierAccount:supplierAccount,
+			employerAccount:employerAccount,
+			revenueAccount:revenueAccount,
+			expenseAccount:expenseAccount,
+			productType:"umrah",
+			productObj:productObj
+		};
+		var promises=[];
+		promises.push(ajaxPromise("currency/check","POST","application/json",{code:currencyCode}));
+		promises.push(ajaxPromise("account/checkAccount","POST","application/json",{account:supplierAccount,character:'umrah'}));
+		promises.push(ajaxPromise("account/checkClient","POST","application/json",{account:clientAccount}));
+		promises.push(ajaxPromise("employer/check","POST","application/json",{employerId:employerAccount}));
+		promises.push(ajaxPromise("account/checkExpense","POST","application/json",{account:expenseAccount}));
+		promises.push(ajaxPromise("account/checkRevenue","POST","application/json",{account:revenueAccount}));
+		Promise.all(promises).then((res)=>{
+			var flag=false;
+			for(var i=0;i<res.length;i++){
+				if(res[i].status!=200){
+					alert(res[i].responseText);
+					flag=true;
+				}
+			}
+			if(flag==false){
+				ajaxRequest("productI/insert","POST","application/json",product,(res)=>{
+					if(res.status=="200"){
+						res=JSON.parse(res.responseText);
+						alert("Umrah has been added successfully!");
+						alert("Umrah Number is "+res.betterId);
+						location.reload();
+					}
+					else{
+						alert(res.responseText);
+					}
+				});
+			}
+		});
+	}
+	return false;
+}
+
+
+
+function deleteProduct(){
+	var productID=document.getElementById("deleteID").value;
+	if(window.confirm("Are you sure that you want to delete it ?")){
+		ajaxRequest("productI/delete","POST","application/json",{betterId:productID,productType:"IP"},(res)=>{
+			alert(res.responseText);
+		});
+	}
+	return false;
+}
+
+
+function show(e){
+  var targetID=e.target.id;
+  var tabID=targetID.slice(0,targetID.length-2);
+	var ticketNumber=document.getElementById(targetID).value;
+	ajaxRequest("productI/getProduct","POST","application/json",{betterId:ticketNumber,productType:"IP"},(res)=>{
+		if(res.status=="200"){
+			var res=JSON.parse(res.responseText);
+			var IPObj=JSON.parse(res.productObj);
+			document.getElementById(tabID+"Net").value=parseFloat(IPObj.net).toFixed(2);
+			document.getElementById(tabID+"SellingPrice").value=parseFloat(IPObj.sellingPrice).toFixed(2);
+			var date=new Date(res.date).toLocaleString().split(',');
+			var time=new Date(res.date).toTimeString().split(' ')[0];;
+			date=date[0];
+			date=date.split('/');
+			date=date[2]+'-'+date[1]+'-'+date[0];
+			document.getElementById(tabID+"Date").value=date;
+			document.getElementById(tabID+"Time").value=time;
+			document.getElementById(tabID+"Notes").value=res.description;
+			document.getElementById(tabID+"ClientName").value=IPObj.clientName;
+
+			document.getElementById(tabID+"CurrencyCode").value=res.currency;
+			document.getElementById(tabID+"ExchangeRate").value=res.exchangeRate;
+			document.getElementById(tabID+"ClientAccount").value=res.clientAccount;
+			document.getElementById(tabID+"SupplierAccount").value=res.supplierAccount;
+			document.getElementById(tabID+"EmployerAccount").value=res.employerAccount;
+			document.getElementById(tabID+"ExpenseAccount").value=res.expenseAccount;
+			document.getElementById(tabID+"RevenueAccount").value=res.revenueAccount;
+			document.getElementById(tabID+"EntryNumber").value=res.entryNumber;
+		}
+		else{
+			alert(res.responseText);
+			document.getElementById(tabID+"Cost").value=0;
+			document.getElementById(tabID+"Net").value=0;
+			document.getElementById(tabID+"DiscountPercentage").value=0;
+			document.getElementById(tabID+"SellingPrice").value=0;
+			document.getElementById(tabID+"Date").value="";
+			document.getElementById(tabID+"Time").value="";
+			document.getElementById(tabID+"Description").value="";
+			document.getElementById(tabID+"IPNumber").value="";
+			document.getElementById(tabID+"ClientName").value="";
+
+			document.getElementById(tabID+"CurrencyCode").value="";
+			document.getElementById(tabID+"ExchangeRate").value="";
+			document.getElementById(tabID+"ClientAccount").value="";
+			document.getElementById(tabID+"SupplierAccount").value="";
+			document.getElementById(tabID+"EmployerAccount").value="";
+			document.getElementById(tabID+"ExpenseAccount").value="";
+			document.getElementById(tabID+"RevenueAccount").value="";
+			document.getElementById(tabID+"EntryNumber").value="";
+		}
+		var cost=document.getElementById(tabID+"Cost");
+		var ClientAccount=document.getElementById(tabID+"ClientAccount");
+		var SupplierAccount=document.getElementById(tabID+"SupplierAccount");
+		var EmployerAccount=document.getElementById(tabID+"EmployerAccount");
+		var expenseAccount=document.getElementById(tabID+"ExpenseAccount");
+		var revenueAccount=document.getElementById(tabID+"RevenueAccount");
+		var currency=document.getElementById(tabID+"CurrencyCode");
+		var event = new Event('change');
+		cost.dispatchEvent(event);
+		ClientAccount.dispatchEvent(event);
+		SupplierAccount.dispatchEvent(event);
+		EmployerAccount.dispatchEvent(event);
+		revenueAccount.dispatchEvent(event);
+		expenseAccount.dispatchEvent(event);
+		currency.dispatchEvent(event);
+
+	});
+
+
+}
+</script>
+</body>
+</html>

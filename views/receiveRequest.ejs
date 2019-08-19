@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html>
+<title>Receive Request</title>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/sidenavStyle.css">
+<link rel="stylesheet" href="/static/topbarStyle.css">
+
+<style>
+#temp table{text-align:right;}
+#temp td{text-align:right;padding:12px;}
+#temp{visibility: hidden;width:99%;display:none;}
+
+.printedReporthead{display:inline-block;margin:15px;}
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #temp, #temp * {
+    visibility: visible;
+  }
+  #temp{
+    position: absolute;
+    left: 0;
+    top: 0;
+
+  }
+}
+</style>
+<body>
+  <%-include('sidenav.ejs')%>
+<div class="main" id="container">
+<section id="content-tab1">
+		<div style="background-color:#173f5f;border-radius:5px;padding:10px;">
+			<a class="y" id="tab1-add">Add <i class="fas fa-plus-circle"></i></a>
+			<a class="y unactive" id="tab1-edit">Edit <i class="fas fa-sync-alt"></i></a>
+			<a class="y unactive" id="tab1-delete">Delete <i class="fas fa-trash-alt"></i></a>
+			<a class="y unactive" id="tab1-print">Show <i class="fas fa-file"></i></a>
+		</div>
+		<section id="add" class="tabsec">
+			<h1 style="text-align:Center;">Receive Request</h1>
+			<form>
+			<table>
+			   <tr>
+				<td>
+				    <p>Supplier Name</p>
+				</td>
+				<td>
+				    <input type="text" id="addsupplierName"/>
+				</td>
+				<td>
+				    <p>Date</p>
+				</td>
+				<td>
+				    <input type="date" id="addDate" class="date canNotEdit" readonly/>
+				</td>
+			    </tr>
+				    <tr>
+					<td>
+					    <p>Request Number</p>
+					</td>
+					<td>
+					    <input type="text" id="requestNumber" readonly class="canNotEdit"/>
+					</td>
+				    </tr>
+			    <tr>
+				<td>
+				    <p>Amount</p>
+				</td>
+				<td>
+				    <input type="Number" id="addAmount"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Description</p>
+				</td>
+				<td colspan="6">
+				    <input type="text" style="width:100%;" id="addDescription"/>
+				</td>
+
+			    </tr>
+			    <tr>
+				<td><p>Execution Date</p></td>
+				<td style="text-align:left;"><input type="date" id="addExecutionDate"/></td>
+				<td><p>End Date</p></td>
+				<td style="text-align:left;"><input type="date" id="addEndDate"/></td>
+			    </tr>
+			    <tr>
+				<td><p>Total Amount</p></td>
+				<td><input type="number" id="addTotalAmount"/></td>
+				<td><p>Remaining Amount</p></td>
+				<td><input type="number" id="addRemainingAmount"/></td>
+			    </tr>
+			    <tr>
+				<td><p>Execution Price</p></td>
+				<td><input type="number" id="addExecutionPrice"/></td>
+				<td><p>Execution Company</p></td>
+				<td><input type="text" id="addExecutionCompany"/></td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>User</p>
+				</td>
+				<td>
+				    <input type="text" value="<%=user.username%>" class="canNotEdit"readonly/>
+				</td>
+			    </tr>
+			    <tr>
+				    <td><button class="button" onClick="return addRequest();">Add</button></td>
+			   </tr>
+			</table>
+			</form>
+		</section>
+
+
+
+		<!--edit section-->
+
+
+
+		<section id="edit" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Receive Request</h1>
+			<form>
+			<table>
+			   <tr>
+				<td>
+				    <p>Supplier Name</p>
+				</td>
+				<td>
+				    <input type="text" id="editsupplierName"/>
+				</td>
+				<td>
+				    <p>Date</p>
+				</td>
+				<td>
+				    <input type="date" id="editDate" class="date canNotEdit" readonly/>
+				</td>
+			    </tr>
+				    <tr>
+					<td>
+					    <p>Request Number</p>
+					</td>
+					<td>
+					    <input type="text" id="editID" onchange="show(event)"/>
+					</td>
+				    </tr>
+			    <tr>
+				<td>
+				    <p>Amount</p>
+				</td>
+				<td>
+				    <input type="Number" id="editAmount"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Description</p>
+				</td>
+				<td colspan="6">
+				    <input type="text" style="width:100%;" id="editDescription"/>
+				</td>
+
+			    </tr>
+			    <tr>
+				<td><p>Execution Date</p></td>
+				<td style="text-align:left;"><input type="date" id="editExecutionDate"/></td>
+				<td><p>End Date</p></td>
+				<td style="text-align:left;"><input type="date" id="editEndDate"/></td>
+			    </tr>
+			    <tr>
+				<td><p>Total Amount</p></td>
+				<td><input type="number" id="editTotalAmount"/></td>
+				<td><p>Remaining Amount</p></td>
+				<td><input type="number" id="editRemainingAmount"/></td>
+			    </tr>
+			    <tr>
+				<td><p>Execution Price</p></td>
+				<td><input type="number" id="editExecutionPrice"/></td>
+				<td><p>Execution Company</p></td>
+				<td><input type="text" id="editExecutionCompany"/></td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>User</p>
+				</td>
+				<td>
+				    <input type="text" value="" id="editUser"/>
+				</td>
+			    </tr>
+			    <tr>
+				    <td><button class="button" onClick="return edit();">Edit</button></td>
+			   </tr>
+			</table>
+			</form>
+		</section>
+		<!--Delete-->
+		<section id="delete" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Receive Request</h1>
+			<form>
+			<table>
+			   <tr>
+				<td>
+				    <p>Supplier Name</p>
+				</td>
+				<td>
+				    <input type="text" id="deletesupplierName" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <p>Date</p>
+				</td>
+				<td>
+				    <input type="date" id="deleteDate" class="date canNotEdit" readonly/>
+				</td>
+			    </tr>
+				    <tr>
+					<td>
+					    <p>Request Number</p>
+					</td>
+					<td>
+					    <input type="text" id="deleteID" onchange="show(event)"/>
+					</td>
+				    </tr>
+			    <tr>
+				<td>
+				    <p>Amount</p>
+				</td>
+				<td>
+				    <input type="Number" id="deleteAmount" readonly class="canNotEdit"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Description</p>
+				</td>
+				<td colspan="6">
+				    <input type="text" style="width:100%;" id="deleteDescription"readonly class="canNotEdit"/>
+				</td>
+
+			    </tr>
+			    <tr>
+				<td><p>Execution Date</p></td>
+				<td style="text-align:left;"><input type="date" id="deleteExecutionDate" readonly class="canNotEdit"/></td>
+				<td><p>End Date</p></td>
+				<td style="text-align:left;"><input type="date" id="deleteEndDate" readonly class="canNotEdit"/></td>
+			    </tr>
+			    <tr>
+				<td><p>Total Amount</p></td>
+				<td><input type="number" id="deleteTotalAmount" readonly class="canNotEdit"/></td>
+				<td><p>Remaining Amount</p></td>
+				<td><input type="number" id="deleteRemainingAmount" readonly class="canNotEdit"/></td>
+			    </tr>
+			    <tr>
+				<td><p>Execution Price</p></td>
+				<td><input type="number" id="deleteExecutionPrice" readonly class="canNotEdit"/></td>
+				<td><p>Execution Company</p></td>
+				<td><input type="text" id="deleteExecutionCompany" readonly class="canNotEdit"/></td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>User</p>
+				</td>
+				<td>
+				    <input type="text" value="" id="deleteUser" readonly class="canNotEdit"/>
+				</td>
+			    </tr>
+			    <tr>
+				    <td><button class="button" onClick="return deleteRequest();">Delete</button></td>
+			   </tr>
+			</table>
+			</form>
+		</section>
+		<!--Print-->
+		<section id="print" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Receive Request</h1>
+			<form>
+			<table>
+			   <tr>
+				<td>
+				    <p>Supplier Name</p>
+				</td>
+				<td>
+				    <input type="text" id="showsupplierName" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <p>Date</p>
+				</td>
+				<td>
+				    <input type="date" id="showDate" class="date canNotEdit" readonly/>
+				</td>
+			    </tr>
+				    <tr>
+					<td>
+					    <p>Request Number</p>
+					</td>
+					<td>
+					    <input type="text" id="showID" onchange="show(event)"/>
+					</td>
+				    </tr>
+			    <tr>
+				<td>
+				    <p>Amount</p>
+				</td>
+				<td>
+				    <input type="Number" id="showAmount" readonly class="canNotEdit"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Description</p>
+				</td>
+				<td colspan="6">
+				    <input type="text" style="width:100%;" id="showDescription"readonly class="canNotEdit"/>
+				</td>
+
+			    </tr>
+			    <tr>
+				<td><p>Execution Date</p></td>
+				<td style="text-align:left;"><input type="date" id="showExecutionDate" readonly class="canNotEdit"/></td>
+				<td><p>End Date</p></td>
+				<td style="text-align:left;"><input type="date" id="showEndDate" readonly class="canNotEdit"/></td>
+			    </tr>
+			    <tr>
+				<td><p>Total Amount</p></td>
+				<td><input type="number" id="showTotalAmount" readonly class="canNotEdit"/></td>
+				<td><p>Remaining Amount</p></td>
+				<td><input type="number" id="showRemainingAmount" readonly class="canNotEdit"/></td>
+			    </tr>
+			    <tr>
+				<td><p>Execution Price</p></td>
+				<td><input type="number" id="showExecutionPrice" readonly class="canNotEdit"/></td>
+				<td><p>Execution Company</p></td>
+				<td><input type="text" id="showExecutionCompany" readonly class="canNotEdit"/></td>
+			    </tr>
+			    <tr>
+
+				<td>
+				    <p>User</p>
+				</td>
+				<td>
+				    <input type="text" value="" id="showUser" readonly class="canNotEdit"/>
+				</td>
+			    </tr>
+			    <tr>
+				    <td><button class="button" onClick="return printShow();">Print</button></td>
+			   </tr>
+			</table>
+			</form>
+		</section>
+</section>
+</div>
+<div style="text-align:Center;margin:auto;display:none;width:99%;" dir="rtl" id="temp">
+  <div style="text-align:right;margin:0;">
+	<div style="display:inline-block;">
+		<p style="text-align:Center;" dir="ltr">
+			9 ElGeish Road - Sidi Bishr - Alexandria
+			<br>
+			Tel : +3 3583492 - 3583498 - 3581450
+			<br>
+			Mobile : +2 01025066684 - 01281655717
+			<br>
+			E-Mail : info.alex@egythai.com
+			<br>
+			Egythai Tours & Travel - Egypt
+		</p>
+	</div>
+	<img src="/static/images/img.png" style="width:auto;height:100px;float:left;display:inline-block;"/>
+	</div>
+	<table style="width:100%;padding-bottom:40px;border:2px solid #000;border-collapse:collapse;">
+		<tr>
+			<td colspan="3" style="border:2px solid #000;padding:10px;text-align:center;" id="cashTable"><p style="font-size:25px;">اذن توريد / مطالبة</p></td>
+		</tr>
+		<tr>
+			<td colspan="2" style="border:2px solid #000;padding:10px;" id="printsupplierName">اسم العميل : 4</td>
+			<td colspan="2" style="border:2px solid #000;padding:10px;" id="printDate">التاريخ : 20/12/2019</td>
+		</tr>
+		<tr>
+			<td colspan="4" style="border:2px solid #000;padding:15px;" id="printAmount">القيمة الموردة : 20/12/2019</td>
+		</tr>
+
+		<tr>
+			<td colspan="4" style="border:2px solid #000;padding:15px;" id="printDescription">
+				البيان و نوع الخدمة : طيران العربية
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" id="printExecutionDate" style="border:2px solid #000;padding:10px;">تاريخ تنفيذ الخدمة : 10000</td>
+			<td colspan="2" id="printEndDate" style="border:2px solid #000;padding:10px;">تاريخ نهاية الخدمة: 10000</td>
+		</tr>
+		<tr>
+			<td colspan="2" id="printTotalAmount" style="border:2px solid #000;padding:10px;">المبلغ الاجمالي : 10000</td>
+			<td colspan="2" id="printRemainingAmount" style="border:2px solid #000;padding:10px;">المبلغ المتبقي: 10000</td>
+		</tr>
+		<tr>
+			<td colspan="2" id="printExecutionPrice" style="border:2px solid #000;padding:15px;">سعر التنفيذ : 33</td>
+			<td colspan="2" id="printExecutionCompany" style="border:2px solid #000;padding:15px;">شركة التنفيذ : 33</td>
+		</tr>
+		<tr>
+			<td colspan="2" id="printRequestNumber" style="border:2px solid #000;padding:15px;" colspan="4">رقم الطلب :</td>
+			<td colspan="2" id="printEmployer" style="border:2px solid #000;padding:15px;">اسم الموظف :  Mazen</td>
+		</tr>
+	</table>
+</div>
+
+
+
+<script src="/static/jquery-min.js"></script>
+<script src="/static/frontendlib.js"></script>
+<script src="/static/topbarFunction.js"></script>
+
+<!--vainlia javascript-->
+<script>
+function addRequest(){
+	var executionDate=document.getElementById("addExecutionDate").value;
+	var endDate=document.getElementById("addEndDate").value;
+	var executionPrice=document.getElementById("addExecutionPrice").value;
+	var amount=document.getElementById("addAmount").value;
+	var totalAmount=document.getElementById("addTotalAmount").value;
+	var remainingAmount=document.getElementById("addRemainingAmount").value;
+	var supplierName=document.getElementById("addsupplierName").value;
+	var description=document.getElementById("addDescription").value;
+	var executionCompany=document.getElementById("addExecutionCompany").value;
+	//check
+	if(executionDate==""||endDate==""||executionPrice==""||isNaN(amount)||isNaN(totalAmount)||isNaN(remainingAmount)||supplierName==""||description==""){
+		alert("You Can't leave blank inputs!");
+	}
+	else{
+	var requestBody={};
+	requestBody.executionDate=executionDate;
+	requestBody.endDate=endDate;
+	requestBody.executionPrice=executionPrice;
+	requestBody.executionCompany=executionCompany;
+	requestBody.amount=amount;
+	requestBody.totalAmount=totalAmount;
+	requestBody.remainingAmount=remainingAmount;
+	requestBody.supplierName=supplierName;
+	requestBody.description=description;
+	var reqObj={};
+	reqObj.requestBody=requestBody;
+	reqObj.type="receive";
+	ajaxRequest('api/request',"POST","application/json",reqObj,(res)=>{
+		if(res.status=="200"){
+			res=JSON.parse(res.responseText);
+			alert("Request has been added successfully!");
+			if(window.confirm("Do you want to print it ?")){
+				var requestBody=JSON.parse(res.requestBody);
+				var date=new Date(res.createdAt).toLocaleString().split(',');
+				var time=date[1];
+				date=date[0];
+				date=date.split('/');
+				date=date[2]+'-'+date[1]+'-'+date[0];
+				var temp=document.getElementById("temp");
+				temp.style.display="block";
+				var printsupplierName=document.getElementById("printsupplierName");
+				printsupplierName.innerHTML="اسم المورد : "+requestBody.supplierName;
+				var dateTable=document.getElementById("printDate");
+				dateTable.innerHTML="التاريخ : "+new Date(res.createdAt).toLocaleString().split(',')[0];
+				var printDescription=document.getElementById("printDescription");
+				printDescription.innerHTML="البيان و نوع الخدمة : "+requestBody.description;
+				var printAmount=document.getElementById("printAmount");
+				printAmount.innerHTML="القيمة الموردة : "+requestBody.amount;
+				var printRemainingAmount=document.getElementById("printRemainingAmount");
+				printRemainingAmount.innerHTML="المبلغ المتبقي : "+requestBody.remainingAmount;
+				var printTotalAmount=document.getElementById("printTotalAmount");
+				printTotalAmount.innerHTML="المبلغ الاجمالي : "+requestBody.totalAmount;
+				var printExecutionPrice=document.getElementById("printExecutionPrice");
+				printExecutionPrice.innerHTML="مبلغ التنفيذ : "+requestBody.executionPrice;
+				var printEmployer=document.getElementById("printEmployer");
+				printEmployer.innerHTML="اسم الموظف : "+"<%=user.username%>";
+				var printExecutionDate=document.getElementById("printExecutionDate");
+				printExecutionDate.innerHTML="تاريخ التنفيد : "+new Date(requestBody.executionDate).toLocaleString().split(',')[0];
+				var printEndDate=document.getElementById("printEndDate");
+				printEndDate.innerHTML="تاريخ نهاية الخدمة : "+new Date(requestBody.endDate).toLocaleString().split(',')[0];
+				var printRequestNumber=document.getElementById("printRequestNumber");
+				printRequestNumber.innerHTML="رقم الطلب :"+res.id;
+				window.print();
+				temp.style.display="none";
+			}
+		}
+		else{
+			alert(res.responseText);
+		}
+	});
+	}
+	return false;
+}
+function show(e){
+  var targetID=e.target.id;
+  var tabID=targetID.slice(0,targetID.length-2);
+	var user=document.getElementById(tabID+"User");
+  var dateInput=document.getElementById(tabID+"Date");
+	var executionDate=document.getElementById(tabID+"ExecutionDate");
+	var endDate=document.getElementById(tabID+"EndDate");
+	var executionPrice=document.getElementById(tabID+"ExecutionPrice");
+	var amount=document.getElementById(tabID+"Amount");
+	var totalAmount=document.getElementById(tabID+"TotalAmount");
+	var remainingAmount=document.getElementById(tabID+"RemainingAmount");
+	var supplierName=document.getElementById(tabID+"supplierName");
+	var description=document.getElementById(tabID+"Description");
+	var executionCompany=document.getElementById(tabID+"ExecutionCompany");
+	var editRequestNumber=document.getElementById(targetID).value;
+	ajaxRequest('api/request/frontGet',"POST","application/json",{id:editRequestNumber,type:"receive"},(res)=>{
+		if(res.status==200){
+			res=JSON.parse(res.responseText);
+			var requestBody=JSON.parse(res.requestBody);
+			var date=new Date(requestBody.executionDate).toLocaleString().split(',');
+			var time=date[1];
+			date=date[0];
+			date=date.split('/');
+			date=date[2]+'-'+date[1]+'-'+date[0];
+			var date2=new Date(requestBody.endDate).toLocaleString().split(',');
+			var time=date2[1];
+			date2=date2[0];
+			date2=date2.split('/');
+			date2=date2[2]+'-'+date2[1]+'-'+date2[0];
+
+      dateInput.value=res.createdAt.split('T')[0];
+			executionDate.value=date;
+			endDate.value=date2;
+			executionPrice.value=requestBody.executionPrice;
+			amount.value=requestBody.amount;
+			totalAmount.value=requestBody.totalAmount;
+			remainingAmount.value=requestBody.remainingAmount;
+			supplierName.value=requestBody.supplierName;
+			description.value=requestBody.description;
+			user.value=res.employerUserAccount.username;
+			executionCompany.value=requestBody.executionCompany;
+		}
+		else{
+			alert(res.responseText);
+			executionPrice.value=0;
+			amount.value=0;
+			totalAmount.value=0;
+			remainingAmount.value=0;
+			supplierName.value="";
+			description.value="";
+			executionDate.value="";
+			endDate.value="";
+			user.value="";
+			executionCompany.value="";
+
+		}
+
+	});
+
+
+}
+function edit(){
+	var editRequestNumber=document.getElementById("editID").value;
+	var executionDate=document.getElementById("editExecutionDate").value;
+	var endDate=document.getElementById("editEndDate").value;
+	var executionPrice=document.getElementById("editExecutionPrice").value;
+	var amount=document.getElementById("editAmount").value;
+	var totalAmount=document.getElementById("editTotalAmount").value;
+	var remainingAmount=document.getElementById("editRemainingAmount").value;
+	var supplierName=document.getElementById("editsupplierName").value;
+	var description=document.getElementById("editDescription").value;
+	var executionCompany=document.getElementById("editExecutionCompany").value;
+	var type="receiveRequest";
+	if(executionDate==""||endDate==""||executionPrice==""||isNaN(amount)||isNaN(totalAmount)||isNaN(remainingAmount)||supplierName==""||description==""){
+		alert("You Can't leave blank inputs!");
+	}
+	else{
+	var requestBody={};
+	requestBody.executionDate=executionDate;
+	requestBody.endDate=endDate;
+	requestBody.executionPrice=executionPrice;
+	requestBody.amount=amount;
+	requestBody.totalAmount=totalAmount;
+	requestBody.remainingAmount=remainingAmount;
+	requestBody.supplierName=supplierName;
+	requestBody.description=description;
+	requestBody.executionCompany=executionCompany;
+	var obj={
+		requestBody:requestBody,
+		betterId:editRequestNumber,
+		type:type
+	}
+
+	ajaxRequest('request/update',"POST","application/json",obj,(res)=>{
+		alert(res.responseText);
+	});
+	}
+	return false;
+}
+function deleteRequest(){
+	var deleteRequestNumber=document.getElementById("deleteID").value;
+	var type="receive";
+	if(window.confirm("Are you sure that you want to delete it?")){
+		ajaxRequest('api/request',"DELETE","application/json",{id:deleteRequestNumber,type:type},(res)=>{
+			alert(res.responseText);
+		});
+	}
+	return false;
+}
+function printShow(){
+	var showRequestNumber=document.getElementById("showID").value;
+  var type="receive";
+
+	ajaxRequest('api/request/frontGet',"POST","application/json",{id:showRequestNumber,type:type},(res)=>{
+		if(res.status!=200){
+				alert(res.responseText);}
+		else{
+			res=JSON.parse(res.responseText);
+			if(res.type=="receive"){
+        console.log(res);
+				var requestBody=JSON.parse(res.requestBody);
+				var date=new Date(res.createdAt).toLocaleString().split(',');
+				var time=date[1];
+				date=date[0];
+				date=date.split('/');
+				date=date[2]+'-'+date[1]+'-'+date[0];
+				var temp=document.getElementById("temp");
+				temp.style.display="block";
+				var printsupplierName=document.getElementById("printsupplierName");
+				printsupplierName.innerHTML="اسم العميل : "+requestBody.supplierName;
+				var dateTable=document.getElementById("printDate");
+				dateTable.innerHTML="التاريخ : "+new Date(res.createdAt).toLocaleString().split(',')[0];
+				var printDescription=document.getElementById("printDescription");
+				printDescription.innerHTML="البيان و نوع الخدمة : "+requestBody.description;
+				var printAmount=document.getElementById("printAmount");
+				printAmount.innerHTML="القيمة المصروفة : "+requestBody.amount;
+				var printRemainingAmount=document.getElementById("printRemainingAmount");
+				printRemainingAmount.innerHTML="المبلغ المتبقي : "+requestBody.remainingAmount;
+				var printTotalAmount=document.getElementById("printTotalAmount");
+				printTotalAmount.innerHTML="المبلغ الاجمالي : "+requestBody.totalAmount;
+				var printExecutionPrice=document.getElementById("printExecutionPrice");
+				printExecutionPrice.innerHTML="مبلغ التنفيذ : "+requestBody.executionPrice;
+				var printEmployer=document.getElementById("printEmployer");
+				printEmployer.innerHTML="اسم الموظف : "+res.employerUserAccount.username;
+				var printExecutionDate=document.getElementById("printExecutionDate");
+				printExecutionDate.innerHTML="تاريخ التنفيد : "+new Date(requestBody.executionDate).toLocaleString().split(',')[0];
+				var printExecutionCompany=document.getElementById("printExecutionCompany");
+				printExecutionCompany.innerHTML="شركة التنفيد : "+requestBody.executionCompany;
+				var printEndDate=document.getElementById("printEndDate");
+				printEndDate.innerHTML="تاريخ نهاية الخدمة : "+new Date(requestBody.endDate).toLocaleString().split(',')[0];
+				var printRequestNumber=document.getElementById("printRequestNumber");
+				printRequestNumber.innerHTML="رقم الطلب :"+res.id;
+				window.print();
+				temp.style.display="none";
+			}
+			else{
+				alert("Request Not Found!");
+			}
+		}
+
+	});
+	return false;
+}
+</script>
+</body>
+</html>

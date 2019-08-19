@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<title>Currencies</title>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/sidenavStyle.css">
+<link rel="stylesheet" href="/static/topbarStyle.css">
+
+<style>
+#showAllDiv{border-collapse:collapse;}
+#showAllDiv td{border:1px solid #000;padding:15px;}
+</style>
+<body>
+<%-include('sidenav.ejs')%>
+<div class="main" id="container">
+<section id="content-tab1">
+		<div style="background-color:#173f5f;border-radius:5px;padding:10px;">
+			<a class="y" id="tab1-add">Add <i class="fas fa-plus-circle"></i></a>
+			<a class="y unactive" id="tab1-delete">Delete <i class="fas fa-trash-alt"></i></a>
+			<a class="y unactive" id="tab1-edit">Edit <i class="fas fa-edit"></i></a>
+			<a class="y unactive" id="tab1-print">Show <i class="fas fa-file"></i></a>
+			<a class="y unactive" id="tab1-showAll">Show All <i class="fas fa-file"></i></a>
+		</div>
+		<section id="add" class="tabsec">
+			<h1 style="text-align:Center;">Currency</h1>
+			<form>
+			<table>
+			    <tr>
+				<td>
+				    <p>Code</p>
+				</td>
+				<td>
+				    <input type="text" id="addCode"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Name</p>
+				</td>
+				<td colspan="6">
+				    <input type="text" id="addName"/>
+				</td>
+
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Abbreviation</p>
+				</td>
+				<td colspan="6">
+				    <input type="text" id="addAbbreviation"/>
+				</td>
+
+			    </tr>
+			    <tr>
+				    <td><button class="button" onClick="return addCurrency();">Add</button></td>
+			   </tr>
+			</table>
+			</form>
+		</section>
+
+
+		<!--Delete-->
+
+
+		<section id="delete" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Currency</h1>
+			<form>
+			<table>
+			    <tr>
+				<td>
+				    <p>Code</p>
+				</td>
+				<td>
+				    <input type="text" onchange="show(event);" id="deleteID"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Name</p>
+				</td>
+				<td colspan="6">
+				    <input type="text" id="deleteName" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Abbreviation</p>
+				</td>
+				<td colspan="6">
+				    <input type="text" id="deleteAbbreviation" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+
+			    <tr>
+				    <td><button class="button" onClick="return deleteCurrency();">Delete</button></td>
+			   </tr>
+			</table>
+			</form>
+		</section>
+
+
+
+
+		<!--edit-->
+
+
+
+
+		<section id="edit" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Currency</h1>
+			<form>
+			<table>
+			    <tr>
+				<td>
+				    <p>Code</p>
+				</td>
+				<td>
+				    <input type="text" onchange="show(event);" id="editID"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Name</p>
+				</td>
+				<td colspan="6">
+				    <input type="text" id="editName"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Abbreviation</p>
+				</td>
+				<td colspan="6">
+				    <input type="text" id="editAbbreviation"/>
+				</td>
+			    </tr>
+
+			    <tr>
+				    <td><button class="button" onClick="return editCurrency();">Edit</button></td>
+			   </tr>
+			</table>
+			</form>
+		</section>
+
+
+		<!--Print-->
+
+
+		<section id="print" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Currency</h1>
+			<form>
+			<table>
+			    <tr>
+				<td>
+				    <p>Code</p>
+				</td>
+				<td>
+				    <input type="text" id="showID" onchange="show(event)"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Name</p>
+				</td>
+				<td colspan="6">
+				    <input type="text" id="showName" class="canNotEdit" readonly/>
+				</td>
+
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Abbreviation</p>
+				</td>
+				<td colspan="6">
+				    <input type="text" id="showAbbreviation" class="canNotEdit" readonly/>
+				</td>
+
+			    </tr>
+			</table>
+			</form>
+		</section>
+		<section id="showAll" class="tabsec" style="display:none;">
+			<table id="showAllDiv" style="text-align:center;margin:auto;">
+			</table>
+			<button onClick="showAll()" class="button">Show</button>
+		</section>
+</section>
+</div>
+
+
+
+<script src="/static/jquery-min.js"></script>
+<script src="/static/frontendlib.js"></script>
+<script src="/static/topbarFunction.js"></script>
+
+
+<!--vainlia javascript-->
+<script>
+//cash
+function addCurrency(){
+	var code=document.getElementById("addCode").value;
+	var name=document.getElementById("addName").value;
+	var abbreviation=document.getElementById("addAbbreviation").value;
+	var currencyObj={id:code,name:name,abb:abbreviation};
+	ajaxRequest("api/currency","POST","application/json",currencyObj,(res)=>{
+		if(res.status==200){
+			alert("Currency has been added successfully!");
+		}
+		else{
+			alert(res.responseText);
+		}
+	});
+	return false;
+}
+
+
+function show(e){
+  var targetID=e.target.id;
+  var tabID=targetID.slice(0,targetID.length-2);
+	var code=document.getElementById(targetID).value;
+	var name=document.getElementById(tabID+"Name");
+	var abbreviation=document.getElementById(tabID+"Abbreviation");
+	ajaxRequest("api/currency/frontGet","POST","application/json",{id:code},(res)=>{
+		if(res.status==200){
+			res=JSON.parse(res.responseText);
+			name.value=res.name;
+			abbreviation.value=res.abb;
+		}
+		else{
+			alert(res.responseText);
+			name.value="";
+			abbreviation.value="";
+		}
+	});
+	return false;
+}
+
+
+function deleteCurrency(){
+	var code=document.getElementById("deleteID").value;
+	if(window.confirm("Are you sure that you want to delete ?")){
+		ajaxRequest("api/currency","DELETE","application/json",{id:code},(res)=>{
+			alert(res.responseText);
+		});
+	}
+	return false;
+}
+
+
+function editCurrency(){
+	var code=document.getElementById("editID").value;
+	var name=document.getElementById("editName").value;
+	var abbreviation=document.getElementById("editAbbreviation").value;
+	var obj={id:code,name:name,abb:abbreviation};
+	ajaxRequest("api/currency","PUT","application/json",obj,(res)=>{
+		if(res.status==200){
+			alert(res.responseText);
+		}
+		else{
+			res=JSON.parse(res.responseText);
+			alert(res.errors[0].message);
+		}
+	});
+	return false;
+}
+
+
+function showAll(){
+	ajaxRequest("api/currency","GET","application/json",{},(res)=>{
+		if(res.status==200){
+			var showAllDiv=document.getElementById("showAllDiv");
+			showAllDiv.innerHTML="<tr><td>Seq</td><td>Currency Name</td><td>Currency Abbreviation</td>"+
+			"<td>Currency Code</td></tr>";
+			res=JSON.parse(res.responseText);
+			for(var i=0;i<res.length;i++){
+				var tr=document.createElement("tr");
+				var th1=document.createElement("td");
+				var th2=document.createElement("td");
+				var th3=document.createElement("td");
+				var th4=document.createElement("td");
+				th1.innerHTML=i+1;
+				th2.innerHTML=res[i].name;
+				th3.innerHTML=res[i].abb;
+				th4.innerHTML=res[i].id;
+				tr.appendChild(th1);
+				tr.appendChild(th2);
+				tr.appendChild(th3);
+				tr.appendChild(th4);
+				showAllDiv.appendChild(tr);
+
+			}
+		}
+		else{
+			alert(res.responseText);
+		}
+	});
+
+
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html>
+<title>Accounting Reports</title>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/sidenavStyle.css">
+<link rel="stylesheet" href="/static/topbarStyle.css">
+
+<style>
+#accountReportTemplate{
+	border:0.5px solid #000;
+	border-collapse:collapse;
+	width:100%;
+}
+#accountReportTemplate td{
+	text-align:center;
+	border:0.5px solid #000;
+
+}
+#cashCoverTemplate td{border:0.5px solid #000;}
+.printedReporthead{display:inline-block;margin:15px;}
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #temp, #temp * {
+    visibility: visible;
+  }
+  #temp{
+    position: absolute;
+    left: 0;
+    top: 0;
+
+  }
+}
+</style>
+<body>
+<%-include('sidenav.ejs')%>
+
+<div class="main" id="container">
+<section id="content-tab1">
+		<div style="background-color:#173f5f;border-radius:5px;padding:10px;">
+			<a class="y" id="tab1-add">Account Statement</a>
+			<a class="y unactive" id="tab1-delete">Currency Account Statement</a>
+			<a class="y unactive" id="tab1-cashCover">Cash Cover</a>
+		</div>
+		<section id="add" class="tabsec">
+			<h1 style="text-align:Center;">Account Statement</h1>
+			<form>
+				<table>
+				    <tr>
+					<td>
+					    <p>Account</p>
+					</td>
+					<td>
+					    <input type="text" id="Account" onchange="getAccount(event)"/>
+					</td>
+					<td>
+					    <input type="text" value="There's no such account!" id="AccountDiv"readonly/>
+					</td>
+					<td>
+							<button class="showButton" onClick="return showAccounts();">Show</button>
+					</td>
+
+				    </tr>
+				    <tr>
+					<td>
+					    <p>From</p>
+					</td>
+					<td>
+					    <input type="Date" id="fromDate"/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>To</p>
+					</td>
+					<td>
+					    <input type="Date" id="toDate"/>
+					</td>
+				    </tr>
+				    <tr>
+					    <td><button class="button" onClick="return getReport();">Get Report</button></td>
+				   </tr>
+				</table>
+			</form>
+		</section>
+
+
+		<!--Delete-->
+
+
+
+		<section id="delete" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Currency Account Statement</h1>
+			<form>
+				<table>
+				    <tr>
+					<td>
+					    <p>Account</p>
+					</td>
+					<td>
+					    <input type="text" id="currencyAccount" onchange="getAccount(event)"/>
+					</td>
+					<td>
+					    <input type="text" value="There's no such account!" id="currencyAccountDiv"readonly/>
+					</td>
+					<td>
+							<button class="showButton" onClick="return showAccounts();">Show</button>
+					</td>
+
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Currency</p>
+					</td>
+					<td>
+					    <input type="text" id="currency" onchange="getCurrency(event)"/>
+					</td>
+					<td>
+					    <input type="text" value="There's no such currency!" id="currencyDiv"readonly/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>From</p>
+					</td>
+					<td>
+					    <input type="Date" id="currencyFromDate"/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>To</p>
+					</td>
+					<td>
+					    <input type="Date" id="currencyToDate"/>
+					</td>
+				    </tr>
+				    <tr>
+					    <td><button class="button" onClick="return getCurrencyReport();">Get Report</button></td>
+				   </tr>
+				</table>
+			</form>
+		</section>
+
+
+
+		<!--Print-->
+
+
+
+		<section id="cashCover" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Cash Cover</h1>
+			<form>
+				<table>
+				    <tr>
+					<td>
+					    <p>Cash Account</p>
+					</td>
+					<td>
+					    <input type="text" id="cashAccount" onchange="getCashAccount(event)"/>
+					</td>
+					<td>
+					    <input type="text" value="There's no such cash account!" id="cashAccountDiv"readonly/>
+					</td>
+					<td>
+							<button class="showButton" onClick="return showAccounts();">Show</button>
+					</td>
+
+				    </tr>
+				    <tr>
+					<td>
+					    <p>From</p>
+					</td>
+					<td>
+					    <input type="Date" id="cashDate"/>
+					</td>
+				    </tr>
+				    <tr>
+					    <td><button class="button" onClick="return getCashCover();">Get Report</button></td>
+				   </tr>
+				</table>
+			</form>
+		</section>
+</section>
+</div>
+
+<table style="width:100%;display:none;" id="accountReportTemplate" dir="rtl">
+  <col>
+  <colgroup span="3"></colgroup>
+  <colgroup span="3"></colgroup>
+  <tr>
+    <td colspan="1" scope="colgroup">التاريخ</td>
+    <td colspan="1" scope="colgroup">رقم القيد</td>
+    <td colspan="1" scope="colgroup">العملة</td>
+    <td colspan="1" scope="colgroup">الوصف</td>
+    <td colspan="1" scope="colgroup">رقم الايصال</td>
+    <td colspan="1" scope="colgroup">اذن توريد</td>
+    <td colspan="1" scope="colgroup">المعادل</td>
+		<td colspan="1" scope="colgroup">المدين</td>
+    <td colspan="1" scope="colgroup">الدائن</td>
+    <td colspan="1" scope="colgroup">الرصيد</td>
+  </tr>
+</table>
+
+
+<table style="width:100%;border:0.5px solid #000;border-collapse:collapse;text-align:center;display:none;" id="cashCoverTemplate" dir="rtl">
+	<tr>
+		<td colspan="3" style="background:#ccc;">المقبوضات</td>
+		<td colspan="3" style="background:#ccc;">المدفوعات</td>
+	</tr>
+	<tr>
+		<td colspan="1">مبلغ المدين</td>
+		<td colspan="1">البيان</td>
+		<td colspan="1">اذن توريد</td>
+		<td colspan="1">مبلغ دائن</td>
+		<td colspan="1">البيان</td>
+		<td colspan="1">اذن صرف</td>
+	</tr>
+</table>
+
+<%-include('showAccounts.ejs')%>
+
+<script src="/static/jquery-min.js"></script>
+<script src="/static/frontendlib.js"></script>
+<script src="/static/topbarFunction.js"></script>
+
+
+<!--vainlia javascript-->
+
+<script>
+function getReport(){
+	var account=document.getElementById("Account").value;
+	var fromDate=document.getElementById("fromDate").value;
+	var toDate=document.getElementById("toDate").value;
+	if(toDate==""||fromDate==""){alert("insert valid date!");}
+	else{
+		var obj={accountId:account,fromDate:fromDate,toDate:toDate};
+		ajaxRequest("api/accountingReports/accountStatment","POST","application/json",obj,(res)=>{
+			if(res.status==200){
+				console.log(res.responseText);
+				var accountReportTemplate=document.getElementById("accountReportTemplate");
+				var accountReportTemplate=accountReportTemplate.cloneNode(true);
+				accountReportTemplate.style.display="table";
+				res=JSON.parse(res.responseText);
+				var currentCredit=res.beginingCredit;
+				var currentDebit=res.beginingDebit;
+				var currentBalance=0;
+				var prevBalanceNumber=0;
+				if(res.account.accountNature=="debit"){
+					currentBalance=currentDebit-currentCredit;
+					prevBalanceNumber=currentDebit-currentCredit;
+				}
+				else if(res.account.accountNature=="credit"){
+					currentBalance=currentCredit-currentDebit;
+					prevBalanceNumber=currentCredit-currentDebit;
+				}
+				//add prev balance to the table
+				var tr=document.createElement("tr");
+				var th1=document.createElement("td");
+				var th2=document.createElement("td");
+				var th3=document.createElement("td");
+				var th4=document.createElement("td");
+				var th5=document.createElement("td");
+				var th6=document.createElement("td");
+				var th7=document.createElement("td");
+				var th8=document.createElement("td");
+				var th9=document.createElement("td");
+				var th10=document.createElement("td");
+				th1.innerHTML="";
+				th2.innerHTML="";
+				th3.innerHTML="";
+				th4.innerHTML="رصيد سابق";
+				th5.innerHTML="";
+				th6.innerHTML="";
+				th7.innerHTML="";
+				th8.innerHTML=res.beginingDebit.toFixed(2);
+				th9.innerHTML=res.beginingCredit.toFixed(2);
+				th10.innerHTML=prevBalanceNumber.toFixed(2);
+				tr.appendChild(th1);
+				tr.appendChild(th2);
+				tr.appendChild(th3);
+				tr.appendChild(th4);
+				tr.appendChild(th5);
+				tr.appendChild(th6);
+				tr.appendChild(th7);
+				tr.appendChild(th8);
+				tr.appendChild(th9);
+				tr.appendChild(th10);
+				accountReportTemplate.appendChild(tr);
+
+
+				var moves=res.moves;
+				console.log(moves);
+				for(var j=0;j<moves.length;j++){
+					currentDebit+=parseFloat(moves[j].debit)*parseFloat(moves[j].exchangeRate);
+					currentCredit+=parseFloat(moves[j].credit)*parseFloat(moves[j].exchangeRate);
+					if(res.account.accountNature=="debit"){
+						console.log(moves[j].debit);
+						currentBalance=currentDebit-currentCredit;
+					}
+					else if(res.account.accountNature=="credit"){
+						currentBalance=currentCredit-currentDebit;
+					}
+					var tr=document.createElement("tr");
+					var th1=document.createElement("td");
+					var th2=document.createElement("td");
+					var th3=document.createElement("td");
+					var th4=document.createElement("td");
+					var th5=document.createElement("td");
+					var th6=document.createElement("td");
+					var th7=document.createElement("td");
+					var th8=document.createElement("td");
+					var th9=document.createElement("td");
+					var th10=document.createElement("td");
+					th1.innerHTML=moves[j].createdAt.split("T")[0];
+					th2.innerHTML=moves[j].moveId;
+					th3.innerHTML=moves[j].currency.abb;
+					th4.innerHTML=moves[j].notes;
+					if(moves[j].receipt){
+						if(moves[j].receipt.type=="paymentReceipt"){
+							th5.innerHTML=moves[j].receiptId;
+						}
+						else{
+							th6.innerHTML=moves[j].receiptId;
+						}
+
+					}
+					th7.innerHTML=moves[j].exchangeRate.toFixed(2);
+					th8.innerHTML=moves[j].debit.toFixed(2);
+					th9.innerHTML=moves[j].credit.toFixed(2);
+					th10.innerHTML=currentBalance.toFixed(2);
+					tr.appendChild(th1);
+					tr.appendChild(th2);
+					tr.appendChild(th3);
+					tr.appendChild(th4);
+					tr.appendChild(th5);
+					tr.appendChild(th6);
+					tr.appendChild(th7);
+					tr.appendChild(th8);
+					tr.appendChild(th9);
+					tr.appendChild(th10);
+					accountReportTemplate.appendChild(tr);
+				}
+				//add total balance to the table
+				var tr=document.createElement("tr");
+				var th1=document.createElement("td");
+				var th2=document.createElement("td");
+				var th3=document.createElement("td");
+				var th4=document.createElement("td");
+				var th5=document.createElement("td");
+				var th6=document.createElement("td");
+				var th7=document.createElement("td");
+				var th8=document.createElement("td");
+				var th9=document.createElement("td");
+				var th10=document.createElement("td");
+				th8.innerHTML=currentDebit.toFixed(2);
+				th9.innerHTML=currentCredit.toFixed(2);
+				th10.innerHTML=currentBalance.toFixed(2);
+				th8.style.backgroundColor="#ccc";
+				th9.style.backgroundColor="#ccc";
+				th10.style.backgroundColor="#ccc";
+				th2.style.border="none";
+				tr.appendChild(th1);
+				tr.appendChild(th2);
+				tr.appendChild(th3);
+				tr.appendChild(th4);
+				tr.appendChild(th5);
+				tr.appendChild(th6);
+				tr.appendChild(th7);
+				tr.appendChild(th8);
+				tr.appendChild(th9);
+				tr.appendChild(th10);
+				accountReportTemplate.appendChild(tr);
+
+				var reportDiv=document.createElement("div");
+				reportDiv.style.width='100%';
+				var intro=document.createElement("div");
+				intro.style.textAlign="center";
+				intro.dir="rtl";
+				var balanceSheet=document.createElement("h1");
+				balanceSheet.innerHTML="كشف حساب";
+				var fromDateh4=document.createElement("p");
+				fromDateh4.innerHTML="من تاريخ : "+fromDate;
+				fromDateh4.className+="printedReporthead";
+				var toDateh4=document.createElement("p");
+				toDateh4.innerHTML="الى تاريخ : "+toDate;
+				toDateh4.className+="printedReporthead";
+				var br=document.createElement("br");
+				var mainAccount=document.createElement("p");
+				mainAccount.innerHTML="اسم الحساب : "+res.account.name;
+				mainAccount.className+="printedReporthead";
+				var accountId=document.createElement("p");
+				accountId.innerHTML="رقم الحساب : "+res.account.id;
+				accountId.className+="printedReporthead";
+
+
+				var outro=document.createElement("div");
+				outro.dir="rtl";
+				/**
+				var x=document.createElement("IMG");
+				x.src="/static/images/img.png";
+				x.style.width="100%";
+				x.style.height="20%";
+				console.log(x);
+				intro.appendChild(x);
+				**/
+				intro.appendChild(balanceSheet);
+				intro.appendChild(fromDateh4);
+				intro.appendChild(toDateh4);
+				intro.appendChild(br);
+				intro.appendChild(mainAccount);
+				intro.appendChild(accountId);
+				reportDiv.appendChild(intro);
+				reportDiv.appendChild(accountReportTemplate);
+				reportDiv.appendChild(outro);
+				reportDiv.id="temp";
+				document.body.append(reportDiv);
+				window.print();
+				var temp = document.getElementById("temp");
+				temp.parentNode.removeChild(temp);
+
+			}
+			else{alert(res.responseText);}
+
+
+		});
+	}
+
+
+	return false;
+
+
+}
+function getCurrencyReport(){
+	var account=document.getElementById("currencyAccount").value;
+	var currency=document.getElementById("currency").value;
+	var currencyName=document.getElementById("currencyDiv").value;
+	var fromDate=document.getElementById("currencyFromDate").value;
+	var toDate=document.getElementById("currencyToDate").value;
+	if(toDate==""||fromDate==""){alert("insert valid date!");}
+	else if(currencyName=="There's no such currency!"){alert("Insert valid currency!")}
+	else{
+		var obj={accountId:account,currencyId:currency,fromDate:fromDate,toDate:toDate};
+		ajaxRequest("api/accountingReports/accountStatmentCurrency","POST","application/json",obj,(res)=>{
+			if(res.status=="200"){
+				var accountReportTemplate=document.getElementById("accountReportTemplate");
+				var accountReportTemplate=accountReportTemplate.cloneNode(true);
+				accountReportTemplate.style.display="table";
+				res=JSON.parse(res.responseText);
+				var currentCredit=res.beginingCredit;
+				var currentDebit=res.beginingDebit;
+				var currentBalance=0;
+				var prevBalanceNumber=0;
+				if(res.account.accountNature=="debit"){
+					currentBalance=currentDebit-currentCredit;
+					prevBalanceNumber=currentDebit-currentCredit;
+				}
+				else if(res.account.accountNature=="credit"){
+					currentBalance=currentCredit-currentDebit;
+					prevBalanceNumber=currentCredit-currentDebit;
+				}
+
+				//add prev balance to the table
+				var tr=document.createElement("tr");
+				var th1=document.createElement("td");
+				var th2=document.createElement("td");
+				var th3=document.createElement("td");
+				var th4=document.createElement("td");
+				var th5=document.createElement("td");
+				var th6=document.createElement("td");
+				var th7=document.createElement("td");
+				var th8=document.createElement("td");
+				var th9=document.createElement("td");
+				var th10=document.createElement("td");
+				th1.innerHTML="";
+				th2.innerHTML="";
+				th3.innerHTML="";
+				th4.innerHTML="رصيد سابق";
+				th5.innerHTML="";
+				th6.innerHTML="";
+				th7.innerHTML="";
+				th8.innerHTML=res.beginingDebit.toFixed(2);
+				th9.innerHTML=res.beginingCredit.toFixed(2);
+				th10.innerHTML=prevBalanceNumber.toFixed(2);
+				tr.appendChild(th1);
+				tr.appendChild(th2);
+				tr.appendChild(th3);
+				tr.appendChild(th4);
+				tr.appendChild(th5);
+				tr.appendChild(th6);
+				tr.appendChild(th7);
+				tr.appendChild(th8);
+				tr.appendChild(th9);
+				tr.appendChild(th10);
+				accountReportTemplate.appendChild(tr);
+
+
+				var moves=res.moves;
+				for(var j=0;j<moves.length;j++){
+						currentDebit+=parseFloat(moves[j].debit);
+						currentCredit+=parseFloat(moves[j].credit);
+						if(res.account.accountNature=="debit"){
+							console.log(moves[j].debit);
+							currentBalance=currentDebit-currentCredit;
+						}
+						else if(res.account.accountNature=="credit"){
+							currentBalance=currentCredit-currentDebit;
+						}
+
+						var tr=document.createElement("tr");
+						var th1=document.createElement("td");
+						var th2=document.createElement("td");
+						var th3=document.createElement("td");
+						var th4=document.createElement("td");
+						var th5=document.createElement("td");
+						var th6=document.createElement("td");
+						var th7=document.createElement("td");
+						var th8=document.createElement("td");
+						var th9=document.createElement("td");
+						var th10=document.createElement("td");
+						th1.innerHTML=moves[j].createdAt.split("T")[0];
+						th2.innerHTML=moves[j].moveId;
+						th3.innerHTML=moves[j].currency.abb;
+						th4.innerHTML=moves[j].notes;
+						if(moves[j].receipt){
+							if(moves[j].receipt.type=="paymentReceipt"){
+								th5.innerHTML=moves[j].receiptId;
+							}
+							else{
+								th6.innerHTML=moves[j].receiptId;
+							}
+
+						}
+						th7.innerHTML=moves[j].exchangeRate.toFixed(2);
+						th8.innerHTML=moves[j].debit.toFixed(2);
+						th9.innerHTML=moves[j].credit.toFixed(2);
+						th10.innerHTML=currentBalance;
+						tr.appendChild(th1);
+						tr.appendChild(th2);
+						tr.appendChild(th3);
+						tr.appendChild(th4);
+						tr.appendChild(th5);
+						tr.appendChild(th6);
+						tr.appendChild(th7);
+						tr.appendChild(th8);
+						tr.appendChild(th9);
+						tr.appendChild(th10);
+						accountReportTemplate.appendChild(tr);
+				}
+				//add total balance to the table
+				var tr=document.createElement("tr");
+				var th1=document.createElement("td");
+				var th2=document.createElement("td");
+				var th3=document.createElement("td");
+				var th4=document.createElement("td");
+				var th5=document.createElement("td");
+				var th6=document.createElement("td");
+				var th7=document.createElement("td");
+				var th8=document.createElement("td");
+				var th9=document.createElement("td");
+				var th10=document.createElement("td");
+				th8.innerHTML=currentDebit.toFixed(2);
+				th9.innerHTML=currentCredit.toFixed(2);
+				th10.innerHTML=currentBalance.toFixed(2);
+				th8.style.backgroundColor="#ccc";
+				th9.style.backgroundColor="#ccc";
+				th10.style.backgroundColor="#ccc";
+
+				th2.style.border="none";
+				tr.appendChild(th1);
+				tr.appendChild(th2);
+				tr.appendChild(th3);
+				tr.appendChild(th4);
+				tr.appendChild(th5);
+				tr.appendChild(th6);
+				tr.appendChild(th7);
+				tr.appendChild(th8);
+				tr.appendChild(th9);
+				tr.appendChild(th10);
+				accountReportTemplate.appendChild(tr);
+
+				var reportDiv=document.createElement("div");
+				reportDiv.style.width='100%';
+				var intro=document.createElement("div");
+				intro.style.textAlign="center";
+				intro.dir="rtl";
+				var balanceSheet=document.createElement("h1");
+				balanceSheet.innerHTML="كشف حساب محدد بالعملة";
+				var fromDateh4=document.createElement("p");
+				fromDateh4.innerHTML="من تاريخ : "+fromDate;
+				fromDateh4.className+="printedReporthead";
+				var toDateh4=document.createElement("p");
+				toDateh4.innerHTML="الى تاريخ : "+toDate;
+				toDateh4.className+="printedReporthead";
+				var br=document.createElement("br");
+				var mainAccount=document.createElement("p");
+				mainAccount.innerHTML="اسم الحساب : "+res.account.name;
+				mainAccount.className+="printedReporthead";
+				var accountId=document.createElement("p");
+				accountId.innerHTML="رقم الحساب : "+res.account.id;
+				accountId.className+="printedReporthead";
+				var currencyP=document.createElement("p");
+				currencyP.innerHTML="العملة : "+currencyName;
+				currencyP.className+="printedReporthead";
+
+
+				var outro=document.createElement("div");
+				outro.dir="rtl";				/**
+				var x=document.createElement("IMG");
+				x.src="/static/images/img.png";
+				x.style.width="100%";
+				x.style.height="20%";
+				console.log(x);
+				intro.appendChild(x);
+				**/
+				intro.appendChild(balanceSheet);
+				intro.appendChild(fromDateh4);
+				intro.appendChild(toDateh4);
+				intro.appendChild(br);
+				intro.appendChild(mainAccount);
+				intro.appendChild(accountId);
+				intro.appendChild(currencyP);
+				reportDiv.appendChild(intro);
+				reportDiv.appendChild(accountReportTemplate);
+				reportDiv.appendChild(outro);
+				reportDiv.id="temp";
+				document.body.append(reportDiv);
+				window.print();
+				var temp = document.getElementById("temp");
+				temp.parentNode.removeChild(temp);
+
+			}
+			else{alert(res.responseText);}
+
+
+		});
+	}
+
+
+	return false;
+
+
+}
+
+function getCashCover(){
+	var cashAccount=document.getElementById("cashAccount").value;
+	var cashAccountName=document.getElementById("cashAccountDiv").value;
+	var cashDate=document.getElementById("cashDate").value;
+	if(cashDate==""){alert("insert valid date!");}
+	else{
+		ajaxRequest("api/accountingReports/getCashCover","POST","application/json",{date:cashDate,cashAccount:cashAccount},(res)=>{
+			if(res.status=="200"){
+				var cashCoverTemplate=document.getElementById("cashCoverTemplate");
+				var cashCoverTemplate=cashCoverTemplate.cloneNode(true);
+				cashCoverTemplate.style.display="table";
+				res=JSON.parse(res.responseText);
+				var receipts=res.receipts;
+				var numericPrevBalance=res.debit-res.credit;
+				var paymentReceipts=[];
+				var receiveReceipts=[];
+				var currentBalance=numericPrevBalance;
+				var totalPayment=0;
+				var totalReceive=0;
+				for(var i=0;i<receipts.length;i++){
+					if(receipts[i].type=="paymentReceipt"){
+						paymentReceipts.push(receipts[i]);
+						currentBalance-=receipts[i].amount*receipts[i].exchangeRate;
+						totalPayment+=receipts[i].amount*receipts[i].exchangeRate;
+					}
+				}
+				for(var i=0;i<receipts.length;i++){
+					if(receipts[i].type=="receiveReceipt"){
+						receiveReceipts.push(receipts[i]);
+						currentBalance+=receipts[i].amount*receipts[i].exchangeRate;
+						totalReceive+=receipts[i].amount*receipts[i].exchangeRate;
+
+					}
+				}
+				for(var j=0;j<receiveReceipts.length;j++){
+						var tr=document.createElement("tr");
+						var td1=document.createElement("td");
+						var td2=document.createElement("td");
+						var td3=document.createElement("td");
+						var td4=document.createElement("td");
+						var td5=document.createElement("td");
+						var td6=document.createElement("td");
+						td1.innerHTML=receiveReceipts[j].amount.toFixed(2);
+						td2.innerHTML=receiveReceipts[j].description;
+						td3.innerHTML=receiveReceipts[j].id;
+						td4.innerHTML="";
+						td5.innerHTML="";
+						td6.innerHTML="";
+						tr.appendChild(td1);
+						tr.appendChild(td2);
+						tr.appendChild(td3);
+						tr.appendChild(td4);
+						tr.appendChild(td5);
+						tr.appendChild(td6);
+						cashCoverTemplate.appendChild(tr);
+				}
+				for(var j=0;j<paymentReceipts.length;j++){
+						var tr=document.createElement("tr");
+						var td1=document.createElement("td");
+						var td2=document.createElement("td");
+						var td3=document.createElement("td");
+						var td4=document.createElement("td");
+						var td5=document.createElement("td");
+						var td6=document.createElement("td");
+						td1.innerHTML="";
+						td2.innerHTML="";
+						td3.innerHTML="";
+						td4.innerHTML=paymentReceipts[j].amount.toFixed(2);
+						td5.innerHTML=paymentReceipts[j].description;
+						td6.innerHTML=paymentReceipts[j].id;
+						tr.appendChild(td1);
+						tr.appendChild(td2);
+						tr.appendChild(td3);
+						tr.appendChild(td4);
+						tr.appendChild(td5);
+						tr.appendChild(td6);
+						cashCoverTemplate.appendChild(tr);
+				}
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				var td3=document.createElement("td");
+				var td4=document.createElement("td");
+				td1.colSpan="1";
+				td2.colSpan="2";
+				td3.colSpan="1";
+				td4.colSpan="2";
+				td1.innerHTML=totalReceive.toFixed(2);
+				td2.innerHTML="اجمالي المقبوضات";
+				td3.innerHTML=totalPayment.toFixed(2);
+				td4.innerHTML="اجمالي المدفوعات";
+				td1.style.backgroundColor="#ccc";
+				td2.style.backgroundColor="#ccc";
+				td3.style.backgroundColor="#ccc";
+				td4.style.backgroundColor="#ccc";
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				tr.appendChild(td3);
+				tr.appendChild(td4);
+				cashCoverTemplate.appendChild(tr);
+
+
+
+				var reportDiv=document.createElement("div");
+				reportDiv.style.width='100%';
+				var intro=document.createElement("div");
+				intro.style.textAlign="center";
+				intro.dir="rtl";
+				var balanceSheet=document.createElement("h1");
+				balanceSheet.innerHTML="حركة الخزينة";
+				var fromDateh4=document.createElement("p");
+				fromDateh4.innerHTML="التاريخ : "+cashDate;
+				fromDateh4.className+="printedReporthead";
+				var br=document.createElement("br");
+				var mainAccount=document.createElement("p");
+				mainAccount.innerHTML="رقم الخزينة : "+cashAccount;
+				mainAccount.className+="printedReporthead";
+				var mainAccountName=document.createElement("p");
+				mainAccountName.innerHTML="اسم الخزينة : "+cashAccountName;
+				mainAccountName.className+="printedReporthead";
+				var introPrevBalance=document.createElement("p");
+				introPrevBalance.innerHTML="الرصيد السابق : "+numericPrevBalance.toFixed(2);
+				introPrevBalance.className+="printedReporthead";
+
+
+
+
+				var outro=document.createElement("div");
+				outro.dir="rtl";
+				var totalReceiveP=document.createElement("p");
+				totalReceiveP.innerHTML="اجمالي المقبوضات: "+totalReceive.toFixed(2);
+				var totalPaymentP=document.createElement("p");
+				totalPaymentP.innerHTML="اجمالي المدفوعات: "+totalPayment.toFixed(2);
+				var prevBalance=document.createElement("p");
+				prevBalance.innerHTML="الرصيد السابق : "+numericPrevBalance.toFixed(2);
+				var allCredith4=document.createElement("p");
+				allCredith4.innerHTML="الرصيد الحالي : "+currentBalance.toFixed(2);
+
+				var p1=document.createElement("p");
+				p1.innerHTML="امين الخزينة";
+				p1.className+="printedReporthead";
+
+				var p2=document.createElement("p");
+				p2.innerHTML="المراجعة";
+				p2.className+="printedReporthead";
+
+				var p3=document.createElement("p");
+				p3.innerHTML="يعتمد";
+				p3.className+="printedReporthead";
+
+
+
+
+				/**
+				var x=document.createElement("IMG");
+				x.src="/static/images/img.png";
+				x.style.width="100%";
+				x.style.height="20%";
+				console.log(x);
+				intro.appendChild(x);
+				**/
+				intro.appendChild(balanceSheet);
+				intro.appendChild(fromDateh4);
+				intro.appendChild(br);
+				intro.appendChild(mainAccount);
+				intro.appendChild(mainAccountName);
+				intro.appendChild(introPrevBalance);
+
+				outro.appendChild(totalReceiveP);
+				outro.appendChild(totalPaymentP);
+				outro.appendChild(prevBalance);
+				outro.appendChild(allCredith4);
+
+
+				reportDiv.appendChild(intro);
+				reportDiv.appendChild(cashCoverTemplate);
+				reportDiv.appendChild(outro);
+				reportDiv.id="temp";
+				document.body.append(reportDiv);
+				window.print();
+				var temp = document.getElementById("temp");
+				temp.parentNode.removeChild(temp);
+			}
+			else{alert(res.responseText);}
+
+
+		});
+	}
+	return false;
+
+}
+</script>
+</body>
+</html>

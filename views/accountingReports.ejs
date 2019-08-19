@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html>
+<title>Accounting Reports</title>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/sidenavStyle.css">
+<link rel="stylesheet" href="/static/topbarStyle.css">
+
+<style>
+#accountReportTemplate{
+	border:0.5px solid #000;
+	border-collapse:collapse;
+	width:100%;
+}
+#accountReportTemplate td{
+	text-align:center;
+	border:0.5px solid #000;
+
+}
+#trialBalanceTemplate{
+	border:0.5px solid #000;
+	border-collapse:collapse;
+	width:100%;
+}
+#trialBalanceTemplate td{
+	text-align:center;
+	border:0.5px solid #000;
+
+}
+
+#FPSTemplate{
+	border:0.5px solid #000;
+	border-collapse:collapse;
+	width:100%;
+}
+#FPSTemplate td{
+	text-align:center;
+	border:0.5px solid #000;
+
+}
+
+#ISTemplate{
+	border:0.5px solid #000;
+	border-collapse:collapse;
+	width:100%;
+}
+#ISTemplate td{
+	text-align:center;
+	border:0.5px solid #000;
+
+}
+
+
+#cashCoverTemplate td{border:0.5px solid #000;}
+.printedReporthead{display:inline-block;margin:15px;}
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #temp, #temp * {
+    visibility: visible;
+  }
+  #temp{
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}
+</style>
+<body>
+<%-include('sidenav.ejs')%>
+
+<div class="main" id="container">
+<section id="content-tab1">
+		<div style="background-color:#173f5f;border-radius:5px;padding:10px;">
+			<a class="y" id="tab1-trialBalance">Trial Balance</a>
+			<a class="y unactive" id="tab1-FPS">Financial Position Statement</a>
+			<a class="y unactive" id="tab1-IS">Income Statement</a>
+		</div>
+		<section id="trialBalance" class="tabsec">
+			<h1 style="text-align:Center;">Trial Balance</h1>
+			<form>
+				<table>
+				  <tr>
+						<td>
+						    <p>Date</p>
+						</td>
+						<td>
+						    <input type="Date" id="toDate"/>
+						</td>
+					</tr>
+				  <tr>
+					    <td><button class="button" onClick="return getTrialBalance();">Get Report</button></td>
+				  </tr>
+				</table>
+			</form>
+		</section>
+
+
+		<!--Delete-->
+
+
+
+		<section id="FPS" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Financial Position Statement</h1>
+			<form>
+				<table>
+					<tr>
+						<td>
+						    <p>From</p>
+						</td>
+						<td>
+						    <input type="Date" id="FPSDate"/>
+						</td>
+					</tr>
+			    <tr>
+				    <td><button class="button" onClick="return getFPS();">Get Report</button></td>
+			    </tr>
+				</table>
+			</form>
+		</section>
+
+
+
+		<!--Print-->
+
+
+
+		<section id="IS" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Income List</h1>
+			<form>
+				<table>
+				  <tr>
+						<td>
+						    <p>Date</p>
+						</td>
+						<td>
+						    <input type="Date" id="ISDate"/>
+						</td>
+				    </tr>
+				    <tr>
+					    <td><button class="button" onClick="return getIS();">Get Report</button></td>
+				   </tr>
+				</table>
+			</form>
+		</section>
+</section>
+</div>
+
+
+<!--trial balance-->
+<table style="width:100%;border:0.5px solid #000;border-collapse:collapse;text-align:center;display:none;" id="trialBalanceTemplate" dir="rtl">
+	<tr>
+		<td colspan="2">أرصدة</td>
+		<td colspan="2">مجاميع</td>
+		<td colspan="2" rowspan="2">البيان</td>
+	</tr>
+	<tr>
+		<td>مدين</td>
+		<td>دائن</td>
+		<td>مدين</td>
+		<td>دائن</td>
+
+	</tr>
+</table>
+
+
+<table style="width:100%;border:0.5px solid #000;border-collapse:collapse;text-align:center;display:none;" id="FPSTemplate" dir="rtl">
+	<tr>
+		<td>البيان</td>
+		<td>الأرصدة</td>
+	</tr>
+</table>
+
+
+<table style="width:100%;border:0.5px solid #000;border-collapse:collapse;text-align:center;display:none;" id="ISTemplate" dir="rtl">
+	<tr>
+		<td>البيان</td>
+		<td>الأرصدة</td>
+	</tr>
+</table>
+
+
+
+
+
+<script src="/static/jquery-min.js"></script>
+<script src="/static/frontendlib.js"></script>
+<script src="/static/topbarFunction.js"></script>
+
+
+<!--vainlia javascript-->
+
+<script>
+function getTrialBalance(){
+	var toDate=document.getElementById("toDate").value;
+	if(toDate==""){alert("insert valid date!");}
+	else{
+		var obj={date:toDate};
+		ajaxRequest("api/accountingReports/getBalances","POST","application/json",obj,(res)=>{
+			if(res.status==200){
+				var trialBalanceTemplate=document.getElementById("trialBalanceTemplate");
+				var trialBalanceTemplate=trialBalanceTemplate.cloneNode(true);
+				trialBalanceTemplate.style.display="table";
+
+				var totalMovesCredit=0;
+				var totalMovesDebit=0;
+				var totalBalanceCredit=0;
+				var totalBalanceDebit=0;
+
+				var majorAccounts=JSON.parse(res.responseText);
+				var keys=Object.keys(majorAccounts);
+				for(var i=0;i<keys.length;i++){
+					k=keys[i];
+					var tr=document.createElement("tr");
+					var td1=document.createElement("td");
+					var td2=document.createElement("td");
+					var td3=document.createElement("td");
+					var td4=document.createElement("td");
+					var td5=document.createElement("td");
+					var balance=777;
+					if(majorAccounts[k].nature=="debit"){
+						balance=majorAccounts[k].debit-majorAccounts[k].credit;
+						td1.innerHTML=balance.toFixed(2);
+						td2.innerHTML=0;
+						totalBalanceDebit+=balance;
+					}
+					else if(majorAccounts[k].nature=="credit"){
+						balance=majorAccounts[k].credit-majorAccounts[k].debit;
+						td1.innerHTML=0;
+						td2.innerHTML=balance.toFixed(2);
+						totalBalanceCredit+=balance;
+
+					}
+					td3.innerHTML=majorAccounts[k].debit.toFixed(2);
+					td4.innerHTML=majorAccounts[k].credit.toFixed(2);
+					td5.innerHTML=majorAccounts[k].name;
+					totalMovesDebit+=majorAccounts[k].debit;
+					totalMovesCredit+=majorAccounts[k].credit;
+
+					tr.appendChild(td1);
+					tr.appendChild(td2);
+					tr.appendChild(td3);
+					tr.appendChild(td4);
+					tr.appendChild(td5);
+					trialBalanceTemplate.appendChild(tr);
+				}
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				var td3=document.createElement("td");
+				var td4=document.createElement("td");
+				var td5=document.createElement("td");
+				td1.innerHTML=totalBalanceDebit.toFixed(2);
+				td2.innerHTML=totalBalanceCredit.toFixed(2);
+				td3.innerHTML=totalMovesDebit.toFixed(2);
+				td4.innerHTML=totalMovesCredit.toFixed(2);
+				td5.innerHTML="الاجمالي";
+				td1.style.backgroundColor="#ccc";
+				td2.style.backgroundColor="#ccc";
+				td3.style.backgroundColor="#ccc";
+				td4.style.backgroundColor="#ccc";
+
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				tr.appendChild(td3);
+				tr.appendChild(td4);
+				tr.appendChild(td5);
+				trialBalanceTemplate.appendChild(tr);
+
+
+
+
+				var reportDiv=document.createElement("div");
+				reportDiv.style.width='100%';
+				var intro=document.createElement("div");
+				intro.style.textAlign="center";
+				intro.dir="rtl";
+				var title=document.createElement("h1");
+				title.innerHTML="ميزان المراجعة";
+				var toDateP=document.createElement("p");
+				toDateP.innerHTML="الى تاريخ : "+toDate;
+				toDateP.className+="printedReporthead";
+				var br=document.createElement("br");
+
+				intro.appendChild(title);
+				intro.appendChild(toDateP);
+				intro.appendChild(br);
+				reportDiv.appendChild(intro);
+				reportDiv.appendChild(trialBalanceTemplate);
+				reportDiv.id="temp";
+				document.body.append(reportDiv);
+				window.print();
+				var temp = document.getElementById("temp");
+				temp.parentNode.removeChild(temp);
+
+			}
+			else{alert(res.responseText);}
+
+
+		});
+	}
+
+
+	return false;
+}
+
+//FPS
+
+function getFPS(){
+	var FPSDate=document.getElementById("FPSDate").value;
+	if(FPSDate==""){alert("insert valid date!");}
+	else{
+		var obj={date:FPSDate};
+		ajaxRequest("api/accountingReports/getBalances","POST","application/json",obj,(res)=>{
+			if(res.status==200){
+				//cloneing the template
+				var FPSTemplate=document.getElementById("FPSTemplate");
+				var FPSTemplate=FPSTemplate.cloneNode(true);
+				FPSTemplate.style.display="table";
+
+				//getting the data from the API
+
+				var majorAccounts=JSON.parse(res.responseText);
+
+
+				//handling the data
+
+
+				var accounts={
+					currentAssets:[],
+					nonCurrentAssets:[],
+					currentLiabilities:[],
+					nonCurrentLiabilities:[],
+					shareholdersEquity:[],
+					revenues:[],
+					expenses:[]
+				}
+				var keys=Object.keys(majorAccounts);
+				for(var i=0;i<keys.length;i++){
+					var key=keys[i];
+					var type=majorAccounts[key].type;
+					accounts[type].push(majorAccounts[key]);
+				}
+
+				//filling the template with data
+
+
+
+				//hardcode .-.
+				//non current Assets
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				td1.innerHTML="الأصول غير المتداولة";
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				FPSTemplate.appendChild(tr);
+
+				var nonCurrentAssetsTotal=0;
+
+				for(var i=0;i<accounts.nonCurrentAssets.length;i++){
+					var balance=666;
+					var credit=accounts.nonCurrentAssets[i].credit;
+					var debit=accounts.nonCurrentAssets[i].debit;
+					var name=accounts.nonCurrentAssets[i].name;
+
+					if(accounts.nonCurrentAssets[i].nature=="debit"){
+						balance=debit-credit;
+					}
+					else{
+						balance=credit-debit;
+					}
+
+					nonCurrentAssetsTotal+=balance;
+
+					var tr=document.createElement("tr");
+					var td1=document.createElement("td");
+					var td2=document.createElement("td");
+					td1.innerHTML=name;
+					td2.innerHTML=balance.toFixed(2);
+					tr.appendChild(td1);
+					tr.appendChild(td2);
+					FPSTemplate.appendChild(tr);
+				}
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				td1.innerHTML="اجمالي الأصول غير المتداولة";
+				td2.innerHTML=nonCurrentAssetsTotal.toFixed(2);
+				td2.style.backgroundColor="#ccc";
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				FPSTemplate.appendChild(tr);
+
+
+				//current Assets
+
+
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				td1.innerHTML="الأصول المتداولة";
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				FPSTemplate.appendChild(tr);
+
+				var currentAssetsTotal=0;
+
+				for(var i=0;i<accounts.currentAssets.length;i++){
+					var balance=666;
+					var credit=accounts.currentAssets[i].credit;
+					var debit=accounts.currentAssets[i].debit;
+					var name=accounts.currentAssets[i].name;
+
+					if(accounts.currentAssets[i].nature=="debit"){
+						balance=debit-credit;
+					}
+					else{
+						balance=credit-debit;
+					}
+
+					currentAssetsTotal+=balance;
+
+					var tr=document.createElement("tr");
+					var td1=document.createElement("td");
+					var td2=document.createElement("td");
+					td1.innerHTML=name;
+					td2.innerHTML=balance.toFixed(2);
+					tr.appendChild(td1);
+					tr.appendChild(td2);
+					FPSTemplate.appendChild(tr);
+				}
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				td1.innerHTML="اجمالي الأصول المتداولة";
+				td2.innerHTML=currentAssetsTotal.toFixed(2);
+				td2.style.backgroundColor="#ccc";
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				FPSTemplate.appendChild(tr);
+
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				td1.innerHTML="اجمالي الأصول";
+				td2.innerHTML=(currentAssetsTotal+nonCurrentAssetsTotal).toFixed(2);
+				td2.style.backgroundColor="#ccc";
+
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				FPSTemplate.appendChild(tr);
+
+
+
+				//shareholdersEquity
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				td1.innerHTML="حقوق المساهمين";
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				FPSTemplate.appendChild(tr);
+
+				var shareholdersEquityTotal=0;
+
+				for(var i=0;i<accounts.shareholdersEquity.length;i++){
+					var balance=666;
+					var credit=accounts.shareholdersEquity[i].credit;
+					var debit=accounts.shareholdersEquity[i].debit;
+					var name=accounts.shareholdersEquity[i].name;
+
+					if(accounts.shareholdersEquity[i].nature=="debit"){
+						balance=debit-credit;
+					}
+					else{
+						balance=credit-debit;
+					}
+
+					shareholdersEquityTotal+=balance;
+
+					var tr=document.createElement("tr");
+					var td1=document.createElement("td");
+					var td2=document.createElement("td");
+					td1.innerHTML=name;
+					td2.innerHTML=balance.toFixed(2);
+					tr.appendChild(td1);
+					tr.appendChild(td2);
+					FPSTemplate.appendChild(tr);
+				}
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				td1.innerHTML="اجمالي حقوق المساهمين";
+				td2.innerHTML=shareholdersEquityTotal.toFixed(2);
+				td2.style.backgroundColor="#ccc";
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				FPSTemplate.appendChild(tr);
+
+
+
+				//non current Liabilites
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				td1.innerHTML="الالتزامات  غير المتداولة";
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				FPSTemplate.appendChild(tr);
+
+				var nonCurrentLiabilitiesTotal=0;
+
+				for(var i=0;i<accounts.nonCurrentLiabilities.length;i++){
+					var balance=666;
+					var credit=accounts.nonCurrentLiabilities[i].credit;
+					var debit=accounts.nonCurrentLiabilities[i].debit;
+					var name=accounts.nonCurrentLiabilities[i].name;
+
+					if(accounts.nonCurrentLiabilities[i].nature=="debit"){
+						balance=debit-credit;
+					}
+					else{
+						balance=credit-debit;
+					}
+
+					nonCurrentLiabilitiesTotal+=balance;
+
+					var tr=document.createElement("tr");
+					var td1=document.createElement("td");
+					var td2=document.createElement("td");
+					td1.innerHTML=name;
+					td2.innerHTML=balance.toFixed(2);
+					tr.appendChild(td1);
+					tr.appendChild(td2);
+					FPSTemplate.appendChild(tr);
+				}
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				td1.innerHTML="اجمالي الالتزامات غير المتداولة";
+				td2.innerHTML=nonCurrentLiabilitiesTotal.toFixed(2);
+				td2.style.backgroundColor="#ccc";
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				FPSTemplate.appendChild(tr);
+
+
+
+
+				//current Liabilites
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				td1.innerHTML="الالتزامات المتداولة";
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				FPSTemplate.appendChild(tr);
+
+				var currentLiabilitiesTotal=0;
+
+				for(var i=0;i<accounts.currentLiabilities.length;i++){
+					var balance=666;
+					var credit=accounts.currentLiabilities[i].credit;
+					var debit=accounts.currentLiabilities[i].debit;
+					var name=accounts.currentLiabilities[i].name;
+
+					if(accounts.currentLiabilities[i].nature=="debit"){
+						balance=debit-credit;
+					}
+					else{
+						balance=credit-debit;
+					}
+
+					currentLiabilitiesTotal+=balance;
+
+					var tr=document.createElement("tr");
+					var td1=document.createElement("td");
+					var td2=document.createElement("td");
+					td1.innerHTML=name;
+					td2.innerHTML=balance.toFixed(2);
+					tr.appendChild(td1);
+					tr.appendChild(td2);
+					FPSTemplate.appendChild(tr);
+				}
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				td1.innerHTML="اجمالي الالتزامات المتداولة";
+				td2.innerHTML=currentLiabilitiesTotal.toFixed(2);
+				td2.style.backgroundColor="#ccc";
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				FPSTemplate.appendChild(tr);
+
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				td1.innerHTML="اجمالي حقوق المساهمين و الالتزامات";
+				td2.innerHTML=(currentLiabilitiesTotal+nonCurrentLiabilitiesTotal+shareholdersEquityTotal).toFixed(2);
+				td2.style.backgroundColor="#ccc";
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				FPSTemplate.appendChild(tr);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				var reportDiv=document.createElement("div");
+				reportDiv.style.width='100%';
+				var intro=document.createElement("div");
+				intro.style.textAlign="center";
+				intro.dir="rtl";
+				var title=document.createElement("h1");
+				title.innerHTML="قائمة المركز المالي";
+				var date=document.createElement("p");
+				date.innerHTML="التاريخ : "+FPSDate;
+				date.className+="printedReporthead";
+				var br=document.createElement("br");
+
+				intro.appendChild(title);
+				intro.appendChild(date);
+				intro.appendChild(br);
+				reportDiv.appendChild(intro);
+				reportDiv.appendChild(FPSTemplate);
+				reportDiv.id="temp";
+				document.body.append(reportDiv);
+				window.print();
+				var temp = document.getElementById("temp");
+				temp.parentNode.removeChild(temp);
+
+			}
+			else{alert(res.responseText);}
+		});
+	}
+	return false;
+}
+
+
+function getIS(){
+	var ISDate=document.getElementById("ISDate").value;
+	if(ISDate==""){alert("insert valid date!");}
+	else{
+		var obj={date:ISDate};
+		ajaxRequest("api/accountingReports/getBalances","POST","application/json",obj,(res)=>{
+			if(res.status==200){
+				//cloneing the template
+				var ISTemplate=document.getElementById("ISTemplate");
+				var ISTemplate=ISTemplate.cloneNode(true);
+				ISTemplate.style.display="table";
+
+				//getting the data from the API
+
+				var majorAccounts=JSON.parse(res.responseText);
+
+
+				//handling the data
+
+
+				var accounts={
+					currentAssets:[],
+					nonCurrentAssets:[],
+					currentLiabilities:[],
+					nonCurrentLiabilities:[],
+					shareholdersEquity:[],
+					revenues:[],
+					expenses:[]
+				}
+				var keys=Object.keys(majorAccounts);
+				for(var i=0;i<keys.length;i++){
+					var key=keys[i];
+					var type=majorAccounts[key].type;
+					accounts[type].push(majorAccounts[key]);
+				}
+
+				//filling the template with data
+
+				//revenues
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				td1.innerHTML="الايرادات";
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				ISTemplate.appendChild(tr);
+
+				var revenuesTotal=0;
+
+				for(var i=0;i<accounts.revenues.length;i++){
+					var balance=666;
+					var credit=accounts.revenues[i].credit;
+					var debit=accounts.revenues[i].debit;
+					var name=accounts.revenues[i].name;
+
+					if(accounts.revenues[i].nature=="debit"){
+						balance=debit-credit;
+					}
+					else{
+						balance=credit-debit;
+					}
+
+					revenuesTotal+=balance;
+
+					var tr=document.createElement("tr");
+					var td1=document.createElement("td");
+					var td2=document.createElement("td");
+					td1.innerHTML=name;
+					td2.innerHTML=balance.toFixed(2);
+					tr.appendChild(td1);
+					tr.appendChild(td2);
+					ISTemplate.appendChild(tr);
+				}
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				td1.innerHTML="اجمالي الايرادات";
+				td2.innerHTML=revenuesTotal.toFixed(2);
+				td2.style.backgroundColor="#ccc";
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				ISTemplate.appendChild(tr);
+
+
+
+
+				//current Liabilites
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				td1.innerHTML="المصروفات";
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				ISTemplate.appendChild(tr);
+
+				var expensesTotal=0;
+
+				for(var i=0;i<accounts.expenses.length;i++){
+					var balance=666;
+					var credit=accounts.expenses[i].credit;
+					var debit=accounts.expenses[i].debit;
+					var name=accounts.expenses[i].name;
+
+					if(accounts.expenses[i].nature=="debit"){
+						balance=debit-credit;
+					}
+					else{
+						balance=credit-debit;
+					}
+
+					expensesTotal+=balance;
+
+					var tr=document.createElement("tr");
+					var td1=document.createElement("td");
+					var td2=document.createElement("td");
+					td1.innerHTML=name;
+					td2.innerHTML=balance.toFixed(2);
+					tr.appendChild(td1);
+					tr.appendChild(td2);
+					ISTemplate.appendChild(tr);
+				}
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				td1.innerHTML="اجمالي المصروفات";
+				td2.innerHTML=expensesTotal.toFixed(2);
+				td2.style.backgroundColor="#ccc";
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				ISTemplate.appendChild(tr);
+
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				td1.innerHTML="صافي الدخل";
+				td2.innerHTML=(revenuesTotal-expensesTotal).toFixed(2);
+				td2.style.backgroundColor="#ccc";
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				ISTemplate.appendChild(tr);
+
+
+
+
+				var reportDiv=document.createElement("div");
+				reportDiv.style.width='100%';
+				var intro=document.createElement("div");
+				intro.style.textAlign="center";
+				intro.dir="rtl";
+				var title=document.createElement("h1");
+				title.innerHTML="قائمة الدخل";
+				var date=document.createElement("p");
+				date.innerHTML="التاريخ : "+ISDate;
+				date.className+="printedReporthead";
+				var br=document.createElement("br");
+
+				intro.appendChild(title);
+				intro.appendChild(date);
+				intro.appendChild(br);
+				reportDiv.appendChild(intro);
+				reportDiv.appendChild(ISTemplate);
+				reportDiv.id="temp";
+				document.body.append(reportDiv);
+				window.print();
+				var temp = document.getElementById("temp");
+				temp.parentNode.removeChild(temp);
+
+			}
+			else{alert(res.responseText);}
+		});
+	}
+	return false;
+}
+
+
+</script>
+</body>
+</html>

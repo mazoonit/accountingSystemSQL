@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<title>Login</title>
+<link rel="stylesheet" href="/static/style.css">
+<body>
+		<form style="text-align:center;margin-top:12%;">
+					<h1>Login</h1>
+					<input id="username" placeholder="username">
+					<br>
+					<input id="password" placeholder="password" type="password">
+					<br>
+					<button onclick="return login();" class="button">Login</button>
+		</form>
+
+<script src="/static/frontendlib.js"></script>
+<script>
+function login(){
+	var username=document.getElementById("username").value;
+	var password=document.getElementById("password").value;
+	var obj={username:username,password:password};
+	if(!username || !password){
+		alert("Your Username/Password can not be blank!");
+	}
+	else{
+		ajaxRequest("/login","POST","application/json",obj,(res)=>{
+			if(res.status==200){
+				window.location.href='/';}
+			else{
+				alert(res.responseText);
+			}
+		});
+	}
+	return false;
+}
+</script>
+</body>
+</html>

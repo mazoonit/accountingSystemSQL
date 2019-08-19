@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html>
+<title>Ticket Entry</title>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/sidenavStyle.css">
+<link rel="stylesheet" href="/static/topbarStyle.css">
+
+<body>
+<%-include('sidenav.ejs')%>
+
+<div class="main" id="container">
+<section id="content-tab1">
+		<div style="background-color:#173f5f;border-radius:5px;padding:10px;">
+			<a class="y" id="tab1-add">Add <i class="fas fa-plus-circle"></i></a>
+			<a class="y unactive" id="tab1-delete">Delete <i class="fas fa-trash-alt"></i></a>
+			<a class="y unactive" id="tab1-show">Show <i class="fas fa-file"></i></a>
+		</div>
+		<section id="add" class="tabsec">
+			<h1 style="text-align:Center;">Airline Movement (Low Cost)</h1>
+			<form>
+			<table>
+			    <tr>
+				<td>
+				    <p>User</p>
+				</td>
+				<td>
+				    <input type="text" value="<%=user.username%>" readonly/>
+				</td>
+				<td>
+				    <p>Date</p>
+				</td>
+				<td>
+				    <input type="Date" class="date" id="addDate"/>
+				</td>
+				<td>
+				    <p>Time</p>
+				</td>
+				<td>
+				    <input type="time" value="now" id="addTime"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Passenger Name</p>
+				</td>
+				<td >
+				    <input type="text" id="addPassengerName"/>
+				</td>
+				<td>
+				    <p>Serial Number</p>
+				</td>
+				<td >
+				    <input type="text" id="addSerialNumber"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Airline Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getLowcostAccount(event)" id="addSupplierAccount"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such airline account!" id="addSupplierAccountDiv" class="canNotEdit" readonly/>
+				</td>
+				<td  style="text-align:left;">
+						<button class="showButton" onClick="return showAccounts();">Show</button>
+				</td>
+
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Ticket Total</p>
+				</td>
+				<td>
+				    <input type="number" min="0" value="0" onchange="addUpdateDiscount(event)" id="addticketTotal"/>
+				</td>
+				<td>
+				    <p>Selling Price</p>
+				</td>
+				<td>
+				    <input type="number" min="0" value="0" onchange="addUpdateDiscount(event)" id="addSellingPrice"/>
+				</td>
+				<td>
+				<p id="addProfit">Profit :</p>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Profit Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getProfitAccount(event)" id="addProfitAccount"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such profit account!" id="addProfitAccountDiv" class="canNotEdit" readonly/>
+				</td>
+				<td  style="text-align:left;">
+						<button class="showButton" onClick="return showAccounts();">Show</button>
+				</td>
+
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Client Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getClientAccount(event)" id="addClientAccount"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such client account!" id="addClientAccountDiv" class="canNotEdit" readonly/>
+				</td>
+				<td  style="text-align:left;">
+						<button class="showButton" onClick="return showAccounts();">Show</button>
+				</td>
+
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Employer Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getEmployerAccount(event)" id="addEmployerAccount"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such employer account!" id="addEmployerAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Currency</p>
+				</td>
+				<td>
+				    <input type="text" id="addCurrencyCode" onchange="getCurrency(event)"/>
+				</td>
+				<td>
+				    <input type="text" id="addCurrencyCodeDiv" readonly required class="canNotEdit" value="There's no such currency!"/>
+				</td>
+			    </tr>
+					<tr>
+						<td>
+						    <p>Exchange Rate</p>
+						</td>
+						<td >
+						    <input type="Number" id="addExchangeRate"/>
+						</td>
+			    </tr>
+			    <tr>
+						<td>
+						    <p>Description</p>
+						</td>
+						<td >
+						    <input type="text" id="addDescription"/>
+						</td>
+			    </tr>
+			    <tr>
+				    <td><button class="button" onClick="return addTicket();">Add</button></td>
+			   </tr>
+			</table>
+			</form>
+		</section>
+
+
+
+
+		<!--Delete-->
+
+
+
+
+		<section id="delete" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Airline Movement (lowcost)</h1>
+			<form>
+			<table>
+			    <tr>
+				<td>
+				    <p>User</p>
+				</td>
+				<td>
+				    <input type="text" value="<%=user.username%>" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <p>Date</p>
+				</td>
+				<td>
+				    <input type="Date" class="date canNotEdit" id="deleteDate" readonly/>
+				</td>
+				<td>
+				    <p>Time</p>
+				</td>
+				<td>
+				    <input type="Time" id="deleteTime" value="now" readonly class="canNotEdit"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Ticket Number</p>
+				</td>
+				<td>
+				    <input type="text" id="deleteID" onchange="show(event)"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Passenger Name</p>
+				</td>
+				<td >
+				    <input type="text"  id="deletePassengerName" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <p>Serial Number</p>
+				</td>
+				<td >
+				    <input type="text"  id="deleteSerialNumber" readonly class="canNotEdit"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Airline Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getLowcostAccount(event)" id="deleteSupplierAccount" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such airline account!" id="deleteSupplierAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+
+			    <tr>
+				<td>
+				    <p>Ticket Total</p>
+				</td>
+				<td>
+				    <input type="number" min="0" value="0" onchange="deleteUpdateDiscount(event)" id="deleteticketTotal" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <p>Selling Price</p>
+				</td>
+				<td>
+				    <input type="number" min="0" value="0" onchange="deleteUpdateDiscount(event)" id="deleteSellingPrice" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				<p id="deleteProfit">Profit :</p>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Profit Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getProfitAccount(event)" id="deleteProfitAccount" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such profit account!" id="deleteProfitAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Client Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getClientAccount(event)" id="deleteClientAccount" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such client account!" id="deleteClientAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Employer Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getEmployerAccount(event)" id="deleteEmployerAccount" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such employer account!" id="deleteEmployerAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Currency</p>
+				</td>
+				<td>
+				    <input type="text" id="deleteCurrencyCode" onchange="getCurrency(event)" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <input type="text" id="deleteCurrencyCodeDiv" readonly required class="canNotEdit" value="There's no such currency!"/>
+				</td>
+			    </tr>
+					<tr>
+						<td>
+						    <p>Exchange Rate</p>
+						</td>
+						<td >
+						    <input type="Number" id="deleteExchangeRate"/>
+						</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Description</p>
+				</td>
+				<td >
+				    <input type="text"  id="deleteDescription" readonly class="canNotEdit"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Entry Number</p>
+				</td>
+				<td>
+				    <input type="text" id="deleteEntryNumber" readonly class="canNotEdit"/>
+				</td>
+			    </tr>
+        <tr>
+          <td><button class="button" onclick="return deleteTicket();">Delete</button></td>
+        </tr>
+			</table>
+			</form>
+
+		</section>
+
+
+
+		<!--show-->
+
+
+
+    <section id="show" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Airline Movement (lowcost)</h1>
+			<form>
+			<table>
+			    <tr>
+				<td>
+				    <p>User</p>
+				</td>
+				<td>
+				    <input type="text" value="<%=user.username%>" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <p>Date</p>
+				</td>
+				<td>
+				    <input type="Date" class="date canNotEdit" id="showDate" readonly/>
+				</td>
+				<td>
+				    <p>Time</p>
+				</td>
+				<td>
+				    <input type="Time" id="showTime" value="now" readonly class="canNotEdit"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Ticket Number</p>
+				</td>
+				<td>
+				    <input type="text" id="showID" onchange="show(event)"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Passenger Name</p>
+				</td>
+				<td >
+				    <input type="text"  id="showPassengerName" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <p>Serial Number</p>
+				</td>
+				<td >
+				    <input type="text"  id="showSerialNumber" readonly class="canNotEdit"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Airline Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getLowcostAccount(event)" id="showSupplierAccount" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such airline account!" id="showSupplierAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Ticket Total</p>
+				</td>
+				<td>
+				    <input type="number" min="0" value="0" onchange="showUpdateDiscount(event)" id="showticketTotal" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <p>Selling Price</p>
+				</td>
+				<td>
+				    <input type="number" min="0" value="0" onchange="showUpdateDiscount(event)" id="showSellingPrice" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				<p id="showProfit">Profit :</p>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Profit Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getProfitAccount(event)" id="showProfitAccount" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such profit account!" id="showProfitAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Client Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getClientAccount(event)" id="showClientAccount" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such client account!" id="showClientAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Employer Account</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getEmployerAccount(event)" id="showEmployerAccount" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such employer account!" id="showEmployerAccountDiv" class="canNotEdit" readonly/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Currency</p>
+				</td>
+				<td>
+				    <input type="text" id="showCurrencyCode" onchange="getCurrency(event)" readonly class="canNotEdit"/>
+				</td>
+				<td>
+				    <input type="text" id="showCurrencyCodeDiv" readonly required class="canNotEdit" value="There's no such currency!"/>
+				</td>
+			    </tr>
+					<tr>
+						<td>
+						    <p>Exchange Rate</p>
+						</td>
+						<td >
+						    <input type="Number" id="showExchangeRate"/>
+						</td>
+			    </tr>
+
+			    <tr>
+				<td>
+				    <p>Description</p>
+				</td>
+				<td >
+				    <input type="text"  id="showDescription" readonly class="canNotEdit"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Entry Number</p>
+				</td>
+				<td>
+				    <input type="text" id="showEntryNumber" readonly class="canNotEdit"/>
+				</td>
+			    </tr>
+			</table>
+			</form>
+		</section>
+</div>
+
+<%-include('showAccounts.ejs')%>
+
+
+<script src="/static/jquery-min.js"></script>
+<script src="/static/frontendlib.js"></script>
+<script src="/static/topbarFunction.js"></script>
+
+<!--vainlia javascript-->
+<script>
+function addTicket(){
+	var sellingPrice=parseFloat(document.getElementById("addSellingPrice").value);
+	var ticketTotal=parseFloat(document.getElementById("addticketTotal").value);
+	var profit=parseFloat(sellingPrice-ticketTotal);
+
+	var date=document.getElementById("addDate").value;
+	var time=document.getElementById("addTime").value;
+	var description=document.getElementById("addDescription").value;
+	var serialNumber=document.getElementById("addSerialNumber").value;
+	var passengerName=document.getElementById("addPassengerName").value;
+
+	if(date=="" || time=="" || description=="" || serialNumber=="" ||passengerName==""){
+		alert("You can't leave blank inputs!");
+	}
+	else{
+		var productObj={
+			sellingPrice:sellingPrice,
+			profit:profit,
+			total:ticketTotal,
+			passengerName:passengerName,
+			serialNumber:serialNumber,
+			description:description
+		};
+		//there's something to edit here
+		var currencyCode=document.getElementById("addCurrencyCode").value;
+		var exchangeRate=document.getElementById("addExchangeRate").value;
+		var clientAccount=document.getElementById("addClientAccount").value;
+		var supplierAccount=document.getElementById("addSupplierAccount").value;
+		var employerAccount=document.getElementById("addEmployerAccount").value;
+		var profitAccount=document.getElementById("addProfitAccount").value;
+		var product={
+			createdAt:date+' '+time,
+			currencyId:currencyCode,
+			exchangeRate:exchangeRate,
+			clientAccount:clientAccount,
+			supplierAccount:supplierAccount,
+			employerId:employerAccount,
+			profitAccount:profitAccount,
+			productType:"lowcost",
+			productObj:productObj
+		};
+		var promises=[];
+		promises.push(ajaxPromise("api/currency/frontGet","POST","application/json",{id:currencyCode}));
+		promises.push(ajaxPromise("api/account/check","POST","application/json",{id:supplierAccount,type:"lowCost"}));
+		promises.push(ajaxPromise("api/account/check","POST","application/json",{id:clientAccount,type:"client"}));
+		promises.push(ajaxPromise("api/employer/frontGet","POST","application/json",{id:employerAccount}));
+		promises.push(ajaxPromise("api/account/check","POST","application/json",{id:profitAccount,type:"profit"}));
+		Promise.all(promises).then((res)=>{
+			var flag=false;
+			for(var i=0;i<res.length;i++){
+				if(res[i].status!=200){
+					alert(res[i].responseText);
+					flag=true;
+				}
+			}
+			if(flag==false){
+				ajaxRequest("api/product","POST","application/json",product,(res)=>{
+					if(res.status=="200"){
+						res=JSON.parse(res.responseText);
+						alert("Ticket has been added successfully!");
+						alert("Ticket Number is "+res.id);
+					}
+					else{
+						alert(res.responseText);
+					}
+				});
+			}
+		});
+	}
+	return false;
+}
+
+function deleteTicket(){
+	var ticketNumber=document.getElementById("deleteID").value;
+	if(window.confirm("Are you sure that you want to delete it ?")){
+		ajaxRequest("api/product","DELETE","application/json",{id:ticketNumber,productType:"lowcost"},(res)=>{
+			alert(res.responseText);
+		});
+	}
+	return false;
+}
+
+
+
+
+function show(e){
+  var targetID=e.target.id;
+  var tabID=targetID.slice(0,targetID.length-2);
+	var ticketNumber=document.getElementById(targetID).value;
+	ajaxRequest("api/product/frontGet","POST","application/json",{id:ticketNumber,productType:"lowcost"},(res)=>{
+		if(res.status=="200"){
+			var res=JSON.parse(res.responseText);
+			console.log(res);
+			var ticketObj=JSON.parse(res.productObj);
+			document.getElementById(tabID+"SellingPrice").value=parseFloat(ticketObj.sellingPrice);
+			document.getElementById(tabID+"ticketTotal").value=parseFloat(ticketObj.total);
+			var date=new Date(res.createdAt).toLocaleString().split(',');
+			var time=new Date(res.createdAt).toTimeString().split(' ')[0];;
+			date=date[0];
+			date=date.split('/');
+			date=date[2]+'-'+date[1]+'-'+date[0];
+			document.getElementById(tabID+"Date").value=date;
+			document.getElementById(tabID+"Time").value=time;
+			document.getElementById(tabID+"Description").value=ticketObj.description;
+			document.getElementById(tabID+"SerialNumber").value=ticketObj.serialNumber;
+			document.getElementById(tabID+"PassengerName").value=ticketObj.passengerName;
+
+			document.getElementById(tabID+"CurrencyCode").value=res.currencyId;
+			document.getElementById(tabID+"ExchangeRate").value=res.exchangeRate;
+			document.getElementById(tabID+"ClientAccount").value=res.clientAccount;
+			document.getElementById(tabID+"SupplierAccount").value=res.supplierAccount;
+			document.getElementById(tabID+"EmployerAccount").value=res.employerId;
+			document.getElementById(tabID+"ProfitAccount").value=res.profitAccount;
+			document.getElementById(tabID+"EntryNumber").value=res.entryId;
+
+
+		}
+		else{
+			alert(res.responseText);
+			document.getElementById(tabID+"SellingPrice").value=0;
+			document.getElementById(tabID+"ticketTotal").value=0;
+			document.getElementById(tabID+"Date").value="";
+			document.getElementById(tabID+"Time").value="";
+			document.getElementById(tabID+"Description").value="";
+			document.getElementById(tabID+"SerialNumber").value="";
+			document.getElementById(tabID+"PassengerName").value="";
+
+			document.getElementById(tabID+"CurrencyCode").value="";
+			document.getElementById(tabID+"ExchangeRate").value="";
+			document.getElementById(tabID+"ClientAccount").value="";
+			document.getElementById(tabID+"SupplierAccount").value="";
+			document.getElementById(tabID+"EmployerAccount").value="";
+			document.getElementById(tabID+"ProfitAccount").value="";
+			document.getElementById(tabID+"EntryNumber").value="";
+		}
+		var ticketTotal=document.getElementById(tabID+"ticketTotal");
+		var ClientAccount=document.getElementById(tabID+"ClientAccount");
+		var SupplierAccount=document.getElementById(tabID+"SupplierAccount");
+		var EmployerAccount=document.getElementById(tabID+"EmployerAccount");
+		var ProfitAccount=document.getElementById(tabID+"ProfitAccount");
+		var Currency=document.getElementById(tabID+"CurrencyCode");
+		var event = new Event('change');
+		ticketTotal.dispatchEvent(event);
+		ClientAccount.dispatchEvent(event);
+		SupplierAccount.dispatchEvent(event);
+		EmployerAccount.dispatchEvent(event);
+		ProfitAccount.dispatchEvent(event);
+		Currency.dispatchEvent(event);
+
+	});
+}
+
+
+
+
+function addUpdateDiscount(event){
+	var ticketTotal=parseFloat(document.getElementById("addticketTotal").value);
+	var sellingPrice=parseFloat(document.getElementById("addSellingPrice").value);
+	var profit=document.getElementById("addProfit");
+	var e=sellingPrice-ticketTotal;
+	profit.innerHTML="Profit :"+e.toFixed(2);
+}
+function deleteUpdateDiscount(event){
+
+	var ticketTotal=parseFloat(document.getElementById("deleteticketTotal").value);
+	var sellingPrice=parseFloat(document.getElementById("deleteSellingPrice").value);
+	var profit=document.getElementById("deleteProfit");
+	var e=sellingPrice-ticketTotal;
+	profit.innerHTML="Profit :"+e.toFixed(2);
+}
+function showUpdateDiscount(event){
+	var ticketTotal=parseFloat(document.getElementById("showticketTotal").value);
+	var sellingPrice=parseFloat(document.getElementById("showSellingPrice").value);
+	var profit=document.getElementById("showProfit");
+	var e=sellingPrice-ticketTotal;
+	profit.innerHTML="Profit :"+e.toFixed(2);
+}
+</script>
+</body>
+</html>

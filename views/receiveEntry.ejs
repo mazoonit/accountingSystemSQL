@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html>
+<title>Receive Entry</title>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/sidenavStyle.css">
+<link rel="stylesheet" href="/static/topbarStyle.css">
+
+<style>
+.printedReporthead{display:inline-block;margin:15px;}
+#accountReportTemplate{
+	border:0.5px solid #000;
+	border-collapse:collapse;
+	width:100%;
+}
+#accountReportTemplate td{
+	text-align:center;
+	border:0.5px solid #000;
+
+}
+#temp table{text-align:right;font-size:20px;}
+#temp td{text-align:right;padding:15px;}
+#temp{visibility: hidden;width:99%;display:none;}
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #temp, #temp * {
+    visibility: visible;
+  }
+  #temp{
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}
+</style>
+<body>
+<%-include('sidenav.ejs')%>
+<div class="main" id="container">
+<section id="content-tab1">
+		<div style="background-color:#173f5f;border-radius:5px;padding:10px;">
+			<a class="y" id="tab1-add">Add <i class="fas fa-plus-circle"></i></a>
+			<a class="y unactive" id="tab1-edit">Edit <i class="fas fa-sync-alt"></i></a>
+			<a class="y unactive" id="tab1-print">Show <i class="fas fa-file"></i></a>
+		</div>
+		<section id="add" class="tabsec">
+			<h1 style="text-align:Center;">Receive Entry</h1>
+			<form>
+			<table>
+			    <tr>
+				<td>
+				    <p>User</p>
+				</td>
+				<td>
+				    <input type="text" class="canNotEdit" value="<%=user.username%>" readonly/>
+				</td>
+				<td>
+				    <p>Date</p>
+				</td>
+				<td>
+				    <input type="Date" class="date canNotEdit" readonly/>
+				</td>
+				<td>
+						<input type="Time" value='now' class="canNotEdit" readonly />
+				</td>
+
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Cash</p>
+				</td>
+				<td>
+				    <input type="text" onchange="getCashAccount(event)" id="cashAccount"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such cash account!"class="canNotEdit" id="cashAccountDiv"readonly/>
+				</td>
+				<td  style="text-align:left;">
+						<button class="showButton" onClick="return showAccounts();">Show</button>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Reciept Number</p>
+				</td>
+				<td>
+				    <input type="text" readonly class="canNotEdit"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Receive From</p>
+				</td>
+				<td colspan="10">
+				    <input type="text" style="width:100%;" id="addDescriptionFromTo"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Amount</p>
+				</td>
+				<td>
+				    <input type="Number" id="addAmount"/>
+				</td>
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Currency</p>
+				</td>
+				<td>
+				    <input type="text" id="addCurrencyCode" onchange="getCurrency(event)"/>
+				</td>
+				<td>
+				    <input type="text" id="addCurrencyCodeDiv" class="canNotEdit" readonly required value="There's no such currency!"/>
+				</td>
+			    </tr>
+					<tr>
+						<td>
+								<p>Exchange Rate</p>
+						</td>
+						<td>
+								<input type="number" id="addExchangeRate"/>
+						</td>
+					</tr>
+			    <tr>
+				<td>
+				    <p>Description</p>
+				</td>
+				<td colspan="6">
+				    <input type="text" style="width:100%;" id="addDescription"/>
+				</td>
+
+			    </tr>
+			    <tr>
+				<td>
+				    <p>Account</p>
+				</td>
+				<td>
+				    <input type="text" id="Account" onchange="getAccount(event)"/>
+				</td>
+				<td>
+				    <input type="text" value="There's no such account!" class="canNotEdit" id="AccountDiv"readonly/>
+				</td>
+				<td  style="text-align:left;">
+						<button class="showButton" onClick="return showAccounts();">Show</button>
+				</td>
+
+			    </tr>
+			    <tr>
+				    <td><button class="button" onClick="return addReceiveReceipt();">Add</button></td>
+			   </tr>
+			</table>
+			</form>
+		</section>
+
+
+
+		<!--edit section-->
+
+
+
+		<section id="edit" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Receive Entry</h1>
+			<form>
+				<table>
+				  <col>
+				  <colgroup span="4"></colgroup>
+				  <colgroup span="4"></colgroup>
+				    <tr>
+					<td>
+					    <p>User</p>
+					</td>
+					<td>
+					    <input type="text" value="<%=user.username%>" class="canNotEdit" readonly/>
+					</td>
+					<td>
+					    <p>Date</p>
+					</td>
+					<td>
+					    <input type="Date" class="date canNotEdit" id="editDate" readonly/>
+					</td>
+					<td>
+							<input type="Time" value='now' class="canNotEdit" id="editTime" readonly />
+					</td>
+
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Cash</p>
+					</td>
+					<td>
+					    <input type="text" id="editCashBetterId" onchange="getCashAccount(event)"/>
+					</td>
+					<td>
+					    <input type="text" value="There's no such cash account!" id="editCashBetterIdDiv" class="canNotEdit" readonly/>
+					</td>
+					<td  style="text-align:left;">
+							<button class="showButton" onClick="return showAccounts();">Show</button>
+					</td>
+
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Receipt Number</p>
+					</td>
+					<td>
+					    <input type="text" id="editID" onchange="show(event)"/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Receive From</p>
+					</td>
+					<td colspan="10">
+					    <input type="text" style="width:100%;" id="editDescriptionFromTo"/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Amount</p>
+					</td>
+					<td>
+					    <input type="number" id="editAmount"/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Currency</p>
+					</td>
+					<td>
+					    <input type="text" id="editCurrencyCode" onchange="getCurrency(event)"/>
+					</td>
+					<td>
+					    <input type="text" id="editCurrencyCodeDiv" readonly value="There's no such currency!" class="canNotEdit"/>
+					</td>
+				    </tr>
+					<tr>
+						<td>
+								<p>Exchange Rate</p>
+						</td>
+						<td>
+								<input type="number" id="editExchangeRate"/>
+						</td>
+					</tr>
+				    <tr>
+					<td>
+					    <p>Description</p>
+					</td>
+					<td colspan="6">
+					    <input type="text" style="width:100%;" id="editDescription"/>
+					</td>
+
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Account</p>
+					</td>
+					<td>
+					    <input type="text" id="editAccount" onchange="getAccount(event)"/>
+					</td>
+					<td>
+					    <input type="text" class="canNotEdit" id="editAccountDiv"value="There's no such account!" readonly/>
+					</td>
+					<td  style="text-align:left;">
+							<button class="showButton" onClick="return showAccounts();">Show</button>
+					</td>
+
+				    </tr>
+				    <tr>
+					    <td><button class="button" onClick="return edit();">Edit</button></td>
+				   </tr>
+				</table>
+			</form>
+		</section>
+
+
+
+
+		<!--Print-->
+
+
+
+
+		<section id="print" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Receive Entry</h1>
+			<form>
+				<table>
+				  <col>
+				  <colgroup span="4"></colgroup>
+				  <colgroup span="4"></colgroup>
+				    <tr>
+					<td>
+					    <p>User</p>
+					</td>
+					<td>
+					    <input type="text" value="<%=user.username%>" class="canNotEdit" readonly/>
+					</td>
+					<td>
+					    <p>Date</p>
+					</td>
+					<td>
+					    <input type="Date" class="date canNotEdit" id="showDate" readonly/>
+					</td>
+					<td>
+							<input type="Time" value='now' class="canNotEdit" id="showTime" readonly />
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Cash</p>
+					</td>
+					<td>
+					    <input type="text" id="showCashBetterId" class="canNotEdit" onchange="getCashAccount(event)" readonly/>
+					</td>
+					<td>
+					    <input type="text" value="There's no such cash account!" id="showCashBetterIdDiv" class="canNotEdit" readonly/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Receipt Number</p>
+					</td>
+					<td>
+					    <input type="text" id="showID" onchange="show(event)"/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Receive From</p>
+					</td>
+					<td colspan="10">
+					    <input type="text" style="width:100%;" id="showDescriptionFromTo" class="canNotEdit" readonly/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Amount</p>
+					</td>
+					<td>
+					    <input type="text" id="showAmount" class="canNotEdit" readonly/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Currency</p>
+					</td>
+					<td>
+					    <input type="text" id="showCurrencyCode" class="canNotEdit" onchange="getCurrency(event)" readonly/>
+					</td>
+					<td>
+					    <input type="text" id="showCurrencyCodeDiv" class="canNotEdit" value="There's no such currency!"readonly/>
+					</td>
+				    </tr>
+						<tr>
+							<td>
+									<p>Exchange Rate</p>
+							</td>
+							<td>
+									<input type="number" id="showExchangeRate"/>
+							</td>
+						</tr>
+				    <tr>
+					<td>
+					    <p>Description</p>
+					</td>
+					<td colspan="6">
+					    <input type="text" style="width:100%;" id="showDescription" class="canNotEdit" readonly/>
+					</td>
+
+				    </tr>
+				    <tr>
+					<td>
+					    <p>Account</p>
+					</td>
+					<td>
+					    <input type="text" id="showAccount" class="canNotEdit" onchange="getAccount(event)" readonly/>
+					</td>
+					<td>
+					    <input type="text" class="canNotEdit" id="showAccountDiv"value="There's no such account!" readonly/>
+					</td>
+				    </tr>
+				    <tr>
+					    <td><button class="button" onClick="return printShow();">Print</button></td>
+				   </tr>
+				</table>
+			</form>
+
+		</section>
+</section>
+</div>
+
+<div style="text-align:Center;margin:auto;display:none;" dir="rtl" id="temp">
+	<div style="text-align:right;margin:0;">
+	<div style="display:inline-block;">
+		<p style="text-align:Center;" dir="ltr">
+			9 ElGeish Road - Sidi Bishr - Alexandria
+			<br>
+			Tel : +3 3583492 - 3583498 - 3581450
+			<br>
+			Mobile : +2 01025066684 - 01281655717
+			<br>
+			E-Mail : info.alex@egythai.com
+			<br>
+			Egythai Tours & Travel - Egypt
+		</p>
+	</div>
+	<img src="/static/images/img.png" style="width:auto;height:100px;float:left;display:inline-block;"/>
+	</div>
+	<h2 style="font-size:30px;border:2px solid #000;box-shadow:2px 4px;display:table;padding:5px;padding-left:20px;padding-right:20px;text-align:Center; margin:Auto;">حركة المقبوضات</h2>
+	<p style="font-size:20px;display:inline-block;float:right;" id="amountHeader"></p>
+	<p style="font-size:20px;display:inline-block;text-align:center;" id="idHeader"></p>
+	<table style="width:100%;border-collapse: collapse;padding-bottom:40px;border:2px solid #000;text-align:right;">
+		<tr>
+			<td colspan="2" style="border:2px solid #000;padding:5px;" id="cashTable"></td>
+			<td colspan="2" style="border:2px solid #000;padding:5px;" id="printDateTable"></td>
+		</tr>
+		<tr>
+			<td colspan="4" id="dateTable"></td>
+		</tr>
+		<tr>
+			<td colspan="4" id="descriptionFromToTable"></td>
+		</tr>
+		<tr>
+			<td colspan="4" id="amountTable"></td>
+		</tr>
+		<tr>
+			<td colspan="4" id="descriptionTable"></td>
+		</tr>
+		<tr>
+			<td colspan="4" id="accountTable"></td>
+		</tr>
+		<tr>
+			<td colspan="4" id="employerTable"></td>
+		</tr>
+		<tr>
+			<td colspan="2">توقيع المستلم</td>
+			<td colspan="1">المدير المالي</td>
+			<td colspan="1">الاعتماد</td>
+		</tr>
+
+	</table>
+	<br><br><br>
+	<div style="text-align:right;margin:0;">
+	<div style="display:inline-block;">
+		<p style="text-align:Center;" dir="ltr">
+			9 ElGeish Road - Sidi Bishr - Alexandria
+			<br>
+			Tel : +3 3583492 - 3583498 - 3581450
+			<br>
+			Mobile : +2 01025066684 - 01281655717
+			<br>
+			E-Mail : info.alex@egythai.com
+			<br>
+			Egythai Tours & Travel - Egypt
+		</p>
+	</div>
+	<img src="/static/images/img.png" style="width:auto;height:100px;float:left;display:inline-block;"/>
+	</div>
+	<h2 style="font-size:30px;border:2px solid #000;box-shadow:2px 4px;display:table;padding:5px;padding-left:20px;padding-right:20px;text-align:Center; margin:Auto;">حركة المقبوضات</h2>
+	<p style="font-size:20px;display:inline-block;float:right;" id="amountHeader2"></p>
+	<p style="font-size:20px;display:inline-block;text-align:center;" id="idHeader2"></p>
+	<table style="width:100%;border-collapse: collapse;padding-bottom:40px;border:2px solid #000;text-align:right;">
+		<tr>
+			<td colspan="2" style="border:2px solid #000;padding:5px;" id="cashTable2"></td>
+			<td colspan="2" style="border:2px solid #000;padding:5px;" id="printDateTable2"></td>
+		</tr>
+		<tr>
+			<td colspan="4" id="dateTable2"></td>
+		</tr>
+		<tr>
+			<td colspan="4" id="descriptionFromToTable2"></td>
+		</tr>
+		<tr>
+			<td colspan="4" id="amountTable2"></td>
+		</tr>
+		<tr>
+			<td colspan="4" id="descriptionTable2"></td>
+		</tr>
+		<tr>
+			<td colspan="4" id="accountTable2"></td>
+		</tr>
+		<tr>
+			<td colspan="4" id="employerTable2"></td>
+		</tr>
+		<tr>
+			<td colspan="2">توقيع المستلم</td>
+			<td colspan="1">المدير المالي</td>
+			<td colspan="1">الاعتماد</td>
+		</tr>
+
+	</table>
+
+</div>
+
+
+<%-include('showAccounts.ejs')%>
+
+
+<script src="/static/jquery-min.js"></script>
+<script src="/static/frontendlib.js"></script>
+<script src="/static/topbarFunction.js"></script>
+<script src="/static/Tafqeet.js"></script>
+<!--vainlia javascript-->
+<script>
+function show(e){
+  var targetID=e.target.id;
+  var tabID=targetID.slice(0,targetID.length-2);
+	var editReceiptNumber=document.getElementById(targetID).value;
+	ajaxRequest('api/receipt/frontGet',"POST","application/json",{id:editReceiptNumber,type:"receiveReceipt"},(res)=>{
+    if(res.status!="200"){
+				alert(res.responseText);
+				var dateInput=document.getElementById(tabID+"Date");
+				dateInput.value='';
+				var account=document.getElementById(tabID+"Account");
+				account.value='';
+				var cash=document.getElementById(tabID+"CashBetterId");
+				cash.value='';
+				var description=document.getElementById(tabID+"Description");
+				description.value='';
+				var descriptionFromTo=document.getElementById(tabID+"DescriptionFromTo");
+				descriptionFromTo.value='';
+				var amount=document.getElementById(tabID+"Amount");
+				amount.value='';
+				var currency=document.getElementById(tabID+"CurrencyCode");
+				currency.value='';
+				var exchangeRate=document.getElementById(tabID+"ExchangeRate");
+				exchangeRate.value='';
+				var event = new Event('change');
+				currency.dispatchEvent(event);
+				account.dispatchEvent(event);
+				cash.dispatchEvent(event);
+			}
+		else{
+				res=JSON.parse(res.responseText);
+				var date=new Date(res.createdAt).toLocaleString().split(',');
+				var time=date[1];
+				date=date[0];
+				date=date.split('/');
+				date=date[2]+'-'+date[1]+'-'+date[0];
+				var dateInput=document.getElementById(tabID+"Date");
+				dateInput.value=date;
+				var account=document.getElementById(tabID+"Account");
+				account.value=res.accountId;
+				var cash=document.getElementById(tabID+"CashBetterId");
+				cash.value=res.cashAccount;
+				var description=document.getElementById(tabID+"Description");
+				description.value=res.description;
+				var descriptionFromTo=document.getElementById(tabID+"DescriptionFromTo");
+				descriptionFromTo.value=res.descriptionFromTo;
+				var amount=document.getElementById(tabID+"Amount");
+				amount.value=res.amount;
+				var currency=document.getElementById(tabID+"CurrencyCode");
+				currency.value=res.currencyId;
+				var exchangeRate=document.getElementById(tabID+"ExchangeRate");
+				exchangeRate.value=res.exchangeRate;
+				var event = new Event('change');
+				currency.dispatchEvent(event);
+				account.dispatchEvent(event);
+				cash.dispatchEvent(event);
+		}
+
+	});
+	return false;
+}
+
+
+function printShow(){
+	var showReceiptNumber=document.getElementById("showID").value;
+	ajaxRequest('api/receipt/frontGet',"POST","application/json",{id:showReceiptNumber,type:"receiveReceipt"},(res)=>{
+		if(res.status!="200"){
+				alert(res.responseText);}
+		else{
+			res=JSON.parse(res.responseText);
+			var date=new Date(res.createdAt).toLocaleString().split(',');
+			var time=date[1];
+			date=date[0];
+			date=date.split('/');
+			date=date[2]+'-'+date[1]+'-'+date[0];
+			var temp=document.getElementById("temp");
+			temp.style.display="block";
+			var idHeader=document.getElementById("idHeader");
+			var idHeader2=document.getElementById("idHeader2");
+			idHeader.innerHTML="رقم :"+res.id;
+			idHeader2.innerHTML="رقم :"+res.id;
+			var amountHeader=document.getElementById("amountHeader");
+			var amountHeader2=document.getElementById("amountHeader2");
+			amountHeader.innerHTML="مبلغ و قدره : "+parseFloat(res.amount).toFixed(2)+"   "+res.currency.abb;
+			amountHeader2.innerHTML="مبلغ و قدره : "+parseFloat(res.amount).toFixed(2)+"   "+res.currency.abb;
+			var cashTable=document.getElementById("cashTable");
+			var cashTable2=document.getElementById("cashTable2");
+			cashTable.innerHTML="رقم الخزينة : "+res.cashAcc.id+"   "+res.cashAcc.name;
+			cashTable2.innerHTML="رقم الخزينة : "+res.cashAcc.id+"   "+res.cashAcc.name;
+			var printDateTable=document.getElementById("printDateTable");
+			var printDateTable2=document.getElementById("printDateTable2");
+			printDateTable.innerHTML="تاريخ الطباعة : "+new Date().toLocaleString().split(',')[0];
+			printDateTable2.innerHTML="تاريخ الطباعة : "+new Date().toLocaleString().split(',')[0];
+			var dateTable=document.getElementById("dateTable");
+			var dateTable2=document.getElementById("dateTable2");
+			dateTable.innerHTML="التاريخ : "+new Date(res.createdAt).toLocaleString().split(',')[0];
+			dateTable2.innerHTML="التاريخ : "+new Date(res.createdAt).toLocaleString().split(',')[0];
+			var descriptionFromToTable=document.getElementById("descriptionFromToTable");
+			var descriptionFromToTable2=document.getElementById("descriptionFromToTable2");
+			descriptionFromToTable.innerHTML="يقبض من : "+res.descriptionFromTo;
+			descriptionFromToTable2.innerHTML="يقبض من : "+res.descriptionFromTo;
+			var amountTable=document.getElementById("amountTable");
+			var amountTable2=document.getElementById("amountTable2");
+			amountTable.innerHTML="فقط : "+tafqeet(res.amount)+" "+res.currency.name;
+			amountTable2.innerHTML="فقط : "+tafqeet(res.amount)+" "+res.currency.name;
+			var descriptionTable=document.getElementById("descriptionTable");
+			var descriptionTable2=document.getElementById("descriptionTable2");
+			descriptionTable.innerHTML="وذلك قيمة : "+res.description;
+			descriptionTable2.innerHTML="وذلك قيمة : "+res.description;
+			var accountTable=document.getElementById("accountTable");
+			var accountTable2=document.getElementById("accountTable2");
+			accountTable.innerHTML="رقم الحساب : "+res.account.id;
+			accountTable2.innerHTML="رقم الحساب : "+res.account.id;
+			var employerTable=document.getElementById("employerTable");
+			var employerTable2=document.getElementById("employerTable2");
+			employerTable.innerHTML="امين الخزينة : "+res.user.username;
+			employerTable2.innerHTML="امين الخزينة : "+res.user.username;
+			window.print();
+			temp.style.display="none";
+
+
+		}
+
+	});
+	return false;
+}
+//cash
+function addReceiveReceipt(){
+	var account=document.getElementById("Account").value;
+	var cashBetterId=document.getElementById("cashAccount").value;
+	var amount=parseFloat(document.getElementById("addAmount").value);
+	var description=document.getElementById("addDescription").value;
+	var descriptionFromTo=document.getElementById("addDescriptionFromTo").value;
+	var currency=document.getElementById("addCurrencyCode").value;
+	var currencyName=document.getElementById("addCurrencyCodeDiv").value;
+	var exchangeRate=document.getElementById("addExchangeRate").value;
+	var type="receiveReceipt";
+	var receiptEntry={
+		accountId:account,
+		amount:amount,
+		description:description,
+		cashAccount:cashBetterId,
+		descriptionFromTo:descriptionFromTo,
+		type:type,
+		currencyId:currency,
+		exchangeRate:exchangeRate};
+	var promises=[];
+	promises.push(ajaxPromise("api/currency/frontGet","POST","application/json",{id:currency}));
+	promises.push(ajaxPromise("api/account/frontGet","POST","application/json",{id:account}));
+	promises.push(ajaxPromise("api/account/frontGet","POST","application/json",{id:cashBetterId}));
+	Promise.all(promises).then((res)=>{
+		let flag=true;
+		for(var i=0;i<res.length;i++){
+			if(res[i].status!="200"){
+				flag=false;
+				alert(res[i].responseText);
+			}
+		}
+		if(flag==true){
+			ajaxRequest("api/receipt","POST","application/json",{receiptObj:receiptEntry},(res)=>{
+				if(res.status=="200"){
+					res=JSON.parse(res.responseText);
+					alert("Receipt has been added successfully!");
+					if(window.confirm("Do you want to print it?")){
+				var date=new Date(res.createdAt).toLocaleString().split(',');
+				var time=date[1];
+				date=date[0];
+				date=date.split('/');
+				date=date[2]+'-'+date[1]+'-'+date[0];
+				var temp=document.getElementById("temp");
+				temp.style.display="block";
+				var idHeader=document.getElementById("idHeader");
+				var idHeader2=document.getElementById("idHeader2");
+				idHeader.innerHTML="رقم :"+res.id;
+				idHeader2.innerHTML="رقم :"+res.id;
+				var amountHeader=document.getElementById("amountHeader");
+				var amountHeader2=document.getElementById("amountHeader2");
+				amountHeader.innerHTML="مبلغ و قدره : "+parseFloat(res.amount).toFixed(2)+"   "+res.currency.abb;
+				amountHeader2.innerHTML="مبلغ و قدره : "+parseFloat(res.amount).toFixed(2)+"   "+res.currency.abb;
+				var cashTable=document.getElementById("cashTable");
+				var cashTable2=document.getElementById("cashTable2");
+				cashTable.innerHTML="رقم الخزينة : "+res.cashAcc.id+"   "+res.cashAcc.name;
+				cashTable2.innerHTML="رقم الخزينة : "+res.cashAcc.id+"   "+res.cashAcc.name;
+				var printDateTable=document.getElementById("printDateTable");
+				var printDateTable2=document.getElementById("printDateTable2");
+				printDateTable.innerHTML="تاريخ الطباعة : "+new Date().toLocaleString().split(',')[0];
+				printDateTable2.innerHTML="تاريخ الطباعة : "+new Date().toLocaleString().split(',')[0];
+				var dateTable=document.getElementById("dateTable");
+				var dateTable2=document.getElementById("dateTable2");
+				dateTable.innerHTML="التاريخ : "+new Date(res.createdAt).toLocaleString().split(',')[0];
+				dateTable2.innerHTML="التاريخ : "+new Date(res.createdAt).toLocaleString().split(',')[0];
+				var descriptionFromToTable=document.getElementById("descriptionFromToTable");
+				var descriptionFromToTable2=document.getElementById("descriptionFromToTable2");
+				descriptionFromToTable.innerHTML="يقبض من : "+res.descriptionFromTo;
+				descriptionFromToTable2.innerHTML="يقبض من : "+res.descriptionFromTo;
+				var amountTable=document.getElementById("amountTable");
+				var amountTable2=document.getElementById("amountTable2");
+				amountTable.innerHTML="فقط : "+tafqeet(res.amount)+" "+res.currency.name;
+				amountTable2.innerHTML="فقط : "+tafqeet(res.amount)+" "+res.currency.name;
+				var descriptionTable=document.getElementById("descriptionTable");
+				var descriptionTable2=document.getElementById("descriptionTable2");
+				descriptionTable.innerHTML="وذلك قيمة : "+res.description;
+				descriptionTable2.innerHTML="وذلك قيمة : "+res.description;
+				var accountTable=document.getElementById("accountTable");
+				var accountTable2=document.getElementById("accountTable2");
+				accountTable.innerHTML="رقم الحساب : "+res.account.id;
+				accountTable2.innerHTML="رقم الحساب : "+res.account.id;
+				var employerTable=document.getElementById("employerTable");
+				var employerTable2=document.getElementById("employerTable2");
+				employerTable.innerHTML="امين الخزينة : "+res.user.username;
+				employerTable2.innerHTML="امين الخزينة : "+res.user.username;
+				window.print();
+				temp.style.display="none";
+
+					}
+				}
+				else{
+					alert(res.responseText);
+				}
+			});
+		}
+	});
+	return false;
+}
+function edit(){
+	var betterId=document.getElementById("editID").value;
+	var dateInput=document.getElementById("editDate").value;
+	var account=document.getElementById("editAccount").value;
+	var cash=document.getElementById("editCashBetterId").value;
+	var description=document.getElementById("editDescription").value;
+	var descriptionFromTo=document.getElementById("editDescriptionFromTo").value;
+	var amount=document.getElementById("editAmount").value;
+	var currency=document.getElementById("editCurrencyCode").value;
+	var currencyName=document.getElementById("editCurrencyCodeDiv").value;
+	var exchangeRate=document.getElementById("editExchangeRate").value;
+
+	var type="receiveReceipt";
+	var editObj={
+		currencyId:currency,
+		amount:parseFloat(amount),
+		description:description,
+		descriptionFromTo:descriptionFromTo,
+		cashAccount:cash,
+		accountId:account,
+		id:betterId,
+		type:type,
+		exchangeRate:parseFloat(exchangeRate)
+	};
+	var promises=[];
+	promises.push(ajaxPromise("api/currency/frontGet","POST","application/json",{id:currency}));
+	promises.push(ajaxPromise("api/account/frontGet","POST","application/json",{id:account}));
+	promises.push(ajaxPromise("api/account/frontGet","POST","application/json",{id:cash}));
+	Promise.all(promises).then((res)=>{
+		let flag=true;
+		for(var i=0;i<res.length;i++){
+			if(res[i].status!="200"){
+				flag=false;
+				alert(res[i].responseText);
+			}
+		}
+		if(flag==true){
+			ajaxRequest("api/receipt","PUT","application/json",{receiptObj:editObj,type:"receiveReceipt"},(res)=>{
+				if(res.status=="200"){
+					alert("Receipt has been edited successfully!");
+				}
+				else{
+					alert(res.responseText);
+				}
+			});
+		}
+	});
+	return false;
+}
+</script>
+</body>
+</html>
