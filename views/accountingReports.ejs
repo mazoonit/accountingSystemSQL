@@ -25,7 +25,7 @@
 #trialBalanceTemplate td{
 	text-align:center;
 	border:0.5px solid #000;
-
+	padding:5px;
 }
 
 #FPSTemplate{
@@ -36,6 +36,7 @@
 #FPSTemplate td{
 	text-align:center;
 	border:0.5px solid #000;
+	padding:5px;
 
 }
 
@@ -47,11 +48,12 @@
 #ISTemplate td{
 	text-align:center;
 	border:0.5px solid #000;
+	padding:5px;
 
 }
 
 
-#cashCoverTemplate td{border:0.5px solid #000;}
+#cashCoverTemplate td{border:0.5px solid #000;padding:5px;}
 .printedReporthead{display:inline-block;margin:15px;}
 @media print {
   body * {
@@ -83,12 +85,21 @@
 				<table>
 				  <tr>
 						<td>
-						    <p>Date</p>
+						    <p>From Date</p>
 						</td>
 						<td>
-						    <input type="Date" id="toDate"/>
+						    <input type="Date" id="fromDate"/>
 						</td>
 					</tr>
+					<tr>
+						<td>
+								<p>To Date</p>
+						</td>
+						<td>
+								<input type="Date" id="toDate"/>
+						</td>
+					</tr>
+
 				  <tr>
 					    <td><button class="button" onClick="return getTrialBalance();">Get Report</button></td>
 				  </tr>
@@ -132,12 +143,20 @@
 				<table>
 				  <tr>
 						<td>
-						    <p>Date</p>
+						    <p>From Date</p>
 						</td>
 						<td>
-						    <input type="Date" id="ISDate"/>
+						    <input type="Date" id="ISFromDate"/>
 						</td>
 				    </tr>
+						<tr>
+							<td>
+									<p>To Date</p>
+							</td>
+							<td>
+									<input type="Date" id="ISToDate"/>
+							</td>
+						</tr>
 				    <tr>
 					    <td><button class="button" onClick="return getIS();">Get Report</button></td>
 				   </tr>
@@ -153,6 +172,7 @@
 	<tr>
 		<td colspan="2">أرصدة</td>
 		<td colspan="2">مجاميع</td>
+		<td colspan="2">رصيد اول الفترة</td>
 		<td colspan="2" rowspan="2">البيان</td>
 	</tr>
 	<tr>
@@ -160,23 +180,24 @@
 		<td>دائن</td>
 		<td>مدين</td>
 		<td>دائن</td>
-
+		<td>مدين</td>
+		<td>دائن</td>
 	</tr>
 </table>
 
 
 <table style="width:100%;border:0.5px solid #000;border-collapse:collapse;text-align:center;display:none;" id="FPSTemplate" dir="rtl">
 	<tr>
-		<td>البيان</td>
-		<td>الأرصدة</td>
+		<td><strong>البيان</strong></td>
+		<td><strong>الأرصدة</strong></td>
 	</tr>
 </table>
 
 
 <table style="width:100%;border:0.5px solid #000;border-collapse:collapse;text-align:center;display:none;" id="ISTemplate" dir="rtl">
 	<tr>
-		<td>البيان</td>
-		<td>الأرصدة</td>
+		<td><strong>البيان</strong></td>
+		<td><strong>الأرصدة</strong></td>
 	</tr>
 </table>
 
@@ -193,11 +214,13 @@
 
 <script>
 function getTrialBalance(){
+	const z=0;
+	var fromDate=document.getElementById("fromDate").value;
 	var toDate=document.getElementById("toDate").value;
-	if(toDate==""){alert("insert valid date!");}
+	if(fromDate=="" || toDate==""){alert("insert valid date!");}
 	else{
-		var obj={date:toDate};
-		ajaxRequest("api/accountingReports/getBalances","POST","application/json",obj,(res)=>{
+		var obj={fromDate:fromDate,toDate:toDate};
+		ajaxRequest("api/accountingReports/getTrialBalance","POST","application/json",obj,(res)=>{
 			if(res.status==200){
 				var trialBalanceTemplate=document.getElementById("trialBalanceTemplate");
 				var trialBalanceTemplate=trialBalanceTemplate.cloneNode(true);
@@ -207,10 +230,14 @@ function getTrialBalance(){
 				var totalMovesDebit=0;
 				var totalBalanceCredit=0;
 				var totalBalanceDebit=0;
+				var totalBeginingBalanceDebit=0;
+				var totalBeginingBalanceCredit=0;
 
 				var majorAccounts=JSON.parse(res.responseText);
+				console.log(majorAccounts);
 				var keys=Object.keys(majorAccounts);
 				for(var i=0;i<keys.length;i++){
+
 					k=keys[i];
 					var tr=document.createElement("tr");
 					var td1=document.createElement("td");
@@ -218,23 +245,59 @@ function getTrialBalance(){
 					var td3=document.createElement("td");
 					var td4=document.createElement("td");
 					var td5=document.createElement("td");
+					var td6=document.createElement("td");
+					var td7=document.createElement("td");
 					var balance=777;
+					var beginingBalance=777;
 					if(majorAccounts[k].nature=="debit"){
+						beginingBalance=majorAccounts[k].beginingDebit-majorAccounts[k].beginingCredit;
 						balance=majorAccounts[k].debit-majorAccounts[k].credit;
-						td1.innerHTML=balance.toFixed(2);
-						td2.innerHTML=0;
+						balance+=beginingBalance;
+						if(balance<0){
+							td1.innerHTML=z.toFixed(2);
+							td2.innerHTML=(balance*-1).toFixed(2);;
+						}
+						else{
+							td1.innerHTML=balance.toFixed(2);
+							td2.innerHTML=z.toFixed(2);
+						}
+						if(beginingBalance<0){
+							td5.innerHTML=z.toFixed(2);
+							td6.innerHTML=(beginingBalance*-1).toFixed(2);
+						}
+						else{
+							td5.innerHTML=beginingBalance.toFixed(2);
+							td6.innerHTML=z.toFixed(2);
+						}
 						totalBalanceDebit+=balance;
+						totalBeginingBalanceDebit+=beginingBalance;
 					}
 					else if(majorAccounts[k].nature=="credit"){
+						beginingBalance=majorAccounts[k].beginingCredit-majorAccounts[k].beginingDebit;
 						balance=majorAccounts[k].credit-majorAccounts[k].debit;
-						td1.innerHTML=0;
-						td2.innerHTML=balance.toFixed(2);
+						balance+=beginingBalance;
+						if(balance<0){
+							td1.innerHTML=(balance*-1).toFixed(2);
+							td2.innerHTML=z.toFixed(2);
+						}
+						else{
+							td1.innerHTML=z.toFixed(2);
+							td2.innerHTML=balance.toFixed(2);
+						}
+						if(beginingBalance<0){
+							td5.innerHTML=(beginingBalance*-1).toFixed(2);
+							td6.innerHTML=z.toFixed(2);
+						}
+						else{
+							td5.innerHTML=z.toFixed(2);
+							td6.innerHTML=beginingBalance.toFixed(2);
+						}
 						totalBalanceCredit+=balance;
-
+						totalBeginingBalanceCredit+=beginingBalance;
 					}
 					td3.innerHTML=majorAccounts[k].debit.toFixed(2);
 					td4.innerHTML=majorAccounts[k].credit.toFixed(2);
-					td5.innerHTML=majorAccounts[k].name;
+					td7.innerHTML=majorAccounts[k].name;
 					totalMovesDebit+=majorAccounts[k].debit;
 					totalMovesCredit+=majorAccounts[k].credit;
 
@@ -243,6 +306,8 @@ function getTrialBalance(){
 					tr.appendChild(td3);
 					tr.appendChild(td4);
 					tr.appendChild(td5);
+					tr.appendChild(td6);
+					tr.appendChild(td7);
 					trialBalanceTemplate.appendChild(tr);
 				}
 				var tr=document.createElement("tr");
@@ -251,21 +316,32 @@ function getTrialBalance(){
 				var td3=document.createElement("td");
 				var td4=document.createElement("td");
 				var td5=document.createElement("td");
+				var td6=document.createElement("td");
+				var td7=document.createElement("td");
+				var td8=document.createElement("td");
+
 				td1.innerHTML=totalBalanceDebit.toFixed(2);
 				td2.innerHTML=totalBalanceCredit.toFixed(2);
 				td3.innerHTML=totalMovesDebit.toFixed(2);
 				td4.innerHTML=totalMovesCredit.toFixed(2);
-				td5.innerHTML="الاجمالي";
+				td5.innerHTML=totalBeginingBalanceDebit.toFixed(2);
+				td6.innerHTML=totalBeginingBalanceCredit.toFixed(2);
+				td7.innerHTML="الاجمالي";
 				td1.style.backgroundColor="#ccc";
 				td2.style.backgroundColor="#ccc";
 				td3.style.backgroundColor="#ccc";
 				td4.style.backgroundColor="#ccc";
+				td5.style.backgroundColor="#ccc";
+				td6.style.backgroundColor="#ccc";
 
 				tr.appendChild(td1);
 				tr.appendChild(td2);
 				tr.appendChild(td3);
 				tr.appendChild(td4);
 				tr.appendChild(td5);
+				tr.appendChild(td6);
+				tr.appendChild(td7);
+
 				trialBalanceTemplate.appendChild(tr);
 
 
@@ -278,12 +354,17 @@ function getTrialBalance(){
 				intro.dir="rtl";
 				var title=document.createElement("h1");
 				title.innerHTML="ميزان المراجعة";
+				var fromDateP=document.createElement("p");
+				fromDateP.innerHTML="من تاريخ : "+fromDate;
+				fromDateP.className+="printedReporthead";
 				var toDateP=document.createElement("p");
 				toDateP.innerHTML="الى تاريخ : "+toDate;
 				toDateP.className+="printedReporthead";
+
 				var br=document.createElement("br");
 
 				intro.appendChild(title);
+				intro.appendChild(fromDateP);
 				intro.appendChild(toDateP);
 				intro.appendChild(br);
 				reportDiv.appendChild(intro);
@@ -342,17 +423,49 @@ function getFPS(){
 					var type=majorAccounts[key].type;
 					accounts[type].push(majorAccounts[key]);
 				}
-
 				//filling the template with data
 
+				var revenuesTotal=0;
+
+				for(var i=0;i<accounts.revenues.length;i++){
+					var balance=666;
+					var credit=accounts.revenues[i].credit;
+					var debit=accounts.revenues[i].debit;
+					var name=accounts.revenues[i].name;
+
+					if(accounts.revenues[i].nature=="debit"){
+						balance=debit-credit;
+					}
+					else{
+						balance=credit-debit;
+					}
+				revenuesTotal+=balance;
+			}
 
 
+				var expensesTotal=0;
+
+				for(var i=0;i<accounts.expenses.length;i++){
+					var balance=666;
+					var credit=accounts.expenses[i].credit;
+					var debit=accounts.expenses[i].debit;
+					var name=accounts.expenses[i].name;
+
+					if(accounts.expenses[i].nature=="debit"){
+						balance=debit-credit;
+					}
+					else{
+						balance=credit-debit;
+					}
+					expensesTotal+=balance;
+				}
+				var profitAccount=revenuesTotal-expensesTotal;
 				//hardcode .-.
 				//non current Assets
 				var tr=document.createElement("tr");
 				var td1=document.createElement("td");
 				var td2=document.createElement("td");
-				td1.innerHTML="الأصول غير المتداولة";
+				td1.innerHTML="<strong>الأصول غير المتداولة</strong>";
 				tr.appendChild(td1);
 				tr.appendChild(td2);
 				FPSTemplate.appendChild(tr);
@@ -386,7 +499,7 @@ function getFPS(){
 				var tr=document.createElement("tr");
 				var td1=document.createElement("td");
 				var td2=document.createElement("td");
-				td1.innerHTML="اجمالي الأصول غير المتداولة";
+				td1.innerHTML="<strong>اجمالي الأصول غير المتداولة</strong>";
 				td2.innerHTML=nonCurrentAssetsTotal.toFixed(2);
 				td2.style.backgroundColor="#ccc";
 				tr.appendChild(td1);
@@ -400,7 +513,7 @@ function getFPS(){
 				var tr=document.createElement("tr");
 				var td1=document.createElement("td");
 				var td2=document.createElement("td");
-				td1.innerHTML="الأصول المتداولة";
+				td1.innerHTML="<strong>الأصول المتداولة</strong>";
 				tr.appendChild(td1);
 				tr.appendChild(td2);
 				FPSTemplate.appendChild(tr);
@@ -434,7 +547,7 @@ function getFPS(){
 				var tr=document.createElement("tr");
 				var td1=document.createElement("td");
 				var td2=document.createElement("td");
-				td1.innerHTML="اجمالي الأصول المتداولة";
+				td1.innerHTML="<strong>اجمالي الأصول المتداولة</strong>";
 				td2.innerHTML=currentAssetsTotal.toFixed(2);
 				td2.style.backgroundColor="#ccc";
 				tr.appendChild(td1);
@@ -444,7 +557,7 @@ function getFPS(){
 				var tr=document.createElement("tr");
 				var td1=document.createElement("td");
 				var td2=document.createElement("td");
-				td1.innerHTML="اجمالي الأصول";
+				td1.innerHTML="<strong>اجمالي الأصول</strong>";
 				td2.innerHTML=(currentAssetsTotal+nonCurrentAssetsTotal).toFixed(2);
 				td2.style.backgroundColor="#ccc";
 
@@ -458,7 +571,7 @@ function getFPS(){
 				var tr=document.createElement("tr");
 				var td1=document.createElement("td");
 				var td2=document.createElement("td");
-				td1.innerHTML="حقوق المساهمين";
+				td1.innerHTML="<strong>حقوق المساهمين</strong>";
 				tr.appendChild(td1);
 				tr.appendChild(td2);
 				FPSTemplate.appendChild(tr);
@@ -489,10 +602,22 @@ function getFPS(){
 					tr.appendChild(td2);
 					FPSTemplate.appendChild(tr);
 				}
+				//profit account
+
 				var tr=document.createElement("tr");
 				var td1=document.createElement("td");
 				var td2=document.createElement("td");
-				td1.innerHTML="اجمالي حقوق المساهمين";
+				td1.innerHTML="صافي الربح";
+				td2.innerHTML=profitAccount.toFixed(2);
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				FPSTemplate.appendChild(tr);
+				shareholdersEquityTotal+=profitAccount;
+
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				td1.innerHTML="<strong>اجمالي حقوق المساهمين</strong>";
 				td2.innerHTML=shareholdersEquityTotal.toFixed(2);
 				td2.style.backgroundColor="#ccc";
 				tr.appendChild(td1);
@@ -505,7 +630,7 @@ function getFPS(){
 				var tr=document.createElement("tr");
 				var td1=document.createElement("td");
 				var td2=document.createElement("td");
-				td1.innerHTML="الالتزامات  غير المتداولة";
+				td1.innerHTML="<strong>الالتزامات  غير المتداولة</strong>";
 				tr.appendChild(td1);
 				tr.appendChild(td2);
 				FPSTemplate.appendChild(tr);
@@ -539,7 +664,7 @@ function getFPS(){
 				var tr=document.createElement("tr");
 				var td1=document.createElement("td");
 				var td2=document.createElement("td");
-				td1.innerHTML="اجمالي الالتزامات غير المتداولة";
+				td1.innerHTML="<strong>اجمالي الالتزامات غير المتداولة</strong>";
 				td2.innerHTML=nonCurrentLiabilitiesTotal.toFixed(2);
 				td2.style.backgroundColor="#ccc";
 				tr.appendChild(td1);
@@ -553,7 +678,7 @@ function getFPS(){
 				var tr=document.createElement("tr");
 				var td1=document.createElement("td");
 				var td2=document.createElement("td");
-				td1.innerHTML="الالتزامات المتداولة";
+				td1.innerHTML="<strong>الالتزامات المتداولة</strong>";
 				tr.appendChild(td1);
 				tr.appendChild(td2);
 				FPSTemplate.appendChild(tr);
@@ -587,7 +712,7 @@ function getFPS(){
 				var tr=document.createElement("tr");
 				var td1=document.createElement("td");
 				var td2=document.createElement("td");
-				td1.innerHTML="اجمالي الالتزامات المتداولة";
+				td1.innerHTML="<strong>اجمالي الالتزامات المتداولة</strong>";
 				td2.innerHTML=currentLiabilitiesTotal.toFixed(2);
 				td2.style.backgroundColor="#ccc";
 				tr.appendChild(td1);
@@ -597,29 +722,12 @@ function getFPS(){
 				var tr=document.createElement("tr");
 				var td1=document.createElement("td");
 				var td2=document.createElement("td");
-				td1.innerHTML="اجمالي حقوق المساهمين و الالتزامات";
+				td1.innerHTML="<strong>اجمالي حقوق المساهمين و الالتزامات</strong>";
 				td2.innerHTML=(currentLiabilitiesTotal+nonCurrentLiabilitiesTotal+shareholdersEquityTotal).toFixed(2);
 				td2.style.backgroundColor="#ccc";
 				tr.appendChild(td1);
 				tr.appendChild(td2);
 				FPSTemplate.appendChild(tr);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -655,11 +763,12 @@ function getFPS(){
 
 
 function getIS(){
-	var ISDate=document.getElementById("ISDate").value;
-	if(ISDate==""){alert("insert valid date!");}
+	var fromDate=document.getElementById("ISFromDate").value;
+	var toDate=document.getElementById("ISToDate").value;
+	if(fromDate=="" || toDate==""){alert("insert valid date!");}
 	else{
-		var obj={date:ISDate};
-		ajaxRequest("api/accountingReports/getBalances","POST","application/json",obj,(res)=>{
+		var obj={fromDate:fromDate,toDate:toDate};
+		ajaxRequest("api/accountingReports/getISBalances","POST","application/json",obj,(res)=>{
 			if(res.status==200){
 				//cloneing the template
 				var ISTemplate=document.getElementById("ISTemplate");
@@ -696,7 +805,7 @@ function getIS(){
 				var tr=document.createElement("tr");
 				var td1=document.createElement("td");
 				var td2=document.createElement("td");
-				td1.innerHTML="الايرادات";
+				td1.innerHTML="<strong>الايرادات</strong>";
 				tr.appendChild(td1);
 				tr.appendChild(td2);
 				ISTemplate.appendChild(tr);
@@ -730,7 +839,7 @@ function getIS(){
 				var tr=document.createElement("tr");
 				var td1=document.createElement("td");
 				var td2=document.createElement("td");
-				td1.innerHTML="اجمالي الايرادات";
+				td1.innerHTML="<strong>اجمالي الايرادات</strong>";
 				td2.innerHTML=revenuesTotal.toFixed(2);
 				td2.style.backgroundColor="#ccc";
 				tr.appendChild(td1);
@@ -740,11 +849,11 @@ function getIS(){
 
 
 
-				//current Liabilites
+				//current Expenses
 				var tr=document.createElement("tr");
 				var td1=document.createElement("td");
 				var td2=document.createElement("td");
-				td1.innerHTML="المصروفات";
+				td1.innerHTML="<strong>المصروفات</strong>";
 				tr.appendChild(td1);
 				tr.appendChild(td2);
 				ISTemplate.appendChild(tr);
@@ -778,7 +887,7 @@ function getIS(){
 				var tr=document.createElement("tr");
 				var td1=document.createElement("td");
 				var td2=document.createElement("td");
-				td1.innerHTML="اجمالي المصروفات";
+				td1.innerHTML="<strong>اجمالي المصروفات</strong>";
 				td2.innerHTML=expensesTotal.toFixed(2);
 				td2.style.backgroundColor="#ccc";
 				tr.appendChild(td1);
@@ -788,7 +897,7 @@ function getIS(){
 				var tr=document.createElement("tr");
 				var td1=document.createElement("td");
 				var td2=document.createElement("td");
-				td1.innerHTML="صافي الدخل";
+				td1.innerHTML="<strong>صافي الدخل</strong>";
 				td2.innerHTML=(revenuesTotal-expensesTotal).toFixed(2);
 				td2.style.backgroundColor="#ccc";
 				tr.appendChild(td1);
@@ -805,13 +914,18 @@ function getIS(){
 				intro.dir="rtl";
 				var title=document.createElement("h1");
 				title.innerHTML="قائمة الدخل";
-				var date=document.createElement("p");
-				date.innerHTML="التاريخ : "+ISDate;
-				date.className+="printedReporthead";
+				var fromDateP=document.createElement("p");
+				fromDateP.innerHTML="من : "+fromDate;
+				fromDateP.className+="printedReporthead";
+				var toDateP=document.createElement("p");
+				toDateP.innerHTML="الى : "+toDate;
+				toDateP.className+="printedReporthead";
+
 				var br=document.createElement("br");
 
 				intro.appendChild(title);
-				intro.appendChild(date);
+				intro.appendChild(fromDateP);
+				intro.appendChild(toDateP);
 				intro.appendChild(br);
 				reportDiv.appendChild(intro);
 				reportDiv.appendChild(ISTemplate);

@@ -6,6 +6,8 @@ var account=models.account;
 var checkUniqueId=accounts.checkUniqueId;
 var checkUniqueName=accounts.checkUniqueName;
 var checks=[checkUniqueId,checkUniqueName];
+var Sequelize=require('sequelize');
+const Op = Sequelize.Op;
 
 router.get('/',function(req,res,next){
   account.findAll().then((accountRaws)=>{
@@ -44,6 +46,7 @@ router.post('/',checks,function(req,res,next){
 
 router.put('/',function(req,res,next){
   var accountObj={};
+  console.log(req.body);
   accountObj.name=req.body.name ? req.body.name : accountObj.name;
   accountObj.accountNature=req.body.accountNature ? req.body.accountNature : accountObj.accountNature;
   accountObj.type=req.body.type ? req.body.type : accountObj.type;
@@ -67,12 +70,18 @@ router.delete('/',function(req,res,next){
   // }).catch((error)=>{
   //   res.status(500).send(error);
   // });
-  account.destroy({where:{id:req.body.id}}).then(()=>{
-    res.status(200).send("Account has been deleted successfully!");
+  var id=req.body.id;
+  accounts.delete(id).then((result)=>{
+    if(result){
+      res.status(200).send("Account has been deleted successfully!");
+    }
+    else{
+      res.status(405).send("Account has entries,You have to delete it first!");
+    }
   }).catch((err)=>{
+    console.log(err);
     res.status(500).send(err);
-
-  });
+  })
 });
 
 
@@ -101,6 +110,21 @@ router.post('/check',function(req,res,next){
     res.status(500).send(error);
   });
 });
+
+router.post('/checkDual',function(req,res,next){
+  account.findOne({where:{id:req.body.id,character:{[Op.in]:req.body.types}}}).then((accountObj)=>{
+    if(accountObj){
+      console.log(req.body.types);
+      res.status(200).send(accountObj);
+    }
+    else{
+      res.status(404).send("Account is not found!");
+    }
+  }).catch((error)=>{
+    res.status(500).send(error);
+  });
+});
+
 
 router.post('/checkType',function(req,res,next){
   account.findOne({where:{id:req.body.id,type:req.body.type}}).then((accountObj)=>{

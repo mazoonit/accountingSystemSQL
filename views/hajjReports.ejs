@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html>
+<title>Airline Reports</title>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/sidenavStyle.css">
+<link rel="stylesheet" href="/static/topbarStyle.css">
+
+<style>
+#accountReportTemplate{
+	border:0.5px solid #000;
+	border-collapse:collapse;
+	width:100%;
+}
+#accountReportTemplate td{
+	text-align:center;
+	border:0.5px solid #000;
+}
+#employerReportTemplate{
+	border:0.5px solid #000;
+	border-collapse:collapse;
+	width:100%;
+}
+#employerReportTemplate td{
+	text-align:center;
+	border:0.5px solid #000;
+}
+
+#islamicdateReportTemplate{
+	border:0.5px solid #000;
+	border-collapse:collapse;
+	width:100%;
+}
+#islamicdateReportTemplate td{
+	text-align:center;
+	border:0.5px solid #000;
+}
+
+
+#CombinedBSPReportTemplate{
+	border:0.5px solid #000;
+	border-collapse:collapse;
+	width:100%;
+}
+#CombinedBSPReportTemplate td{
+	text-align:center;
+	border:0.5px solid #000;
+
+}
+
+.printedReporthead{display:inline-block;margin:15px;}
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #temp, #temp * {
+    visibility: visible;
+  }
+  #temp{
+    position: absolute;
+    left: 0;
+    top: 0;
+
+  }
+}
+</style>
+<body>
+  <%-include('sidenav.ejs')%>
+<div class="main" id="container">
+<section id="content-tab1">
+		<div style="background-color:#173f5f;border-radius:5px;padding:10px;">
+			<a class="y" id="tab1-delegateReport">Delegate Report</a>
+      <a class="y unactive" id="tab1-journeyReport">Journey Report</a>
+      <a class="y unactive" id="tab1-islamicDateTab">Islamic Date Report</a>
+		</div>
+		<!--Delegate Name-->
+
+
+		<section id="delegateReport" class="tabsec">
+			<h1 style="text-align:Center;">Delegate Report</h1>
+			<form>
+				<table>
+				    <tr>
+					<td>
+					    <p>Delegate Name</p>
+					</td>
+					<td>
+					    <input type="text" id="delegateName"/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>From</p>
+					</td>
+					<td>
+					    <input type="Date" id="employerFromDate"/>
+					</td>
+				    </tr>
+				    <tr>
+					<td>
+					    <p>To</p>
+					</td>
+					<td>
+					    <input type="Date" id="employerToDate"/>
+					</td>
+				    </tr>
+				    <tr>
+					    <td><button class="button" onClick="return getDelegateProducts();">Get Report</button></td>
+				   </tr>
+				</table>
+			</form>
+		</section>
+
+
+		<!--Journey Report-->
+
+
+    <section id="journeyReport" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Journey Report</h1>
+			<form>
+				<table>
+				    <tr>
+					<td>
+					    <p>Journey</p>
+					</td>
+					<td>
+					    <input type="text" id="journey"/>
+					</td>
+				    </tr>
+				    <tr>
+					    <td><button class="button" onClick="return getJourneyProducts();">Get Report</button></td>
+				   </tr>
+				</table>
+			</form>
+		</section>
+
+    <section id="islamicDateTab" class="tabsec" style="display:none;">
+      <h1 style="text-align:Center;">Islamic Date Report</h1>
+      <form>
+        <table>
+            <tr>
+          <td>
+              <p>Islamic Date</p>
+          </td>
+          <td>
+              <input type="text" id="islamicDate"/>
+          </td>
+            </tr>
+            <tr>
+              <td><button class="button" onClick="return getIslamicDateProducts();">Get Report</button></td>
+           </tr>
+        </table>
+      </form>
+    </section>
+
+</section>
+</div>
+
+
+		<!--Islamicdate Report-->
+
+
+<!--bsp airline report-->
+<table style="width:100%;display:none;" id="accountReportTemplate" dir="rtl">
+  <col>
+  <colgroup span="3"></colgroup>
+  <colgroup span="3"></colgroup>
+  <tr>
+		<td colspan="1" scope="colgroup">م</td>
+    <td colspan="1" scope="colgroup">التاريخ</td>
+    <td colspan="1" scope="colgroup">اسم العميل</td>
+    <td colspan="1" scope="colgroup">رقم التذكرة</td>
+    <td colspan="1" scope="colgroup">اساس التذكرة</td>
+    <td colspan="1" scope="colgroup">الضريبة</td>
+    <td colspan="1" scope="colgroup">GIG</td>
+		<td colspan="1" scope="colgroup">عمولة الطيران</td>
+		<td colspan="1" scope="colgroup">ضريبة العمولة</td>
+    <td colspan="1" scope="colgroup">الاجمالي</td>
+		<td colspan="1" scope="colgroup">الربح</td>
+  </tr>
+</table>
+
+<!--employer report-->
+
+<table style="width:100%;display:none;" id="employerReportTemplate" dir="rtl">
+
+  <col>
+  <colgroup span="3"></colgroup>
+  <colgroup span="3"></colgroup>
+  <tr>
+		<td colspan="1" scope="colgroup">م</td>
+    <td colspan="1" scope="colgroup">التاريخ</td>
+    <td colspan="1" scope="colgroup">اسم العميل</td>
+    <td colspan="1" scope="colgroup">رقم الجواز</td>
+    <td colspan="1" scope="colgroup">مصروف</td>
+    <td colspan="1" scope="colgroup">ايراد</td>
+		<td colspan="1" scope="colgroup">ربح</td>
+  </tr>
+</table>
+
+
+<!--employer report-->
+
+<table style="width:100%;display:none;" id="islamicdateReportTemplate" dir="rtl">
+
+  <col>
+  <colgroup span="3"></colgroup>
+  <colgroup span="3"></colgroup>
+  <tr>
+		<td colspan="1" scope="colgroup">م</td>
+    <td colspan="1" scope="colgroup">التاريخ</td>
+    <td colspan="1" scope="colgroup">رحلة</td>
+    <td colspan="1" scope="colgroup">مصروف</td>
+    <td colspan="1" scope="colgroup">ايراد</td>
+		<td colspan="1" scope="colgroup">ربح</td>
+  </tr>
+</table>
+
+
+
+
+
+<script src="/static/jquery-min.js"></script>
+<script src="/static/frontendlib.js"></script>
+<script src="/static/topbarFunction.js"></script>
+
+
+<!--vainlia javascript-->
+
+
+
+
+<script>
+function getDelegateProducts(){
+	var delegateName=document.getElementById("delegateName").value;
+	var fromDate=document.getElementById("employerFromDate").value;
+	var toDate=document.getElementById("employerToDate").value;
+	if(toDate==""||fromDate==""){alert("insert valid date!");}
+	else{
+		var obj={delegateName:delegateName,fromDate:fromDate,toDate:toDate,productType:"hajj"};
+		ajaxRequest("api/producti/getDelegateProducts","POST","application/json",obj,(res)=>{
+			if(res.status==200){
+				var employerReportTemplate=document.getElementById("employerReportTemplate");
+				var employerReportTemplate=employerReportTemplate.cloneNode(true);
+				employerReportTemplate.style.display="table";
+				res=JSON.parse(res.responseText);
+				var products=res;
+				var totals={total:0,sellingPrice:0,profit:0};
+
+				for(var i=0;i<products.length;i++){
+					var productObj=JSON.parse(products[i].productObj);
+					//totals
+					totals.total+=productObj.total;
+					totals.sellingPrice+=productObj.sellingPrice;
+					totals.profit+=(productObj.sellingPrice-productObj.total);
+
+					var tr=document.createElement("tr");
+					var th1=document.createElement("td");
+					var th2=document.createElement("td");
+					var th3=document.createElement("td");
+					var th4=document.createElement("td");
+					var th5=document.createElement("td");
+					var th6=document.createElement("td");
+					var th7=document.createElement("td");
+					th1.innerHTML=i+1;
+					th2.innerHTML=products[i].createdAt.split("T")[0];
+					th3.innerHTML=productObj.firstName+' '+productObj.surname;
+					th4.innerHTML=productObj.passportNumber;
+					th5.innerHTML=productObj.total.toFixed(2);
+					th6.innerHTML=productObj.sellingPrice.toFixed(2);
+					th7.innerHTML=(productObj.sellingPrice-productObj.total).toFixed(2);
+
+					tr.appendChild(th1);
+					tr.appendChild(th2);
+					tr.appendChild(th3);
+					tr.appendChild(th4);
+					tr.appendChild(th5);
+					tr.appendChild(th6);
+					tr.appendChild(th7);
+					employerReportTemplate.appendChild(tr);
+				}
+				//totals
+				var tr=document.createElement("tr");
+				var th1=document.createElement("td");
+				var th2=document.createElement("td");
+				var th3=document.createElement("td");
+				var th4=document.createElement("td");
+				var th5=document.createElement("td");
+				var th6=document.createElement("td");
+				var th7=document.createElement("td");
+				th5.innerHTML=totals.total.toFixed(2);
+				th6.innerHTML=totals.sellingPrice.toFixed(2);
+				th7.innerHTML=totals.profit.toFixed(2);
+				th5.style.backgroundColor="#ccc";
+				th6.style.backgroundColor="#ccc";
+				th7.style.backgroundColor="#ccc";
+
+				tr.appendChild(th1);
+				tr.appendChild(th2);
+				tr.appendChild(th3);
+				tr.appendChild(th4);
+				tr.appendChild(th5);
+				tr.appendChild(th6);
+				tr.appendChild(th7);
+				employerReportTemplate.appendChild(tr);
+
+				var reportDiv=document.createElement("div");
+				reportDiv.style.width='100%';
+
+				var intro=document.createElement("div");
+				intro.style.textAlign="center";
+				intro.dir="rtl";
+				var airLineHead=document.createElement("h1");
+				airLineHead.innerHTML="تقرير المندوب الخاص بالحج";
+				var fromDateh4=document.createElement("p");
+				fromDateh4.innerHTML="من تاريخ : "+fromDate;
+				fromDateh4.className+="printedReporthead";
+				var toDateh4=document.createElement("p");
+				toDateh4.innerHTML="الى تاريخ : "+toDate;
+				toDateh4.className+="printedReporthead";
+				var br=document.createElement("br");
+				var airLineName=document.createElement("p");
+				airLineName.innerHTML="اسم المندوب :"+delegateName;
+				airLineName.className+="printedReporthead";
+				/**
+				var x=document.createElement("IMG");
+				x.src="/static/images/img.png";
+				x.style.width="100%";
+				x.style.height="20%";
+				console.log(x);
+				intro.appendChild(x);
+				**/
+				intro.appendChild(airLineHead);
+				intro.appendChild(fromDateh4);
+				intro.appendChild(toDateh4);
+				intro.appendChild(br);
+				intro.appendChild(airLineName);
+
+				reportDiv.appendChild(intro);
+				reportDiv.appendChild(employerReportTemplate);
+				reportDiv.id="temp";
+				document.body.append(reportDiv);
+				window.print();
+				var temp = document.getElementById("temp");
+				temp.parentNode.removeChild(temp);
+			}
+			else{alert(res.responseText);}
+
+
+		});
+	}
+
+
+	return false;
+}
+
+
+function getJourneyProducts(){
+	var journey=document.getElementById("journey").value;
+		var obj={journey:journey,productType:"hajj"};
+		ajaxRequest("api/producti/getJourneyProducts","POST","application/json",obj,(res)=>{
+			if(res.status==200){
+				var employerReportTemplate=document.getElementById("employerReportTemplate");
+				var employerReportTemplate=employerReportTemplate.cloneNode(true);
+				employerReportTemplate.style.display="table";
+				res=JSON.parse(res.responseText);
+				var products=res;
+				var totals={total:0,sellingPrice:0,profit:0};
+
+				for(var i=0;i<products.length;i++){
+					var productObj=JSON.parse(products[i].productObj);
+					//totals
+					totals.total+=productObj.total;
+					totals.sellingPrice+=productObj.sellingPrice;
+					totals.profit+=(productObj.sellingPrice-productObj.total);
+
+					var tr=document.createElement("tr");
+					var th1=document.createElement("td");
+					var th2=document.createElement("td");
+					var th3=document.createElement("td");
+					var th4=document.createElement("td");
+					var th5=document.createElement("td");
+					var th6=document.createElement("td");
+					var th7=document.createElement("td");
+					th1.innerHTML=i+1;
+					th2.innerHTML=products[i].createdAt.split("T")[0];
+					th3.innerHTML=productObj.firstName+' '+productObj.surname;
+					th4.innerHTML=productObj.passportNumber;
+					th5.innerHTML=productObj.total.toFixed(2);
+					th6.innerHTML=productObj.sellingPrice.toFixed(2);
+					th7.innerHTML=(productObj.sellingPrice-productObj.total).toFixed(2);
+
+					tr.appendChild(th1);
+					tr.appendChild(th2);
+					tr.appendChild(th3);
+					tr.appendChild(th4);
+					tr.appendChild(th5);
+					tr.appendChild(th6);
+					tr.appendChild(th7);
+					employerReportTemplate.appendChild(tr);
+				}
+				//totals
+				var tr=document.createElement("tr");
+				var th1=document.createElement("td");
+				var th2=document.createElement("td");
+				var th3=document.createElement("td");
+				var th4=document.createElement("td");
+				var th5=document.createElement("td");
+				var th6=document.createElement("td");
+				var th7=document.createElement("td");
+				th5.innerHTML=totals.total.toFixed(2);
+				th6.innerHTML=totals.sellingPrice.toFixed(2);
+				th7.innerHTML=totals.profit.toFixed(2);
+				th5.style.backgroundColor="#ccc";
+				th6.style.backgroundColor="#ccc";
+				th7.style.backgroundColor="#ccc";
+
+				tr.appendChild(th1);
+				tr.appendChild(th2);
+				tr.appendChild(th3);
+				tr.appendChild(th4);
+				tr.appendChild(th5);
+				tr.appendChild(th6);
+				tr.appendChild(th7);
+				employerReportTemplate.appendChild(tr);
+
+				var reportDiv=document.createElement("div");
+				reportDiv.style.width='100%';
+
+				var intro=document.createElement("div");
+				intro.style.textAlign="center";
+				intro.dir="rtl";
+				var airLineHead=document.createElement("h1");
+				airLineHead.innerHTML="تقرير الرحلة الخاص بالحج";
+				var br=document.createElement("br");
+				var airLineName=document.createElement("p");
+				airLineName.innerHTML="اسم الرحلة :"+journey;
+				airLineName.className+="printedReporthead";
+				/**
+				var x=document.createElement("IMG");
+				x.src="/static/images/img.png";
+				x.style.width="100%";
+				x.style.height="20%";
+				console.log(x);
+				intro.appendChild(x);
+				**/
+				intro.appendChild(airLineHead);
+				intro.appendChild(br);
+				intro.appendChild(airLineName);
+
+				reportDiv.appendChild(intro);
+				reportDiv.appendChild(employerReportTemplate);
+				reportDiv.id="temp";
+				document.body.append(reportDiv);
+				window.print();
+				var temp = document.getElementById("temp");
+				temp.parentNode.removeChild(temp);
+			}
+			else{alert(res.responseText);}
+
+
+		});
+
+	return false;
+}
+
+
+function getIslamicDateProducts(){
+	var islamicDate=document.getElementById("islamicDate").value;
+  console.log(islamicDate);
+		var obj={islamicDate:islamicDate,productType:"hajj"};
+		ajaxRequest("api/producti/getIslamicDateProducts","POST","application/json",obj,(res)=>{
+			if(res.status==200){
+				var employerReportTemplate=document.getElementById("islamicdateReportTemplate");
+				var employerReportTemplate=employerReportTemplate.cloneNode(true);
+				employerReportTemplate.style.display="table";
+				res=JSON.parse(res.responseText);
+				var products=res;
+				var totals={total:0,sellingPrice:0,profit:0};
+
+				for(var i=0;i<products.length;i++){
+					var productObj=JSON.parse(products[i].productObj);
+					//totals
+					totals.total+=productObj.total;
+					totals.sellingPrice+=productObj.sellingPrice;
+					totals.profit+=(productObj.sellingPrice-productObj.total);
+
+					var tr=document.createElement("tr");
+					var th1=document.createElement("td");
+					var th2=document.createElement("td");
+					var th3=document.createElement("td");
+					var th4=document.createElement("td");
+					var th5=document.createElement("td");
+					var th6=document.createElement("td");
+					var th7=document.createElement("td");
+					th1.innerHTML=i+1;
+					th2.innerHTML=products[i].createdAt.split("T")[0];
+					th3.innerHTML=products[i].journey;
+					th4.innerHTML=productObj.total.toFixed(2);
+					th5.innerHTML=productObj.sellingPrice.toFixed(2);
+					th6.innerHTML=(productObj.sellingPrice-productObj.total).toFixed(2);
+
+					tr.appendChild(th1);
+					tr.appendChild(th2);
+					tr.appendChild(th3);
+					tr.appendChild(th4);
+					tr.appendChild(th5);
+					tr.appendChild(th6);
+					employerReportTemplate.appendChild(tr);
+				}
+				//totals
+				var tr=document.createElement("tr");
+				var th1=document.createElement("td");
+				var th2=document.createElement("td");
+				var th3=document.createElement("td");
+				var th4=document.createElement("td");
+				var th5=document.createElement("td");
+				var th6=document.createElement("td");
+				th4.innerHTML=totals.total.toFixed(2);
+				th5.innerHTML=totals.sellingPrice.toFixed(2);
+				th6.innerHTML=totals.profit.toFixed(2);
+				th4.style.backgroundColor="#ccc";
+				th5.style.backgroundColor="#ccc";
+				th6.style.backgroundColor="#ccc";
+
+				tr.appendChild(th1);
+				tr.appendChild(th2);
+				tr.appendChild(th3);
+				tr.appendChild(th4);
+				tr.appendChild(th5);
+				tr.appendChild(th6);
+				employerReportTemplate.appendChild(tr);
+
+				var reportDiv=document.createElement("div");
+				reportDiv.style.width='100%';
+
+				var intro=document.createElement("div");
+				intro.style.textAlign="center";
+				intro.dir="rtl";
+				var airLineHead=document.createElement("h1");
+				airLineHead.innerHTML="تقرير السنة الهجرية بالحج";
+				var br=document.createElement("br");
+				var airLineName=document.createElement("p");
+				airLineName.innerHTML="السنة الهجرية : "+islamicDate;
+				airLineName.className+="printedReporthead";
+				/**
+				var x=document.createElement("IMG");
+				x.src="/static/images/img.png";
+				x.style.width="100%";
+				x.style.height="20%";
+				console.log(x);
+				intro.appendChild(x);
+				**/
+				intro.appendChild(airLineHead);
+				intro.appendChild(br);
+				intro.appendChild(airLineName);
+
+				reportDiv.appendChild(intro);
+				reportDiv.appendChild(employerReportTemplate);
+				reportDiv.id="temp";
+				document.body.append(reportDiv);
+				window.print();
+				var temp = document.getElementById("temp");
+				temp.parentNode.removeChild(temp);
+			}
+			else{alert(res.responseText);}
+
+
+		});
+
+	return false;
+}
+
+
+</script>
+</body>
+</html>

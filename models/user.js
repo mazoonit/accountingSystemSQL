@@ -21,7 +21,9 @@ module.exports = (sequelize, DataTypes) => {
   // associations can be defined here
   user.hasMany(models.invoice,{foreignKey:'userId'});
   user.hasMany(models.invoice,{foreignKey:'userId'});
-  user.hasMany(models.receipt,{foreignKey:'userId'});
+  user.hasMany(models.paymentReceipt,{foreignKey:'userId'});
+  user.hasMany(models.receiveReceipt,{foreignKey:'userId'});
+
   user.hasMany(models.productI,{foreignKey:'userId'});
 
 };

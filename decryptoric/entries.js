@@ -28,7 +28,8 @@ module.exports={
                 include:[
                   {model:models.account,as:"account"},
                   {model:models.currency,as:"currency"},
-                  {model:models.receipt,as:"receipt"}
+                  {model:models.paymentReceipt,as:"paymentReceipt"},
+                  {model:models.receiveReceipt,as:"receiveReceipt"}
                 ]
               }).then((selectedMoveLines)=>{
                 var entryOut={
@@ -43,7 +44,8 @@ module.exports={
               reject("Receipt problem,Try again please!");
             })
             //bulkcreating
-          }).catch(()=>{
+          }).catch((error)=>{
+            console.log(error);
             //catch of bulk creating
             models.move.destroy({where:{id:moveRaw.id}}).then(()=>{
               //remove the empty move
@@ -53,7 +55,8 @@ module.exports={
               reject("MoveLines Creation Error,Please delete the empty move with id "+moveRaw.id);
             });
           });
-        }).catch(()=>{
+        }).catch((error)=>{
+          console.log(entry);
           //catch of move creation
           reject("Move creation failed!");
         });
@@ -103,24 +106,12 @@ module.exports={
       });
     });
   },
-  editEntry:function(entry){
-    return new Promise((resolve,reject)=>{
-      entryValidation(entry).then(()=>{
-        var promises=[];
-        promises.push(this.deleteMoveLines(entry.move.id));
-        promises.push(this.addMoveLines(entry));
-        promises.push(this.updateMoveNotes(entry));
-        Promise.all(promises).then((resolves)=>{
-          resolve(resolves);
-        }).catch((rejects)=>{
-          //promises catch
-          reject(rejects);
-        });
-      }).catch((error)=>{
-        //entryValidation catch
-        reject(error);
-      });
-    });
+  editEntry:async function(entry){
+        await entryValidation(entry);
+        await this.deleteMoveLines(entry.move.id);
+        await this.addMoveLines(entry);
+        await this.updateMoveNotes(entry);
+        return;
   },
   // getEntry:function(id){
   //   return new Promise((resolve,reject)=>{
@@ -144,7 +135,8 @@ module.exports={
       include:[
         {model:models.account,as:"account"},
         {model:models.currency,as:"currency"},
-        {model:models.receipt,as:"receipt"}
+        {model:models.paymentReceipt,as:"paymentReceipt"},
+        {model:models.receiveReceipt,as:"receiveReceipt"}
       ]
     });
     if(move){

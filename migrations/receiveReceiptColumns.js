@@ -2,7 +2,7 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return Promise.all([
       queryInterface.addColumn(
-        'receipts',
+        'receiveReceipts',
         'userId',
         {
           type: Sequelize.INTEGER,
@@ -18,7 +18,7 @@ module.exports = {
 
 
       queryInterface.addColumn(
-        'receipts',
+        'receiveReceipts',
         'cashAccount',
         {
           type: Sequelize.INTEGER,
@@ -35,7 +35,7 @@ module.exports = {
 
 
       queryInterface.addColumn(
-        'receipts',
+        'receiveReceipts',
         'accountId',
         {
           type: Sequelize.INTEGER,
@@ -54,7 +54,7 @@ module.exports = {
 
 
       queryInterface.addColumn(
-        'receipts',
+        'receiveReceipts',
         'currencyId',
         {
           type: Sequelize.INTEGER,
@@ -73,10 +73,10 @@ module.exports = {
 
   down: (queryInterface, Sequelize) => {
     return Promise.all([
-      queryInterface.removeColumn('receipts', 'accountId'),
-      queryInterface.removeColumn('receipts', 'currencyId'),
-      queryInterface.removeColumn('receipts', 'cashAccount'),
-      queryInterface.removeColumn('receipts', 'userId')
+      queryInterface.removeColumn('receiveReceipts', 'accountId'),
+      queryInterface.removeColumn('receiveReceipts', 'currencyId'),
+      queryInterface.removeColumn('receiveReceipts', 'cashAccount'),
+      queryInterface.removeColumn('receiveReceipts', 'userId')
 
         ]);
   }

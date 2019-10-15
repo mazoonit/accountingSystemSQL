@@ -53,9 +53,9 @@ module.exports={
     var productOut=await models.productI.create(product);
     return productOut;
   },
-  getProduct:async function(productId){
+  getProduct:async function(productId,type){
     var product=await models.productI.findOne({
-      where:{id:productId},
+      where:{id:productId,productType:type},
       include:[
         {model:models.account,as:"clientAcc",foreignKey:"clientAccount"},
         {model:models.account,as:"supplierAcc",foreignKey:"supplierAccount"},
@@ -169,7 +169,7 @@ module.exports={
     });
     return products;
   },
-  getIslamicDateProducts:async function(islamicDate,fromDate,toDate,productType){
+  getIslamicDateProducts:async function(islamicDate,productType){
     var products=await models.productI.findAll({
       where:{
         [Op.and]:[
@@ -187,5 +187,100 @@ module.exports={
       ]
     });
     return products;
+  },
+  getJourneyProducts:async function(journey,productType){
+    var products=await models.productI.findAll({
+      where:{
+        [Op.and]:[
+          {journey:journey},
+          {productType:productType}
+        ]
+      },
+      include:[
+        {model:models.account,as:"clientAcc",foreignKey:"clientAccount"},
+        {model:models.account,as:"supplierAcc",foreignKey:"supplierAccount"},
+        {model:models.account,as:"revenueAcc",foreignKey:"revenueAccount"},
+        {model:models.account,as:"expenseAcc",foreignKey:"expenseAccount"},
+        {model:models.currency,as:"currency",foreignKey:"currencyId"},
+        {model:models.employer,as:"employer",foreignKey:"employerId"}
+      ]
+    });
+    return products;
+  },
+  editProduct:async function(product){
+    var productCheck=await models.productI.findOne({where:{id:product.id,productType:product.productType}});
+    if(productCheck){
+    var entry={};
+    entry.move={
+      notes:product.productObj.description,
+      userId:product.userId,
+      createdAt:product.createdAt,
+      id:product.entryId
+    };
+    entry.moveLines=[
+      {
+        debit:parseFloat(product.productObj.sellingPrice),
+        credit:parseFloat(0),
+        accountId:product.clientAccount,
+        notes:product.productObj.description,
+        currencyId:product.currencyId,
+        exchangeRate:product.exchangeRate,
+        createdAt:product.createdAt,
+        moveId:product.entryId
+      },
+      {
+        debit:parseFloat(0),
+        credit:parseFloat(product.productObj.sellingPrice),
+        accountId:product.revenueAccount,
+        notes:product.productObj.description,
+        currencyId:product.currencyId,
+        exchangeRate:product.exchangeRate,
+        createdAt:product.createdAt,
+        moveId:product.entryId
+      },
+      {
+        debit:parseFloat(product.productObj.total),
+        credit:parseFloat(0),
+        accountId:product.expenseAccount,
+        notes:product.productObj.description,
+        currencyId:product.currencyId,
+        exchangeRate:product.exchangeRate,
+        createdAt:product.createdAt,
+        moveId:product.entryId
+    },
+    {
+        debit:parseFloat(0),
+        credit:parseFloat(product.productObj.total),
+        accountId:product.supplierAccount,
+        notes:product.productObj.description,
+        currencyId:product.currencyId,
+        exchangeRate:product.exchangeRate,
+        createdAt:product.createdAt,
+        moveId:product.entryId
+      }];
+
+
+    await entries.editEntry(entry);
+    product.productObj=JSON.stringify(product.productObj);
+    await models.productI.update(product,{where:{id:product.id}});
+    return true;
   }
+  else{
+    return false;
+  }
+},
+getProductByMoveId:async function(moveId,productType){
+  var product=await models.productI.findOne({
+    where:{entryId:moveId,productType:productType},
+    include:[
+      {model:models.account,as:"clientAcc",foreignKey:"clientAccount"},
+      {model:models.account,as:"supplierAcc",foreignKey:"supplierAccount"},
+      {model:models.account,as:"revenueAcc",foreignKey:"revenueAccount"},
+      {model:models.account,as:"expenseAcc",foreignKey:"expenseAccount"},
+      {model:models.currency,as:"currency",foreignKey:"currencyId"},
+      {model:models.employer,as:"employer",foreignKey:"employerId"}
+    ]
+  });
+  return product;
+}
 }

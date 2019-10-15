@@ -125,7 +125,7 @@ function getUmrahAccount(event){
 	ajaxRequest('api/account/frontGet',"POST","application/json",{id:supplierAccountBetterID},(res)=>{
 		if(res.status=="200"){
 			res=JSON.parse(res.responseText);
-			if(res.character.toLowerCase()=="umrah"){
+			if(res.character.toLowerCase()=="umrah" || res.character.toLowerCase()=="hajjandumrah"){
 				supplierAccountDiv.value=res.name;}
 			else{
 				supplierAccountDiv.value="There's no such umrah supplier account!";}
@@ -145,7 +145,7 @@ function getHajjAccount(event){
 	ajaxRequest('api/account/frontGet',"POST","application/json",{id:supplierAccountBetterID},(res)=>{
 		if(res.status=="200"){
 			res=JSON.parse(res.responseText);
-			if(res.character.toLowerCase()=="hajj"){
+			if(res.character.toLowerCase()=="hajj" || res.character.toLowerCase()=="hajjandumrah"){
 				supplierAccountDiv.value=res.name;}
 			else{
 				supplierAccountDiv.value="There's no such hajj supplier account!";}
@@ -158,19 +158,37 @@ function getHajjAccount(event){
 	return false;
 }
 
+function getETAccount(event){
+	var supplierAccountBetterID=event.target.value;
+	var supplierAccountInputId=event.target.id;
+	var supplierAccountDiv=document.getElementById(supplierAccountInputId+"Div");
+	ajaxRequest('api/account/frontGet',"POST","application/json",{id:supplierAccountBetterID},(res)=>{
+		if(res.status=="200"){
+			res=JSON.parse(res.responseText);
+			if(res.character.toLowerCase()=="enteriortourism"){
+				supplierAccountDiv.value=res.name;}
+			else{
+				supplierAccountDiv.value="There's no such Enterior Tourism supplier account!";}
+		}
+		else{
+			console.log(res.responseText);
+			supplierAccountDiv.value="There's no such Enterior Tourism supplier account!";
+		}
+	});
+	return false;
+}
 
 
-function getClientAccount(event){
+
+
+function getClientAccount(event,arrOfTypes){
 	var clientAccountBetterID=event.target.value;
 	var clientAccountInputId=event.target.id;
 	var clientAccountDiv=document.getElementById(clientAccountInputId+"Div");
 	ajaxRequest('api/account/frontGet',"POST","application/json",{id:clientAccountBetterID},(res)=>{
 		if(res.status=="200"){
 			res=JSON.parse(res.responseText);
-			if(res.character=="client"){
-				clientAccountDiv.value=res.name;}
-			else{
-				clientAccountDiv.value="There's no such client account!";}
+			clientAccountDiv.value=res.name;
 		}
 		else{
 			console.log(res.responseText);
@@ -309,19 +327,19 @@ function showAccounts(){
 
 		}
 		var show=document.getElementById("showAccountsTable");
-		show.innerHTML="<tr><td>Account Name</td><td>Account ID</td></tr>";
+		show.innerHTML="<tr><td><strong>Account Name</strong></td><td><strong>Account ID</strong></td></tr>";
 		//hardcode .-.
 		var tr=document.createElement("tr");
 		var td=document.createElement("td");
 		var typeHead=document.createElement("td");
-		typeHead.innerHTML="Assets";
+		typeHead.innerHTML="<strong>Assets</strong>";
 		tr.appendChild(typeHead);
 		tr.appendChild(td);
 		show.appendChild(tr);
 		var tr=document.createElement("tr");
 		var td=document.createElement("td");
 		var minorTypeHead=document.createElement("td");
-		minorTypeHead.innerHTML="Current Assets";
+		minorTypeHead.innerHTML="<strong>Current Assets</strong>";
 		tr.appendChild(minorTypeHead);
 		tr.appendChild(td);
 		show.appendChild(tr);
@@ -331,7 +349,7 @@ function showAccounts(){
 				var tr=document.createElement("tr");
 				var td=document.createElement("td");
 				var majorHead=document.createElement("td");
-				majorHead.innerHTML=keys[j];
+				majorHead.innerHTML='<strong>'+keys[j]+'</strong>';
 				tr.appendChild(majorHead);
 				tr.appendChild(td);
 				show.appendChild(tr);
@@ -351,7 +369,7 @@ function showAccounts(){
 		var tr=document.createElement("tr");
 		var td=document.createElement("td");
 		var minorTypeHead=document.createElement("td");
-		minorTypeHead.innerHTML="Non Current Assets";
+		minorTypeHead.innerHTML="<strong>Non Current Assets</strong>";
 		tr.appendChild(minorTypeHead);
 		tr.appendChild(td);
 		show.appendChild(tr);
@@ -361,7 +379,7 @@ function showAccounts(){
 				var tr=document.createElement("tr");
 				var td=document.createElement("td");
 				var majorHead=document.createElement("td");
-				majorHead.innerHTML=keys[j];
+				majorHead.innerHTML='<strong>'+keys[j]+'</strong>';
 				tr.appendChild(majorHead);
 				tr.appendChild(td);
 				show.appendChild(tr);
@@ -382,14 +400,14 @@ function showAccounts(){
 		var tr=document.createElement("tr");
 		var td=document.createElement("td");
 		var typeHead=document.createElement("td");
-		typeHead.innerHTML="Liabilities";
+		typeHead.innerHTML="<strong>Liabilities</strong>";
 		tr.appendChild(typeHead);
 		tr.appendChild(td);
 		show.appendChild(tr);
 		var tr=document.createElement("tr");
 		var td=document.createElement("td");
 		var minorTypeHead=document.createElement("td");
-		minorTypeHead.innerHTML="Current Liabilities";
+		minorTypeHead.innerHTML="<strong>Current Liabilities</strong>";
 		tr.appendChild(minorTypeHead);
 		tr.appendChild(td);
 		show.appendChild(tr);
@@ -399,7 +417,7 @@ function showAccounts(){
 				var tr=document.createElement("tr");
 				var td=document.createElement("td");
 				var majorHead=document.createElement("td");
-				majorHead.innerHTML=keys[j];
+				majorHead.innerHTML='<strong>'+keys[j]+'</strong>';
 				tr.appendChild(majorHead);
 				tr.appendChild(td);
 				show.appendChild(tr);
@@ -420,7 +438,7 @@ function showAccounts(){
 		var tr=document.createElement("tr");
 		var td=document.createElement("td");
 		var minorTypeHead=document.createElement("td");
-		minorTypeHead.innerHTML="Non Current Liabilities";
+		minorTypeHead.innerHTML="<strong>Non Current Liabilities</strong>";
 		tr.appendChild(minorTypeHead);
 		tr.appendChild(td);
 		show.appendChild(tr);
@@ -430,7 +448,7 @@ function showAccounts(){
 				var tr=document.createElement("tr");
 				var td=document.createElement("td");
 				var majorHead=document.createElement("td");
-				majorHead.innerHTML=keys[j];
+				majorHead.innerHTML='<strong>'+keys[j]+'</strong>';
 				tr.appendChild(majorHead);
 				tr.appendChild(td);
 				show.appendChild(tr);
@@ -450,7 +468,7 @@ function showAccounts(){
 		var tr=document.createElement("tr");
 		var td=document.createElement("td");
 		var minorTypeHead=document.createElement("td");
-		minorTypeHead.innerHTML="Shareholders Equity";
+		minorTypeHead.innerHTML="<strong>Shareholders Equity</strong>";
 		tr.appendChild(minorTypeHead);
 		tr.appendChild(td);
 		show.appendChild(tr);
@@ -460,7 +478,7 @@ function showAccounts(){
 				var tr=document.createElement("tr");
 				var td=document.createElement("td");
 				var majorHead=document.createElement("td");
-				majorHead.innerHTML=keys[j];
+				majorHead.innerHTML='<strong>'+keys[j]+'</strong>';
 				tr.appendChild(majorHead);
 				tr.appendChild(td);
 				show.appendChild(tr);
@@ -482,7 +500,7 @@ function showAccounts(){
 		var tr=document.createElement("tr");
 		var td=document.createElement("td");
 		var typeHead=document.createElement("td");
-		typeHead.innerHTML="Revenues";
+		typeHead.innerHTML="<strong>Revenues</strong>";
 		tr.appendChild(typeHead);
 		tr.appendChild(td);
 		show.appendChild(tr);
@@ -492,7 +510,7 @@ function showAccounts(){
 				var tr=document.createElement("tr");
 				var td=document.createElement("td");
 				var majorHead=document.createElement("td");
-				majorHead.innerHTML=keys[j];
+				majorHead.innerHTML='<strong>'+keys[j]+'</strong>';
 				tr.appendChild(majorHead);
 				tr.appendChild(td);
 				show.appendChild(tr);
@@ -512,7 +530,7 @@ function showAccounts(){
 		var tr=document.createElement("tr");
 		var td=document.createElement("td");
 		var typeHead=document.createElement("td");
-		typeHead.innerHTML="Expenses";
+		typeHead.innerHTML="<strong>Expenses</strong>";
 		tr.appendChild(typeHead);
 		tr.appendChild(td);
 		show.appendChild(tr);
@@ -522,7 +540,7 @@ function showAccounts(){
 				var tr=document.createElement("tr");
 				var td=document.createElement("td");
 				var majorHead=document.createElement("td");
-				majorHead.innerHTML=keys[j];
+				majorHead.innerHTML='<strong>'+keys[j]+'</strong>';
 				tr.appendChild(majorHead);
 				tr.appendChild(td);
 				show.appendChild(tr);

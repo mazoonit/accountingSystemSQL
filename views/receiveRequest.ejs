@@ -43,10 +43,10 @@
 			<table>
 			   <tr>
 				<td>
-				    <p>Supplier Name</p>
+				    <p>Client Name</p>
 				</td>
 				<td>
-				    <input type="text" id="addsupplierName"/>
+				    <input type="text" id="addclientName"/>
 				</td>
 				<td>
 				    <p>Date</p>
@@ -125,10 +125,10 @@
 			<table>
 			   <tr>
 				<td>
-				    <p>Supplier Name</p>
+				    <p>Client Name</p>
 				</td>
 				<td>
-				    <input type="text" id="editsupplierName"/>
+				    <input type="text" id="editclientName"/>
 				</td>
 				<td>
 				    <p>Date</p>
@@ -185,7 +185,7 @@
 				    <p>User</p>
 				</td>
 				<td>
-				    <input type="text" value="" id="editUser"/>
+				    <input type="text" value="" id="editUser" readonly/>
 				</td>
 			    </tr>
 			    <tr>
@@ -201,10 +201,10 @@
 			<table>
 			   <tr>
 				<td>
-				    <p>Supplier Name</p>
+				    <p>Client Name</p>
 				</td>
 				<td>
-				    <input type="text" id="deletesupplierName" readonly class="canNotEdit"/>
+				    <input type="text" id="deleteclientName" readonly class="canNotEdit"/>
 				</td>
 				<td>
 				    <p>Date</p>
@@ -277,10 +277,10 @@
 			<table>
 			   <tr>
 				<td>
-				    <p>Supplier Name</p>
+				    <p>Client Name</p>
 				</td>
 				<td>
-				    <input type="text" id="showsupplierName" readonly class="canNotEdit"/>
+				    <input type="text" id="showclientName" readonly class="canNotEdit"/>
 				</td>
 				<td>
 				    <p>Date</p>
@@ -371,7 +371,7 @@
 			<td colspan="3" style="border:2px solid #000;padding:10px;text-align:center;" id="cashTable"><p style="font-size:25px;">اذن توريد / مطالبة</p></td>
 		</tr>
 		<tr>
-			<td colspan="2" style="border:2px solid #000;padding:10px;" id="printsupplierName">اسم العميل : 4</td>
+			<td colspan="2" style="border:2px solid #000;padding:10px;" id="printclientName">اسم العميل : 4</td>
 			<td colspan="2" style="border:2px solid #000;padding:10px;" id="printDate">التاريخ : 20/12/2019</td>
 		</tr>
 		<tr>
@@ -417,11 +417,11 @@ function addRequest(){
 	var amount=document.getElementById("addAmount").value;
 	var totalAmount=document.getElementById("addTotalAmount").value;
 	var remainingAmount=document.getElementById("addRemainingAmount").value;
-	var supplierName=document.getElementById("addsupplierName").value;
+	var clientName=document.getElementById("addclientName").value;
 	var description=document.getElementById("addDescription").value;
 	var executionCompany=document.getElementById("addExecutionCompany").value;
 	//check
-	if(executionDate==""||endDate==""||executionPrice==""||isNaN(amount)||isNaN(totalAmount)||isNaN(remainingAmount)||supplierName==""||description==""){
+	if(executionDate==""||endDate==""||executionPrice==""||isNaN(amount)||isNaN(totalAmount)||isNaN(remainingAmount)||clientName==""||description==""){
 		alert("You Can't leave blank inputs!");
 	}
 	else{
@@ -433,7 +433,7 @@ function addRequest(){
 	requestBody.amount=amount;
 	requestBody.totalAmount=totalAmount;
 	requestBody.remainingAmount=remainingAmount;
-	requestBody.supplierName=supplierName;
+	requestBody.clientName=clientName;
 	requestBody.description=description;
 	var reqObj={};
 	reqObj.requestBody=requestBody;
@@ -442,40 +442,7 @@ function addRequest(){
 		if(res.status=="200"){
 			res=JSON.parse(res.responseText);
 			alert("Request has been added successfully!");
-			if(window.confirm("Do you want to print it ?")){
-				var requestBody=JSON.parse(res.requestBody);
-				var date=new Date(res.createdAt).toLocaleString().split(',');
-				var time=date[1];
-				date=date[0];
-				date=date.split('/');
-				date=date[2]+'-'+date[1]+'-'+date[0];
-				var temp=document.getElementById("temp");
-				temp.style.display="block";
-				var printsupplierName=document.getElementById("printsupplierName");
-				printsupplierName.innerHTML="اسم المورد : "+requestBody.supplierName;
-				var dateTable=document.getElementById("printDate");
-				dateTable.innerHTML="التاريخ : "+new Date(res.createdAt).toLocaleString().split(',')[0];
-				var printDescription=document.getElementById("printDescription");
-				printDescription.innerHTML="البيان و نوع الخدمة : "+requestBody.description;
-				var printAmount=document.getElementById("printAmount");
-				printAmount.innerHTML="القيمة الموردة : "+requestBody.amount;
-				var printRemainingAmount=document.getElementById("printRemainingAmount");
-				printRemainingAmount.innerHTML="المبلغ المتبقي : "+requestBody.remainingAmount;
-				var printTotalAmount=document.getElementById("printTotalAmount");
-				printTotalAmount.innerHTML="المبلغ الاجمالي : "+requestBody.totalAmount;
-				var printExecutionPrice=document.getElementById("printExecutionPrice");
-				printExecutionPrice.innerHTML="مبلغ التنفيذ : "+requestBody.executionPrice;
-				var printEmployer=document.getElementById("printEmployer");
-				printEmployer.innerHTML="اسم الموظف : "+"<%=user.username%>";
-				var printExecutionDate=document.getElementById("printExecutionDate");
-				printExecutionDate.innerHTML="تاريخ التنفيد : "+new Date(requestBody.executionDate).toLocaleString().split(',')[0];
-				var printEndDate=document.getElementById("printEndDate");
-				printEndDate.innerHTML="تاريخ نهاية الخدمة : "+new Date(requestBody.endDate).toLocaleString().split(',')[0];
-				var printRequestNumber=document.getElementById("printRequestNumber");
-				printRequestNumber.innerHTML="رقم الطلب :"+res.id;
-				window.print();
-				temp.style.display="none";
-			}
+      location.reload();
 		}
 		else{
 			alert(res.responseText);
@@ -495,7 +462,7 @@ function show(e){
 	var amount=document.getElementById(tabID+"Amount");
 	var totalAmount=document.getElementById(tabID+"TotalAmount");
 	var remainingAmount=document.getElementById(tabID+"RemainingAmount");
-	var supplierName=document.getElementById(tabID+"supplierName");
+	var clientName=document.getElementById(tabID+"clientName");
 	var description=document.getElementById(tabID+"Description");
 	var executionCompany=document.getElementById(tabID+"ExecutionCompany");
 	var editRequestNumber=document.getElementById(targetID).value;
@@ -521,7 +488,7 @@ function show(e){
 			amount.value=requestBody.amount;
 			totalAmount.value=requestBody.totalAmount;
 			remainingAmount.value=requestBody.remainingAmount;
-			supplierName.value=requestBody.supplierName;
+			clientName.value=requestBody.clientName;
 			description.value=requestBody.description;
 			user.value=res.employerUserAccount.username;
 			executionCompany.value=requestBody.executionCompany;
@@ -532,7 +499,7 @@ function show(e){
 			amount.value=0;
 			totalAmount.value=0;
 			remainingAmount.value=0;
-			supplierName.value="";
+			clientName.value="";
 			description.value="";
 			executionDate.value="";
 			endDate.value="";
@@ -553,11 +520,11 @@ function edit(){
 	var amount=document.getElementById("editAmount").value;
 	var totalAmount=document.getElementById("editTotalAmount").value;
 	var remainingAmount=document.getElementById("editRemainingAmount").value;
-	var supplierName=document.getElementById("editsupplierName").value;
+	var clientName=document.getElementById("editclientName").value;
 	var description=document.getElementById("editDescription").value;
 	var executionCompany=document.getElementById("editExecutionCompany").value;
-	var type="receiveRequest";
-	if(executionDate==""||endDate==""||executionPrice==""||isNaN(amount)||isNaN(totalAmount)||isNaN(remainingAmount)||supplierName==""||description==""){
+	var type="receive";
+	if(executionDate==""||endDate==""||executionPrice==""||isNaN(amount)||isNaN(totalAmount)||isNaN(remainingAmount)||clientName==""||description==""){
 		alert("You Can't leave blank inputs!");
 	}
 	else{
@@ -568,17 +535,25 @@ function edit(){
 	requestBody.amount=amount;
 	requestBody.totalAmount=totalAmount;
 	requestBody.remainingAmount=remainingAmount;
-	requestBody.supplierName=supplierName;
+	requestBody.clientName=clientName;
 	requestBody.description=description;
 	requestBody.executionCompany=executionCompany;
 	var obj={
 		requestBody:requestBody,
-		betterId:editRequestNumber,
+		id:editRequestNumber,
 		type:type
 	}
 
-	ajaxRequest('request/update',"POST","application/json",obj,(res)=>{
-		alert(res.responseText);
+	ajaxRequest('api/request',"PUT","application/json",obj,(res)=>{
+    if(res.status==200){
+      alert("Request has been updated successfully!");
+    }
+    else if(res.status==400){
+      alert("You can not edit this request!");
+    }
+    else{
+      alert("Internal server error,try again.");
+    }
 	});
 	}
 	return false;
@@ -602,7 +577,7 @@ function printShow(){
 				alert(res.responseText);}
 		else{
 			res=JSON.parse(res.responseText);
-			if(res.type=="receive"){
+			if(res.type=="receive" && res.status=="accepted"){
         console.log(res);
 				var requestBody=JSON.parse(res.requestBody);
 				var date=new Date(res.createdAt).toLocaleString().split(',');
@@ -612,14 +587,14 @@ function printShow(){
 				date=date[2]+'-'+date[1]+'-'+date[0];
 				var temp=document.getElementById("temp");
 				temp.style.display="block";
-				var printsupplierName=document.getElementById("printsupplierName");
-				printsupplierName.innerHTML="اسم العميل : "+requestBody.supplierName;
+				var printclientName=document.getElementById("printclientName");
+				printclientName.innerHTML="اسم العميل : "+requestBody.clientName;
 				var dateTable=document.getElementById("printDate");
 				dateTable.innerHTML="التاريخ : "+new Date(res.createdAt).toLocaleString().split(',')[0];
 				var printDescription=document.getElementById("printDescription");
 				printDescription.innerHTML="البيان و نوع الخدمة : "+requestBody.description;
 				var printAmount=document.getElementById("printAmount");
-				printAmount.innerHTML="القيمة المصروفة : "+requestBody.amount;
+				printAmount.innerHTML="القيمة الموردة : "+requestBody.amount;
 				var printRemainingAmount=document.getElementById("printRemainingAmount");
 				printRemainingAmount.innerHTML="المبلغ المتبقي : "+requestBody.remainingAmount;
 				var printTotalAmount=document.getElementById("printTotalAmount");
@@ -640,7 +615,7 @@ function printShow(){
 				temp.style.display="none";
 			}
 			else{
-				alert("Request Not Found!");
+				alert("Request Not Found OR Not Accepted Yet!");
 			}
 		}
 

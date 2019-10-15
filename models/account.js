@@ -13,13 +13,15 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   account.associate = function(models) {
     // associations can be defined here
-    account.hasMany(models.receipt,{foreignKey:'accountId'});
-    account.hasMany(models.receipt,{foreignKey:'cashAccount'});
+    account.hasMany(models.paymentReceipt,{foreignKey:'accountId'});
+    account.hasMany(models.paymentReceipt,{foreignKey:'cashAccount'});
+    account.hasMany(models.receiveReceipt,{foreignKey:'accountId'});
+    account.hasMany(models.receiveReceipt,{foreignKey:'cashAccount'});
     account.hasMany(models.moveLine,{foreignKey:'accountId'});
-    account.hasMany(models.productI,{foreignKey:'clientAccount'});
-    account.hasMany(models.productI,{foreignKey:'supplierAccount'});
-    account.hasMany(models.productI,{foreignKey:'revenueAccount'});
-    account.hasMany(models.productI,{foreignKey:'expenseAccount'});
+    account.hasMany(models.productI,{foreignKey:'clientAccount',as:"clientAcc"});
+    account.hasMany(models.productI,{foreignKey:'supplierAccount',as:"supplierAcc"});
+    account.hasMany(models.productI,{foreignKey:'revenueAccount',as:"revenueAcc"});
+    account.hasMany(models.productI,{foreignKey:'expenseAccount',as:"expenseAcc"});
 
   };
   return account;

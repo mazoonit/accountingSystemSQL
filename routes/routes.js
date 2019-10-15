@@ -5,10 +5,12 @@ var auth=require('../decryptoric/auth.js');
 var basicAuth=auth.basicAuth;
 var user=models.user;
 var bcrypt = require('bcrypt');
+var receipts=require('../decryptoric/receipts');
 
 router.get('/',basicAuth,function(req,res){
 	res.render('home.ejs',{user:req.session.user});
 });
+
 router.get('/login',function(req,res){
 	if(req.session.user){
 		res.redirect('/');
@@ -31,6 +33,7 @@ router.post('/login',function(req,res,next){
 			next(error);
 		}
 		else{
+			userDoc.permissions=JSON.parse(userDoc.permissions);
       req.session.user=userDoc;
       res.status(200).send(true);
 		}
@@ -43,6 +46,17 @@ router.get('/logout',function(req,res){
 		req.session=null;
 		res.redirect('/');
   	}
+});
+
+
+
+//pending requests
+router.get('/api/getPendingReceipts',function(req,res,next){
+  receipts.getPendingReceipts().then((receiptRaws)=>{
+    res.status(200).send(receiptRaws);
+  }).catch((error)=>{
+    res.status(500).send(error);
+  });
 });
 
 module.exports = router;

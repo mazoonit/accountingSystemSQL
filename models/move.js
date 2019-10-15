@@ -7,6 +7,8 @@ module.exports = (sequelize, DataTypes) => {
   move.associate = function(models) {
     // associations can be defined here
     move.hasMany(models.moveLine,{foreignKey:'moveId'});
+    move.hasOne(models.product,{foreignKey:'entryId'});
+    move.hasOne(models.productI,{foreignKey:'entryId'});
     move.belongsTo(models.user,{foreignKey:'userId'});
 
   };

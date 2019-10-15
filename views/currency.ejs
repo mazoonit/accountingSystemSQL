@@ -205,6 +205,7 @@ function addCurrency(){
 	ajaxRequest("api/currency","POST","application/json",currencyObj,(res)=>{
 		if(res.status==200){
 			alert("Currency has been added successfully!");
+			location.reload();
 		}
 		else{
 			alert(res.responseText);

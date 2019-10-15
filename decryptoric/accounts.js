@@ -17,6 +17,16 @@ module.exports={
     }).catch(()=>{
       res.status(500).send("Internal server error,Try again.");
     });
+  },
+  delete:async function(id){
+    var move=await models.moveLine.findOne({where:{accountId:id}});
+    if(move){
+      return false;
+    }
+    else{
+      await models.account.destroy({where:{id:id}});
+      return true;
+    }
   }
 
 }

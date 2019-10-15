@@ -15,9 +15,10 @@
 #accountReportTemplate td{
 	text-align:center;
 	border:0.5px solid #000;
+	padding:5px;
 
 }
-#cashCoverTemplate td{border:0.5px solid #000;}
+#cashCoverTemplate td{border:0.5px solid #000;padding:5px;}
 .printedReporthead{display:inline-block;margin:15px;}
 @media print {
   body * {
@@ -318,15 +319,8 @@ function getReport(){
 					th2.innerHTML=moves[j].moveId;
 					th3.innerHTML=moves[j].currency.abb;
 					th4.innerHTML=moves[j].notes;
-					if(moves[j].receipt){
-						if(moves[j].receipt.type=="paymentReceipt"){
-							th5.innerHTML=moves[j].receiptId;
-						}
-						else{
-							th6.innerHTML=moves[j].receiptId;
-						}
-
-					}
+					th5.innerHTML=moves[j].paymentReceiptId;
+					th6.innerHTML=moves[j].receiveReceiptId;
 					th7.innerHTML=moves[j].exchangeRate.toFixed(2);
 					th8.innerHTML=moves[j].debit.toFixed(2);
 					th9.innerHTML=moves[j].credit.toFixed(2);
@@ -524,15 +518,8 @@ function getCurrencyReport(){
 						th2.innerHTML=moves[j].moveId;
 						th3.innerHTML=moves[j].currency.abb;
 						th4.innerHTML=moves[j].notes;
-						if(moves[j].receipt){
-							if(moves[j].receipt.type=="paymentReceipt"){
-								th5.innerHTML=moves[j].receiptId;
-							}
-							else{
-								th6.innerHTML=moves[j].receiptId;
-							}
-
-						}
+						th5.innerHTML=moves[j].paymentReceiptId;
+						th6.innerHTML=moves[j].receiveReceiptId;
 						th7.innerHTML=moves[j].exchangeRate.toFixed(2);
 						th8.innerHTML=moves[j].debit.toFixed(2);
 						th9.innerHTML=moves[j].credit.toFixed(2);
@@ -745,6 +732,67 @@ function getCashCover(){
 				tr.appendChild(td4);
 				cashCoverTemplate.appendChild(tr);
 
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				td1.colSpan="1";
+				td2.colSpan="2";
+				td1.innerHTML=numericPrevBalance.toFixed(2);
+				td2.innerHTML="الرصيد السابق";
+				td1.style.backgroundColor="#ccc";
+				td2.style.backgroundColor="#ccc";
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				cashCoverTemplate.appendChild(tr);
+
+
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				td1.colSpan="1";
+				td2.colSpan="2";
+				td1.innerHTML=totalReceive.toFixed(2);
+				td2.innerHTML="اجمالي المقبوضات";
+				td1.style.backgroundColor="#ccc";
+				td2.style.backgroundColor="#ccc";
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				cashCoverTemplate.appendChild(tr);
+
+
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				td1.colSpan="1";
+				td2.colSpan="2";
+				td1.innerHTML=totalPayment.toFixed(2);
+				td2.innerHTML="اجمالي المدفوعات";
+				td1.style.backgroundColor="#ccc";
+				td2.style.backgroundColor="#ccc";
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				cashCoverTemplate.appendChild(tr);
+
+
+
+
+				var tr=document.createElement("tr");
+				var td1=document.createElement("td");
+				var td2=document.createElement("td");
+				td1.colSpan="1";
+				td2.colSpan="2";
+				td1.innerHTML=currentBalance.toFixed(2);
+				td2.innerHTML="الرصيد الحالي";
+				td1.style.backgroundColor="#ccc";
+				td2.style.backgroundColor="#ccc";
+				tr.appendChild(td1);
+				tr.appendChild(td2);
+				cashCoverTemplate.appendChild(tr);
+
+
+
+
+
 
 
 				var reportDiv=document.createElement("div");
@@ -769,34 +817,6 @@ function getCashCover(){
 				introPrevBalance.className+="printedReporthead";
 
 
-
-
-				var outro=document.createElement("div");
-				outro.dir="rtl";
-				var totalReceiveP=document.createElement("p");
-				totalReceiveP.innerHTML="اجمالي المقبوضات: "+totalReceive.toFixed(2);
-				var totalPaymentP=document.createElement("p");
-				totalPaymentP.innerHTML="اجمالي المدفوعات: "+totalPayment.toFixed(2);
-				var prevBalance=document.createElement("p");
-				prevBalance.innerHTML="الرصيد السابق : "+numericPrevBalance.toFixed(2);
-				var allCredith4=document.createElement("p");
-				allCredith4.innerHTML="الرصيد الحالي : "+currentBalance.toFixed(2);
-
-				var p1=document.createElement("p");
-				p1.innerHTML="امين الخزينة";
-				p1.className+="printedReporthead";
-
-				var p2=document.createElement("p");
-				p2.innerHTML="المراجعة";
-				p2.className+="printedReporthead";
-
-				var p3=document.createElement("p");
-				p3.innerHTML="يعتمد";
-				p3.className+="printedReporthead";
-
-
-
-
 				/**
 				var x=document.createElement("IMG");
 				x.src="/static/images/img.png";
@@ -812,15 +832,8 @@ function getCashCover(){
 				intro.appendChild(mainAccountName);
 				intro.appendChild(introPrevBalance);
 
-				outro.appendChild(totalReceiveP);
-				outro.appendChild(totalPaymentP);
-				outro.appendChild(prevBalance);
-				outro.appendChild(allCredith4);
-
-
 				reportDiv.appendChild(intro);
 				reportDiv.appendChild(cashCoverTemplate);
-				reportDiv.appendChild(outro);
 				reportDiv.id="temp";
 				document.body.append(reportDiv);
 				window.print();

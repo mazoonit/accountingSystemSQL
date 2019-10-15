@@ -47,8 +47,11 @@ module.exports={
     return new Promise((resolve,reject)=>{
       var promises=[];
       for(var i=0;i<moveLines.length;i++){
-        if(moveLines[i].receiptId){
-            promises.push(models.receipt.update({status:"accepted"},{where:{id:moveLines[i].receiptId}}));
+        if(moveLines[i].paymentReceiptId){
+            promises.push(models.paymentReceipt.update({status:"accepted"},{where:{id:moveLines[i].paymentReceiptId}}));
+        }
+        if(moveLines[i].receiveReceiptId){
+            promises.push(models.receiveReceipt.update({status:"accepted"},{where:{id:moveLines[i].receiveReceiptId}}));
         }
       }
       Promise.all(promises).then(()=>{

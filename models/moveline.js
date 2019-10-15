@@ -3,7 +3,8 @@ module.exports = (sequelize, DataTypes) => {
   const moveLine = sequelize.define('moveLine', {
     moveId: DataTypes.INTEGER,
     invoiceId: DataTypes.INTEGER,
-    receiptId: DataTypes.INTEGER,
+    paymentReceiptId: DataTypes.INTEGER,
+    receiveReceiptId:DataTypes.INTEGER,
     accountId: DataTypes.INTEGER,
     debit: DataTypes.FLOAT,
     credit: DataTypes.FLOAT,
@@ -17,7 +18,8 @@ module.exports = (sequelize, DataTypes) => {
     moveLine.belongsTo(models.account);
     moveLine.belongsTo(models.move);
     moveLine.belongsTo(models.invoice);
-    moveLine.belongsTo(models.receipt);
+    moveLine.belongsTo(models.paymentReceipt);
+    moveLine.belongsTo(models.receiveReceipt);
 
   };
   return moveLine;

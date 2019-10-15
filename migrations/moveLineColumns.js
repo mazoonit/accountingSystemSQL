@@ -39,17 +39,33 @@ module.exports = {
 
       queryInterface.addColumn(
         'moveLines',
-        'receiptId',
+        'paymentReceiptId',
         {
           type: Sequelize.INTEGER,
   	references:{
-  		model:'receipts',
+  		model:'paymentReceipts',
   		key:'id'
   	},
   	onDelete:'CASCADE',
     allowNull:true
         }
       ),
+
+
+      queryInterface.addColumn(
+        'moveLines',
+        'receiveReceiptId',
+        {
+          type: Sequelize.INTEGER,
+    references:{
+      model:'receiveReceipts',
+      key:'id'
+    },
+    onDelete:'CASCADE',
+    allowNull:true
+        }
+      ),
+
 
 
 
@@ -95,7 +111,8 @@ module.exports = {
   down: (queryInterface, Sequelize) => {
     return Promise.all([
       queryInterface.removeColumn('moveLines', 'invoiceId'),
-      queryInterface.removeColumn('moveLines', 'receiptId'),
+      queryInterface.removeColumn('moveLines', 'receiveReceiptId'),
+      queryInterface.removeColumn('moveLines', 'paymentReceiptId'),      
       queryInterface.removeColumn('moveLines', 'currencyId'),
       queryInterface.removeColumn('moveLines', 'moveId'),
       queryInterface.removeColumn('moveLines', 'accountId'),

@@ -90,6 +90,8 @@
 							<option>insuranceCompany</option>
 							<option>umrah</option>
 							<option>hajj</option>
+							<option>hajjAndUmrah</option>
+							<option>enteriorTourism</option>
 						</optgroup>
 						<option>profit</option>
 						<option>other</option>
@@ -206,17 +208,19 @@
 					</td>
 					<td>
 					    <select id="deleteAccountCharacter" class="canNotEdit" readonly>
-						<option>cash</option>
-						<option>client</option>
-						<optgroup label="Suppliers">
-							<option>bsp</option>
-							<option>lowCost</option>
-							<option>insuranceCompany</option>
-							<option>umrah</option>
-							<option>hajj</option>
-						</optgroup>
-						<option>profit</option>
-						<option>other</option>
+								<option>cash</option>
+								<option>client</option>
+								<optgroup label="Suppliers">
+									<option>bsp</option>
+									<option>lowCost</option>
+									<option>insuranceCompany</option>
+									<option>umrah</option>
+									<option>hajj</option>
+									<option>hajjAndUmrah</option>
+									<option>enteriorTourism</option>
+								</optgroup>
+								<option>profit</option>
+								<option>other</option>
 					    </select>
 					</td>
 				    </tr>
@@ -254,7 +258,7 @@
 					</td>
 				    </tr>
 				    <tr>
-					    <td><button class="button" onClick="return deleteAccount();">delete</button></td>
+					    <td><button class="button" onClick="return deleteAccount();">Delete</button></td>
 				   </tr>
 				</table>
 			</form>
@@ -333,17 +337,19 @@
 					</td>
 					<td>
 					  <select id="editAccountCharacter">
-  						<option>cash</option>
-  						<option>client</option>
-  						<optgroup label="Suppliers">
-  							<option>bsp</option>
-  							<option>lowCost</option>
+							<option>cash</option>
+							<option>client</option>
+							<optgroup label="Suppliers">
+								<option>bsp</option>
+								<option>lowCost</option>
 								<option>insuranceCompany</option>
 								<option>umrah</option>
 								<option>hajj</option>
-  						</optgroup>
-  						<option>profit</option>
-  						<option>other</option>
+								<option>hajjAndUmrah</option>
+								<option>enteriorTourism</option>
+							</optgroup>
+							<option>profit</option>
+							<option>other</option>
 					  </select>
 					</td>
 				    </tr>
@@ -429,6 +435,7 @@ function addAccount(){
 				ajaxRequest('api/account',"POST","application/json",obj,function(res){
 					if(res.status==200){
 						alert("Account has been inserted successfully!");
+						location.reload();
 					}
 					else{
 						alert(res.responseText);
@@ -555,19 +562,19 @@ function showAll(){
 
 			}
 			var show=document.getElementById("showAccounts");
-			show.innerHTML="<tr><td>Account Name</td><td>Account ID</td></tr>";
+			show.innerHTML="<tr><td><strong>Account Name</strong></td><td><strong>Account ID</strong></td></tr>";
 			//hardcode .-.
 			var tr=document.createElement("tr");
 			var td=document.createElement("td");
 			var typeHead=document.createElement("td");
-			typeHead.innerHTML="Assets";
+			typeHead.innerHTML="<strong>Assets</strong>";
 			tr.appendChild(typeHead);
 			tr.appendChild(td);
 			show.appendChild(tr);
 			var tr=document.createElement("tr");
 			var td=document.createElement("td");
 			var minorTypeHead=document.createElement("td");
-			minorTypeHead.innerHTML="Current Assets";
+			minorTypeHead.innerHTML="<strong>Current Assets</strong>";
 			tr.appendChild(minorTypeHead);
 			tr.appendChild(td);
 			show.appendChild(tr);
@@ -577,7 +584,7 @@ function showAll(){
 					var tr=document.createElement("tr");
 					var td=document.createElement("td");
 					var majorHead=document.createElement("td");
-					majorHead.innerHTML=keys[j];
+					majorHead.innerHTML='<strong>'+keys[j]+'</strong>';
 					tr.appendChild(majorHead);
 					tr.appendChild(td);
 					show.appendChild(tr);
@@ -597,7 +604,7 @@ function showAll(){
 			var tr=document.createElement("tr");
 			var td=document.createElement("td");
 			var minorTypeHead=document.createElement("td");
-			minorTypeHead.innerHTML="Non Current Assets";
+			minorTypeHead.innerHTML="<strong>Non Current Assets</strong>";
 			tr.appendChild(minorTypeHead);
 			tr.appendChild(td);
 			show.appendChild(tr);
@@ -607,7 +614,7 @@ function showAll(){
 					var tr=document.createElement("tr");
 					var td=document.createElement("td");
 					var majorHead=document.createElement("td");
-					majorHead.innerHTML=keys[j];
+					majorHead.innerHTML='<strong>'+keys[j]+'</strong>';
 					tr.appendChild(majorHead);
 					tr.appendChild(td);
 					show.appendChild(tr);
@@ -628,14 +635,14 @@ function showAll(){
 			var tr=document.createElement("tr");
 			var td=document.createElement("td");
 			var typeHead=document.createElement("td");
-			typeHead.innerHTML="Liabilities";
+			typeHead.innerHTML="<strong>Liabilities</strong>";
 			tr.appendChild(typeHead);
 			tr.appendChild(td);
 			show.appendChild(tr);
 			var tr=document.createElement("tr");
 			var td=document.createElement("td");
 			var minorTypeHead=document.createElement("td");
-			minorTypeHead.innerHTML="Current Liabilities";
+			minorTypeHead.innerHTML="<strong>Current Liabilities</strong>";
 			tr.appendChild(minorTypeHead);
 			tr.appendChild(td);
 			show.appendChild(tr);
@@ -645,7 +652,7 @@ function showAll(){
 					var tr=document.createElement("tr");
 					var td=document.createElement("td");
 					var majorHead=document.createElement("td");
-					majorHead.innerHTML=keys[j];
+					majorHead.innerHTML='<strong>'+keys[j]+'</strong>';
 					tr.appendChild(majorHead);
 					tr.appendChild(td);
 					show.appendChild(tr);
@@ -666,7 +673,7 @@ function showAll(){
 			var tr=document.createElement("tr");
 			var td=document.createElement("td");
 			var minorTypeHead=document.createElement("td");
-			minorTypeHead.innerHTML="Non Current Liabilities";
+			minorTypeHead.innerHTML="<strong>Non Current Liabilities</strong>";
 			tr.appendChild(minorTypeHead);
 			tr.appendChild(td);
 			show.appendChild(tr);
@@ -676,7 +683,7 @@ function showAll(){
 					var tr=document.createElement("tr");
 					var td=document.createElement("td");
 					var majorHead=document.createElement("td");
-					majorHead.innerHTML=keys[j];
+					majorHead.innerHTML='<strong>'+keys[j]+'</strong>';
 					tr.appendChild(majorHead);
 					tr.appendChild(td);
 					show.appendChild(tr);
@@ -696,7 +703,7 @@ function showAll(){
 			var tr=document.createElement("tr");
 			var td=document.createElement("td");
 			var minorTypeHead=document.createElement("td");
-			minorTypeHead.innerHTML="Shareholders Equity";
+			minorTypeHead.innerHTML="<strong>Shareholders Equity</strong>";
 			tr.appendChild(minorTypeHead);
 			tr.appendChild(td);
 			show.appendChild(tr);
@@ -706,7 +713,7 @@ function showAll(){
 					var tr=document.createElement("tr");
 					var td=document.createElement("td");
 					var majorHead=document.createElement("td");
-					majorHead.innerHTML=keys[j];
+					majorHead.innerHTML='<strong>'+keys[j]+'</strong>';
 					tr.appendChild(majorHead);
 					tr.appendChild(td);
 					show.appendChild(tr);
@@ -728,7 +735,7 @@ function showAll(){
 			var tr=document.createElement("tr");
 			var td=document.createElement("td");
 			var typeHead=document.createElement("td");
-			typeHead.innerHTML="Revenues";
+			typeHead.innerHTML="<strong>Revenues</strong>";
 			tr.appendChild(typeHead);
 			tr.appendChild(td);
 			show.appendChild(tr);
@@ -738,7 +745,7 @@ function showAll(){
 					var tr=document.createElement("tr");
 					var td=document.createElement("td");
 					var majorHead=document.createElement("td");
-					majorHead.innerHTML=keys[j];
+					majorHead.innerHTML='<strong>'+keys[j]+'</strong>';
 					tr.appendChild(majorHead);
 					tr.appendChild(td);
 					show.appendChild(tr);
@@ -758,7 +765,7 @@ function showAll(){
 			var tr=document.createElement("tr");
 			var td=document.createElement("td");
 			var typeHead=document.createElement("td");
-			typeHead.innerHTML="Expenses";
+			typeHead.innerHTML="<strong>Expenses</strong>";
 			tr.appendChild(typeHead);
 			tr.appendChild(td);
 			show.appendChild(tr);
@@ -768,7 +775,7 @@ function showAll(){
 					var tr=document.createElement("tr");
 					var td=document.createElement("td");
 					var majorHead=document.createElement("td");
-					majorHead.innerHTML=keys[j];
+					majorHead.innerHTML='<strong>'+keys[j]+'</strong>';
 					tr.appendChild(majorHead);
 					tr.appendChild(td);
 					show.appendChild(tr);

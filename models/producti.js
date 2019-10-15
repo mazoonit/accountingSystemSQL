@@ -25,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     productI.belongsTo(models.currency,{foreignKey:"currencyId"});
     productI.belongsTo(models.employer,{foreignKey:"employerId"});
     productI.belongsTo(models.user,{foreignKey:"userId"});
+    productI.belongsTo(models.move,{foreignKey:"entryId"});
 
   };
   return productI;

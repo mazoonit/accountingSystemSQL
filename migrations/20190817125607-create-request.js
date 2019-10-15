@@ -9,7 +9,8 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       status: {
-        type: Sequelize.ENUM('pending', 'accepted')
+        type: Sequelize.ENUM('pending', 'accepted'),
+        defaultValue:"pending"
       },
       employerUserId: {
         type: Sequelize.INTEGER,
@@ -23,7 +24,7 @@ module.exports = {
         type: Sequelize.ENUM('payment', 'receive', 'invoice')
       },
       requestBody: {
-        type: Sequelize.STRING
+        type: Sequelize.TEXT
       },
       auditorUserId: {
         type: Sequelize.INTEGER,

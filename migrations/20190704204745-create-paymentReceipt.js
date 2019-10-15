@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('receipts', {
+    return queryInterface.createTable('paymentReceipts', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -49,9 +49,6 @@ module.exports = {
 	// },
 	// onDelete:'CASCADE'
   //     },
-      type: {
-        type: Sequelize.ENUM('paymentReceipt', 'receiveReceipt')
-      },
       status: {
         type: Sequelize.ENUM('pending', 'accepted'),
         defaultValue:"pending"
@@ -70,6 +67,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('receipts');
+    return queryInterface.dropTable('paymentReceipts');
   }
 };

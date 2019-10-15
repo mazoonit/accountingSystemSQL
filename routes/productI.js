@@ -20,12 +20,46 @@ router.post('/frontGet',function(req,res,next){
 });
 
 
+router.post('/frontGetByMoveId',function(req,res,next){
+  var moveId=req.body.moveId;
+  var type=req.body.productType;
+  product.getProductByMoveId(moveId,type).then((productObj)=>{
+    if(productObj){
+      res.status(200).send(productObj);
+    }
+    else{
+      res.status(404).send("Product not found!");
+    }
+  }).catch((error)=>{
+    console.log(error);
+    res.status(500).send(error);
+  });
+});
+
+
 router.post('/',function(req,res,next){
   var productObj=req.body;
   productObj.userId=req.session.user.id;
   product.addProduct(productObj).then((productRaw)=>{
     res.status(200).send(productRaw);
   }).catch((err)=>{
+    res.status(500).send(err);
+  });
+});
+
+
+router.put('/',function(req,res,next){
+  var productObj=req.body;
+  productObj.userId=req.session.user.id;
+  product.editProduct(productObj).then((flag)=>{
+    if(flag){
+      res.status(200).send(true);
+    }
+    else{
+      res.status(404).send("Product not found!");
+    }
+  }).catch((err)=>{
+    console.log(err);
     res.status(500).send(err);
   });
 });
@@ -96,9 +130,47 @@ router.post("/getEmployerProducts",function(req,res,next){
   }).catch((error)=>{
     res.status(500).send(error);
 
-  })
-
+  });
 });
+
+router.post("/getDelegateProducts",function(req,res,next){
+  var fromDate=req.body.fromDate;
+  var toDate=req.body.toDate;
+  var productType=req.body.productType;
+  var delegateName=req.body.delegateName;
+
+
+  product.getDelegateProducts(delegateName,fromDate,toDate,productType).then((products)=>{
+    res.status(200).send(products);
+  }).catch((error)=>{
+    res.status(500).send(error);
+  });
+});
+
+router.post("/getIslamicDateProducts",function(req,res,next){
+  var productType=req.body.productType;
+  var islamicDate=req.body.islamicDate;
+
+  product.getIslamicDateProducts(islamicDate,productType).then((products)=>{
+    console.log("ho");
+    res.status(200).send(products);
+  }).catch((error)=>{
+    res.status(500).send(error);
+  });
+});
+
+router.post("/getJourneyProducts",function(req,res,next){
+  var productType=req.body.productType;
+  var journey=req.body.journey;
+
+  product.getJourneyProducts(journey,productType).then((products)=>{
+    res.status(200).send(products);
+  }).catch((error)=>{
+    res.status(500).send(error);
+  });
+});
+
+
 
 
 

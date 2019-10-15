@@ -8,7 +8,6 @@
 .requestGo{
 	background-color: #1fc8db;
 	padding:10px 20px;
-
 }
 .ybutton{
 	display:inline-block;
@@ -175,7 +174,7 @@ button{margin:0;}
 						</td>
 
 						<td>
-				<input type="number" min="0" required onchange="addBalance();"id="add_debit_0">
+							<input type="number" min="0" required onchange="addBalance();"id="add_debit_0">
 						</td>
 						<td>
 				<input type="number" min="0" required onchange="addBalance();"id="add_credit_0">
@@ -598,7 +597,7 @@ function deleteLine(){
 	return false;
 }
 function cashMove(){
-	ajaxRequest("api/receipt/getPendingReceipts","GET","application/json",{},(res)=>{
+	ajaxRequest("api/getPendingReceipts","GET","application/json",{},(res)=>{
 		if(res.status!="200"){alert(res.responseText);}
 		else{
 			res=JSON.parse(res.responseText);
@@ -701,7 +700,7 @@ function addEntry(){
 	var obj={
 		move:{
 			notes:"notes",
-			createdAt:cDate
+			createdAt:bDate
 	},
 	moveLines:[]};
 	var promises=[];
@@ -729,13 +728,11 @@ function addEntry(){
 		}
 		move.accountId=accountId;
 		move.currencyId=currencyId;
-		if(receive==="" && payment ===""){
+		if(payment){
+			move.paymentReceiptId=payment;
 		}
-		else if(receive===""){
-			move.receiptId=payment;
-		}
-		else{
-			move.receiptId=receive;
+		if(receive){
+			move.receiveReceiptId=receive;
 		}
 		move.exchangeRate=rate;
 		move.debit=debit;
@@ -818,14 +815,8 @@ function addEntry(){
 								th1.innerHTML=moves[j].credit.toFixed(2);
 								th3.innerHTML=moves[j].exchangeRate.toFixed(2);
 								th4.innerHTML=moves[j].currency.name;
-								if(moves[j].receipt){
-									if(moves[j].receipt.type=="paymentReceipt"){
-										th5.innerHTML=moves[j].receiptId;
-									}
-									else if(moves[j].receipt.type=="receiveReceipt"){
-										th6.innerHTML=moves[j].receiptId;
-									}
-								}
+								th5.innerHTML=moves[j].paymentReceiptId;
+								th6.innerHTML=moves[j].receiveReceiptId;
 								th7.innerHTML=moves[j].account.id;
 								th8.innerHTML=moves[j].account.name;
 								th9.innerHTML=moves[j].notes;
@@ -1011,17 +1002,10 @@ function entrySearch(e){
 				currency.value=moveLines[i].currency.id;
 				var event = new Event('change');
 				currency.dispatchEvent(event);
-				if(moveLines[i].receipt){
-					if(moveLines[i].receipt.type=="paymentReceipt"){
-						var payment=document.getElementById("delete_payment_"+i);
-						payment.value=moveLines[i].receiptId;
-					}
-					else{
-						var receive=document.getElementById("delete_receive_"+i);
-						receive.value=moveLines[i].receiptId;
-					}
-
-				}
+				var payment=document.getElementById("delete_payment_"+i);
+				payment.value=moveLines[i].paymentReceiptId;
+				var receive=document.getElementById("delete_receive_"+i);
+				receive.value=moveLines[i].receiveReceiptId;
 				var rate=document.getElementById("delete_rate_"+i);
 				rate.value=moveLines[i].exchangeRate;
 				var debit=document.getElementById("delete_debit_"+i);
@@ -1064,6 +1048,7 @@ function deleteEntry(){
 	if(window.confirm("are you sure you want to delete ?")){
 		ajaxRequest('api/entry',"DELETE","application/json",{id:entryId},function(res){
 			alert("Status : "+res.status+"\n"+"Message : "+res.responseText);
+			location.reload();
 		});
 	}
 	return false;
@@ -1172,17 +1157,10 @@ function editEntrySearch(e){
 				currency.value=moveLines[i].currency.id;
 				var event = new Event('change');
 				currency.dispatchEvent(event);
-				if(moveLines[i].receipt){
-					if(moveLines[i].receipt.type=="paymentReceipt"){
-						var payment=document.getElementById("edit_payment_"+i);
-						payment.value=moveLines[i].receiptId;
-					}
-					else{
-						var receive=document.getElementById("edit_receive_"+i);
-						receive.value=moveLines[i].receiptId;
-					}
-
-				}
+				var payment=document.getElementById("edit_payment_"+i);
+				payment.value=moveLines[i].paymentReceiptId;
+				var receive=document.getElementById("edit_receive_"+i);
+				receive.value=moveLines[i].receiveReceiptId;
 				var rate=document.getElementById("edit_rate_"+i);
 				rate.value=moveLines[i].exchangeRate;
 				var debit=document.getElementById("edit_debit_"+i);
@@ -1228,7 +1206,7 @@ function editEntry(){
 	var obj={
 		move:{
 			notes:"notes",
-			createdAt:cDate,
+			createdAt:bDate,
 			id:entryId
 	},
 	moveLines:[]};
@@ -1259,13 +1237,11 @@ function editEntry(){
 		}
 		move.accountId=accountId;
 		move.currencyId=currencyCode;
-		if(receive==="" && payment ===""){
+		if(payment){
+			move.paymentReceiptId=payment;
 		}
-		else if(receive===""){
-			move.receiptId=payment;
-		}
-		else{
-			move.receiptId=receive;
+		if(receive){
+			move.receiveReceiptId=receive;
 		}
 		move.moveId=entryId;
 		move.exchangeRate=rate;
@@ -1319,6 +1295,7 @@ function editEntry(){
 			ajaxRequest("api/entry","PUT","application/json",{entry:obj},function(res){
 				if(res.status==200){
 					alert("Entry has been updated successfully");
+					location.reload();
 				}
 				else{
 					alert("Status : "+res.status+"\n"+"Message : "+res.responseText);
@@ -1415,17 +1392,10 @@ function showEntrySearch(e){
 				currency.value=moveLines[i].currency.id;
 				var event = new Event('change');
 				currency.dispatchEvent(event);
-				if(moveLines[i].receipt){
-					if(moveLines[i].receipt.type=="paymentReceipt"){
-						var payment=document.getElementById("show_payment_"+i);
-						payment.value=moveLines[i].receiptId;
-					}
-					else{
-						var receive=document.getElementById("show_receive_"+i);
-						receive.value=moveLines[i].receiptId;
-					}
-
-				}
+				var payment=document.getElementById("show_payment_"+i);
+				payment.value=moveLines[i].paymentReceiptId;
+				var receive=document.getElementById("show_receive_"+i);
+				receive.value=moveLines[i].receiveReceiptId;
 				var rate=document.getElementById("show_rate_"+i);
 				rate.value=moveLines[i].exchangeRate;
 				var debit=document.getElementById("show_debit_"+i);
@@ -1490,14 +1460,8 @@ function showEntry(){
 					th1.innerHTML=moves[j].credit.toFixed(2);
 					th3.innerHTML=moves[j].exchangeRate.toFixed(2);
 					th4.innerHTML=moves[j].currency.name;
-					if(moves[j].receipt){
-						if(moves[j].receipt.type=="paymentReceipt"){
-							th5.innerHTML=moves[j].receiptId;
-						}
-						else if(moves[j].receipt.type=="receiveReceipt"){
-							th6.innerHTML=moves[j].receiptId;
-						}
-					}
+					th5.innerHTML=moves[j].paymentReceiptId;
+					th6.innerHTML=moves[j].receiveReceiptId;
 					th7.innerHTML=moves[j].account.id;
 					th8.innerHTML=moves[j].account.name;
 					th9.innerHTML=moves[j].notes;

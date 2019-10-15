@@ -1,6 +1,6 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const receipt = sequelize.define('receipt', {
+  const paymentReceipt = sequelize.define('paymentReceipt', {
     userId: DataTypes.INTEGER,
     amount: DataTypes.FLOAT,
     currencyId: DataTypes.INTEGER,
@@ -9,16 +9,15 @@ module.exports = (sequelize, DataTypes) => {
     exchangeRate:DataTypes.FLOAT,
     cashAccount: DataTypes.INTEGER,
     accountId: DataTypes.INTEGER,
-    type: DataTypes.ENUM('paymentReceipt', 'receiveReceipt'),
     status: DataTypes.ENUM('pending', 'accepted')
   }, {});
-  receipt.associate = function(models) {
+  paymentReceipt.associate = function(models) {
     // associations can be defined here
-    receipt.belongsTo(models.currency);
-    receipt.belongsTo(models.account,{foreignKey:"accountId",as:"account"});
-    receipt.belongsTo(models.account,{foreignKey:"cashAccount",as:"cashAcc"});
-    receipt.belongsTo(models.user);
-    receipt.hasMany(models.moveLine);
+    paymentReceipt.belongsTo(models.currency);
+    paymentReceipt.belongsTo(models.account,{foreignKey:"accountId",as:"account"});
+    paymentReceipt.belongsTo(models.account,{foreignKey:"cashAccount",as:"cashAcc"});
+    paymentReceipt.belongsTo(models.user);
+    paymentReceipt.hasMany(models.moveLine);
   };
-  return receipt;
+  return paymentReceipt;
 };

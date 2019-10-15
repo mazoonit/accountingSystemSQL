@@ -3,134 +3,10 @@
 <title>Payment Request</title>
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/sidenavStyle.css">
+<link rel="stylesheet" href="/static/topbarStyle.css">
+
 <style>
-
-.sidenav {
-  height: 100%;
-  width: 23%;
-  position: fixed;
-  z-index: 1;
-  top: 0;
-  left: 0;
-  background-color: #001E3B;
-  background-image: linear-gradient(#001E3B 0%, #001E3B 100%);
-  overflow-x: hidden;
-  padding-top: 20px;
-}
-.sidenav-cont{
-  width: 90%;
-  float: right;
-}
-
-.sidenav a, .dropdown-btn {
-
-  text-decoration: none;
-  font-size: 18px;
-  color: white;
-  opacity: 0.7;
-  display: block;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
-  outline: none;
-  border-bottom:1px solid #f3f3f3;
-  opacity: 1;
-  padding:4px;
-}
-.sidenav p{
-  text-decoration: none;
-  font-size: 25px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: #CCCCCC;
-  display: block;
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
-}
-img{
-  width: 50px;
-  height: auto;
-  vertical-align: middle;
-  padding-right: 15px;
-}
-
-.active {
-  background-color: rgba(95, 38, 255, 0.4);
-  color: white;
-  border-top-left-radius: 40px;
-}
-
-.active::after {
-    font-weight: 900;
-    display: inline-block;
-    padding-right: 15px;
-    font-size: 180%;
-    color: #034171;
-}
-
-.dropdown-container {
-  display: none;
-  background-color: rgba(95, 38, 255, 0.4);
-  opacity: 0.7;
-}
-
-.fa-caret-down {
-  float: right;
-  padding-right: 8px;
-}
-
-.sidenav a:hover, .dropdown-btn:hover{
-  color:#20639b;
-  opacity: 1;
-}
-.active:hover{
-  background-color: rgba(53, 164, 255, 0.6);
-  border-top-left-radius: 40px;
-  border-bottom-left-radius: 0;
-  opacity: 1;
-}
-.dropdown-container a:hover{
-  background-color: rgba(53, 164, 255, 0.6);
-  color:#fff;
-  border-radius: 0;
-  opacity: 1;
-}
-.dropdown-container a:last-child:hover{
-}
-
-
-
-.main {
-  margin-left:24%; 
-}
-.sidenav .unactive{
-	  background:none;
-	  opacity: 1;
-
-}
-.requestGo{
-	background-color: #1fc8db;
-	padding:10px 20px;
-
-}
-.ybutton{
-	display:inline-block;
-	background-color:rgba(53, 164, 255, 0.6);
-
-}
-.tabsec{background-color:#f3f3f3;padding:10px;border-radius:14px;}
-.unactive{background:#173f5f;}
-
-
-table,th,td{
-	border:none;
-	padding:0px;
-	margin:0;
-	text-align:center;
-}
 #temp table{text-align:right;}
 #temp td{text-align:right;padding:12px;}
 #temp{visibility: hidden;width:99%;display:none;}
@@ -147,54 +23,12 @@ table,th,td{
     position: absolute;
     left: 0;
     top: 0;
-    
+
   }
 }
-a{background-color:#20639b;}
-.y{padding:10px;padding-left:30px;padding-right:30px;margin:0;cursor:pointer;color:#fff;}
-.y:hover{background-color:#20639b;}
-.canNotEdit{border:1px solid #20639b;}
-.canNotEdit:hover{border:1px solid #20639b;}
-button{margin:0;}
 </style>
 <body>
-<div class="sidenav">
-  <div class="sidenav-cont" id="menu">
-	  <p>Geekions</p>
-	  <a class="dropdown-btn unactive">System Settings<i class="fa fa-caret-down"></i></a>
-	  <div class="dropdown-container">
-		  <a href="accountPage" >Accounts</a>
-		  <a href="currency" >Currencies</a>
-		  <a href="user" >Users</a>
-		  <a href="employer" >Employers</a>
-	  </div>
-	  <a class="dropdown-btn unactive">Daily Entries<i class="fa fa-caret-down"></i></a>
-	  <div class="dropdown-container">
-		  <a href="dailyEntry" >Daily Entry</a>
-		  <a href="receiveEntry" >Recieve Entry</a>
-		  <a href="paymentEntry" >Payment Entry</a>
-	  </div>
-	  <a class="dropdown-btn unactive">Requests<i class="fa fa-caret-down"></i></a>
-	  <div class="dropdown-container">
-		  <a href="receiveRequest" >Recieve Request</a>
-		  <a href="paymentRequest" >Payment Request</a>
-		  <a href="requests" >Pending Requests</a>
-	  </div>
-	  <a class="dropdown-btn unactive">Airline Movement<i class="fa fa-caret-down"></i></a>
-	  <div class="dropdown-container">
-		  <a href="ticketEntry" >BSP Ticket</a>
-		  <a href="lowcostticketEntry" >Lowcost Ticket</a>
-	  </div>
-	  <a class="dropdown-btn unactive">Reports<i class="fa fa-caret-down"></i></a>
-	  <div class="dropdown-container">
-		  <a href="reports" >Accounting Reports</a>
-		  <a href="bspReports" >BSP Reports</a>
-		  <a href="lowcostReports" >Lowcost Reports</a>
-	  </div>
-	  <a href="logout">Logout</a>
-  </div>
-</div>
-
+  <%-include('sidenav.ejs')%>
 <div class="main" id="container">
 <section id="content-tab1">
 		<div style="background-color:#173f5f;border-radius:5px;padding:10px;">
@@ -209,17 +43,17 @@ button{margin:0;}
 			<table>
 			   <tr>
 				<td>
-				    <p>Client Name</p>
+				    <p>Supplier Name</p>
 				</td>
 				<td>
-				    <input type="text" id="addClientName"/>
+				    <input type="text" id="addsupplierName"/>
 				</td>
 				<td>
 				    <p>Date</p>
 				</td>
 				<td>
 				    <input type="date" id="addDate" class="date canNotEdit" readonly/>
-				</td>	
+				</td>
 			    </tr>
 				    <tr>
 					<td>
@@ -291,24 +125,24 @@ button{margin:0;}
 			<table>
 			   <tr>
 				<td>
-				    <p>Client Name</p>
+				    <p>Supplier Name</p>
 				</td>
 				<td>
-				    <input type="text" id="editClientName"/>
+				    <input type="text" id="editsupplierName"/>
 				</td>
 				<td>
 				    <p>Date</p>
 				</td>
 				<td>
 				    <input type="date" id="editDate" class="date canNotEdit" readonly/>
-				</td>	
+				</td>
 			    </tr>
 				    <tr>
 					<td>
 					    <p>Request Number</p>
 					</td>
 					<td>
-					    <input type="text" id="editRequestNumber" onchange="editShow()"/>
+					    <input type="text" id="editID" onchange="show(event)"/>
 					</td>
 				    </tr>
 			    <tr>
@@ -351,7 +185,7 @@ button{margin:0;}
 				    <p>User</p>
 				</td>
 				<td>
-				    <input type="text" value="" id="editUser"/>
+				    <input type="text" value="" id="editUser" readonly/>
 				</td>
 			    </tr>
 			    <tr>
@@ -367,24 +201,24 @@ button{margin:0;}
 			<table>
 			   <tr>
 				<td>
-				    <p>Client Name</p>
+				    <p>Supplier Name</p>
 				</td>
 				<td>
-				    <input type="text" id="deleteClientName" readonly class="canNotEdit"/>
+				    <input type="text" id="deletesupplierName" readonly class="canNotEdit"/>
 				</td>
 				<td>
 				    <p>Date</p>
 				</td>
 				<td>
 				    <input type="date" id="deleteDate" class="date canNotEdit" readonly/>
-				</td>	
+				</td>
 			    </tr>
 				    <tr>
 					<td>
 					    <p>Request Number</p>
 					</td>
 					<td>
-					    <input type="text" id="deleteRequestNumber" onchange="deleteShow()"/>
+					    <input type="text" id="deleteID" onchange="show(event)"/>
 					</td>
 				    </tr>
 			    <tr>
@@ -443,24 +277,24 @@ button{margin:0;}
 			<table>
 			   <tr>
 				<td>
-				    <p>Client Name</p>
+				    <p>Supplier Name</p>
 				</td>
 				<td>
-				    <input type="text" id="showClientName" readonly class="canNotEdit"/>
+				    <input type="text" id="showsupplierName" readonly class="canNotEdit"/>
 				</td>
 				<td>
 				    <p>Date</p>
 				</td>
 				<td>
 				    <input type="date" id="showDate" class="date canNotEdit" readonly/>
-				</td>	
+				</td>
 			    </tr>
 				    <tr>
 					<td>
 					    <p>Request Number</p>
 					</td>
 					<td>
-					    <input type="text" id="showRequestNumber" onchange="showShow()"/>
+					    <input type="text" id="showID" onchange="show(event)"/>
 					</td>
 				    </tr>
 			    <tr>
@@ -512,17 +346,32 @@ button{margin:0;}
 			   </tr>
 			</table>
 			</form>
-		</section>	
+		</section>
 </section>
 </div>
 <div style="text-align:Center;margin:auto;display:none;width:99%;" dir="rtl" id="temp">
-	<img src="/static/images/img.png" style="width:100%;height:100px;margin-bottom:5px;"/>
-	<table style="width:100%;padding-bottom:40px;border:2px solid #000;border-collapse:collapse;">
+  <div style="text-align:right;margin:0;">
+	<div style="display:inline-block;">
+		<p style="text-align:Center;" dir="ltr">
+			9 ElGeish Road - Sidi Bishr - Alexandria
+			<br>
+			Tel : +3 3583492 - 3583498 - 3581450
+			<br>
+			Mobile : +2 01025066684 - 01281655717
+			<br>
+			E-Mail : info.alex@egythai.com
+			<br>
+			Egythai Tours & Travel - Egypt
+		</p>
+	</div>
+	<img src="/static/images/img.png" style="width:auto;height:100px;float:left;display:inline-block;"/>
+	</div>
+  <table style="width:100%;padding-bottom:40px;border:2px solid #000;border-collapse:collapse;">
 		<tr>
 			<td colspan="3" style="border:2px solid #000;padding:10px;text-align:center;" id="cashTable"><p style="font-size:25px;">اذن صرف</p></td>
 		</tr>
 		<tr>
-			<td colspan="2" style="border:2px solid #000;padding:10px;" id="printClientName">اسم العميل : 4</td>
+			<td colspan="2" style="border:2px solid #000;padding:10px;" id="printsupplierName">اسم العميل : 4</td>
 			<td colspan="2" style="border:2px solid #000;padding:10px;" id="printDate">التاريخ : 20/12/2019</td>
 		</tr>
 		<tr>
@@ -548,30 +397,16 @@ button{margin:0;}
 		</tr>
 		<tr>
 			<td colspan="2" id="printRequestNumber" style="border:2px solid #000;padding:15px;" colspan="4">رقم الطلب :</td>
-			<td colspan="2" id="printEmployer" style="border:2px solid #000;padding:15px;">اسم الموظف :  Mazen</td>	
+			<td colspan="2" id="printEmployer" style="border:2px solid #000;padding:15px;">اسم الموظف :  Mazen</td>
 		</tr>
-	</table>
-</div>
+	</table></div>
 
 
 
 <script src="/static/jquery-min.js"></script>
 <script src="/static/frontendlib.js"></script>
+<script src="/static/topbarFunction.js"></script>
 
-<!--jquery for sidebar bardo-->
-<script>
-$(document).ready(function(){
-        $('.date').val(new Date().toISOString().substr(0, 10));
-	$(".y").click(function(){
-		var id=$(this).attr("id");
-		id=id.split('-');
-		console.log(id);
-		$("#content-"+id[0]+" section").hide();
-		$(this).removeClass("unactive").siblings().addClass("unactive");
-		$("#content-"+id[0]+" #"+id[1]).fadeIn(1000);
-	});
-});
-</script>
 <!--vainlia javascript-->
 <script>
 function addRequest(){
@@ -581,11 +416,11 @@ function addRequest(){
 	var amount=document.getElementById("addAmount").value;
 	var totalAmount=document.getElementById("addTotalAmount").value;
 	var remainingAmount=document.getElementById("addRemainingAmount").value;
-	var clientName=document.getElementById("addClientName").value;
+	var supplierName=document.getElementById("addsupplierName").value;
 	var description=document.getElementById("addDescription").value;
 	var executionCompany=document.getElementById("addExecutionCompany").value;
 	//check
-	if(executionDate==""||endDate==""||executionPrice==""||isNaN(amount)||isNaN(totalAmount)||isNaN(remainingAmount)||clientName==""||description==""){
+	if(executionDate==""||endDate==""||executionPrice==""||isNaN(amount)||isNaN(totalAmount)||isNaN(remainingAmount)||supplierName==""||description==""){
 		alert("You Can't leave blank inputs!");
 	}
 	else{
@@ -597,49 +432,16 @@ function addRequest(){
 	requestBody.amount=amount;
 	requestBody.totalAmount=totalAmount;
 	requestBody.remainingAmount=remainingAmount;
-	requestBody.clientName=clientName;
+	requestBody.supplierName=supplierName;
 	requestBody.description=description;
 	var reqObj={};
 	reqObj.requestBody=requestBody;
-	reqObj.type="paymentRequest";
-	ajaxRequest('request/insert',"POST","application/json",reqObj,(res)=>{
+	reqObj.type="payment";
+	ajaxRequest('api/request',"POST","application/json",reqObj,(res)=>{
 		if(res.status=="200"){
 			res=JSON.parse(res.responseText);
 			alert("Request has been added successfully!");
-			if(window.confirm("Do you want to print it ?")){
-				var requestBody=JSON.parse(res.requestBody);
-				var date=new Date(res.date).toLocaleString().split(',');
-				var time=date[1];
-				date=date[0];
-				date=date.split('/');
-				date=date[2]+'-'+date[1]+'-'+date[0];
-				var temp=document.getElementById("temp");
-				temp.style.display="block";
-				var printClientName=document.getElementById("printClientName");
-				printClientName.innerHTML="اسم العميل : "+requestBody.clientName;
-				var dateTable=document.getElementById("printDate");
-				dateTable.innerHTML="التاريخ : "+new Date(res.date).toLocaleString().split(',')[0];
-				var printDescription=document.getElementById("printDescription");
-				printDescription.innerHTML="البيان و نوع الخدمة : "+requestBody.description;
-				var printAmount=document.getElementById("printAmount");
-				printAmount.innerHTML="القيمة المصروفة : "+requestBody.amount;
-				var printRemainingAmount=document.getElementById("printRemainingAmount");
-				printRemainingAmount.innerHTML="المبلغ المتبقي : "+requestBody.remainingAmount;
-				var printTotalAmount=document.getElementById("printTotalAmount");
-				printTotalAmount.innerHTML="المبلغ الاجمالي : "+requestBody.totalAmount;
-				var printExecutionPrice=document.getElementById("printExecutionPrice");
-				printExecutionPrice.innerHTML="مبلغ التنفيذ : "+requestBody.executionPrice;
-				var printEmployer=document.getElementById("printEmployer");
-				printEmployer.innerHTML="اسم الموظف : "+"<%=user.username%>";
-				var printExecutionDate=document.getElementById("printExecutionDate");
-				printExecutionDate.innerHTML="تاريخ التنفيد : "+new Date(requestBody.executionDate).toLocaleString().split(',')[0];
-				var printEndDate=document.getElementById("printEndDate");
-				printEndDate.innerHTML="تاريخ نهاية الخدمة : "+new Date(requestBody.endDate).toLocaleString().split(',')[0];
-				var printRequestNumber=document.getElementById("printRequestNumber");
-				printRequestNumber.innerHTML="رقم الطلب :"+res.betterId;
-				window.print();
-				temp.style.display="none";
-			}
+      location.reload();
 		}
 		else{
 			alert(res.responseText);
@@ -648,58 +450,47 @@ function addRequest(){
 	}
 	return false;
 }
-function editShow(){
-	var user=document.getElementById("editUser");
-	var executionDate=document.getElementById("editExecutionDate");
-	var endDate=document.getElementById("editEndDate");
-	var executionPrice=document.getElementById("editExecutionPrice");
-	var amount=document.getElementById("editAmount");
-	var totalAmount=document.getElementById("editTotalAmount");
-	var remainingAmount=document.getElementById("editRemainingAmount");
-	var clientName=document.getElementById("editClientName");
-	var description=document.getElementById("editDescription");
-	var executionCompany=document.getElementById("editExecutionCompany");
-	var editRequestNumber=document.getElementById("editRequestNumber").value;
-	ajaxRequest('request/getRequest',"POST","application/json",{betterId:editRequestNumber},(res)=>{
+function show(e){
+  var targetID=e.target.id;
+  var tabID=targetID.slice(0,targetID.length-2);
+	var user=document.getElementById(tabID+"User");
+  var dateInput=document.getElementById(tabID+"Date");
+	var executionDate=document.getElementById(tabID+"ExecutionDate");
+	var endDate=document.getElementById(tabID+"EndDate");
+	var executionPrice=document.getElementById(tabID+"ExecutionPrice");
+	var amount=document.getElementById(tabID+"Amount");
+	var totalAmount=document.getElementById(tabID+"TotalAmount");
+	var remainingAmount=document.getElementById(tabID+"RemainingAmount");
+	var supplierName=document.getElementById(tabID+"supplierName");
+	var description=document.getElementById(tabID+"Description");
+	var executionCompany=document.getElementById(tabID+"ExecutionCompany");
+	var editRequestNumber=document.getElementById(targetID).value;
+	ajaxRequest('api/request/frontGet',"POST","application/json",{id:editRequestNumber,type:"payment"},(res)=>{
 		if(res.status==200){
 			res=JSON.parse(res.responseText);
-			if(res.type!="paymentRequest"){
-				alert("Request Not Found!");
-				executionPrice.value=0;
-				amount.value=0;
-				totalAmount.value=0;
-				remainingAmount.value=0;
-				clientName.value="";
-				description.value="";
-				executionDate.value="";
-				endDate.value="";
-				user.value="";
-				executionCompany.value="";
-			}
-			else{
-				var requestBody=JSON.parse(res.requestBody);
-				var date=new Date(requestBody.executionDate).toLocaleString().split(',');
-				var time=date[1];
-				date=date[0];
-				date=date.split('/');
-				date=date[2]+'-'+date[1]+'-'+date[0];
-				var date2=new Date(requestBody.endDate).toLocaleString().split(',');
-				var time=date2[1];
-				date2=date2[0];
-				date2=date2.split('/');
-				date2=date2[2]+'-'+date2[1]+'-'+date2[0];
-				executionDate.value=date;
-				endDate.value=date2;
-				executionPrice.value=requestBody.executionPrice;
-				amount.value=requestBody.amount;
-				totalAmount.value=requestBody.totalAmount;
-				remainingAmount.value=requestBody.remainingAmount;
-				clientName.value=requestBody.clientName;
-				description.value=requestBody.description;
-				user.value=res.employer.username;
-				executionCompany.value=requestBody.executionCompany;
-			}
-		
+			var requestBody=JSON.parse(res.requestBody);
+			var date=new Date(requestBody.executionDate).toLocaleString().split(',');
+			var time=date[1];
+			date=date[0];
+			date=date.split('/');
+			date=date[2]+'-'+date[1]+'-'+date[0];
+			var date2=new Date(requestBody.endDate).toLocaleString().split(',');
+			var time=date2[1];
+			date2=date2[0];
+			date2=date2.split('/');
+			date2=date2[2]+'-'+date2[1]+'-'+date2[0];
+
+      dateInput.value=res.createdAt.split('T')[0];
+			executionDate.value=date;
+			endDate.value=date2;
+			executionPrice.value=requestBody.executionPrice;
+			amount.value=requestBody.amount;
+			totalAmount.value=requestBody.totalAmount;
+			remainingAmount.value=requestBody.remainingAmount;
+			supplierName.value=requestBody.supplierName;
+			description.value=requestBody.description;
+			user.value=res.employerUserAccount.username;
+			executionCompany.value=requestBody.executionCompany;
 		}
 		else{
 			alert(res.responseText);
@@ -707,7 +498,7 @@ function editShow(){
 			amount.value=0;
 			totalAmount.value=0;
 			remainingAmount.value=0;
-			clientName.value="";
+			supplierName.value="";
 			description.value="";
 			executionDate.value="";
 			endDate.value="";
@@ -717,162 +508,22 @@ function editShow(){
 		}
 
 	});
-	
 
-}
-function showShow(){
-	var user=document.getElementById("showUser");
-	var executionDate=document.getElementById("showExecutionDate");
-	var endDate=document.getElementById("showEndDate");
-	var executionPrice=document.getElementById("showExecutionPrice");
-	var amount=document.getElementById("showAmount");
-	var totalAmount=document.getElementById("showTotalAmount");
-	var remainingAmount=document.getElementById("showRemainingAmount");
-	var clientName=document.getElementById("showClientName");
-	var description=document.getElementById("showDescription");
-	var executionCompany=document.getElementById("showExecutionCompany");
-	var showRequestNumber=document.getElementById("showRequestNumber").value;
-	ajaxRequest('request/getRequest',"POST","application/json",{betterId:showRequestNumber},(res)=>{
-		if(res.status==200){
-			res=JSON.parse(res.responseText);
-			if(res.type!="paymentRequest"){
-				alert("Request Not Found!");
-				executionPrice.value=0;
-				amount.value=0;
-				totalAmount.value=0;
-				remainingAmount.value=0;
-				clientName.value="";
-				description.value="";
-				executionDate.value="";
-				endDate.value="";
-				user.value="";
-				executionCompany.value="";
-			}
-			else{
-				var requestBody=JSON.parse(res.requestBody);
-				var date=new Date(requestBody.executionDate).toLocaleString().split(',');
-				var time=date[1];
-				date=date[0];
-				date=date.split('/');
-				date=date[2]+'-'+date[1]+'-'+date[0];
-				var date2=new Date(requestBody.endDate).toLocaleString().split(',');
-				var time=date2[1];
-				date2=date2[0];
-				date2=date2.split('/');
-				date2=date2[2]+'-'+date2[1]+'-'+date2[0];
-				executionDate.value=date;
-				endDate.value=date2;
-				executionPrice.value=requestBody.executionPrice;
-				amount.value=requestBody.amount;
-				totalAmount.value=requestBody.totalAmount;
-				remainingAmount.value=requestBody.remainingAmount;
-				clientName.value=requestBody.clientName;
-				description.value=requestBody.description;
-				user.value=res.employer.username;
-				executionCompany.value=requestBody.executionCompany;
-			}
-		
-		}
-		else{
-			alert(res.responseText);
-			executionPrice.value=0;
-			amount.value=0;
-			totalAmount.value=0;
-			remainingAmount.value=0;
-			clientName.value="";
-			description.value="";
-			executionDate.value="";
-			endDate.value="";
-			user.value="";
-			executionCompany.value="";
 
-		}
-
-	});
-}
-function deleteShow(){
-	var user=document.getElementById("deleteUser");
-	var executionDate=document.getElementById("deleteExecutionDate");
-	var endDate=document.getElementById("deleteEndDate");
-	var executionPrice=document.getElementById("deleteExecutionPrice");
-	var amount=document.getElementById("deleteAmount");
-	var totalAmount=document.getElementById("deleteTotalAmount");
-	var remainingAmount=document.getElementById("deleteRemainingAmount");
-	var clientName=document.getElementById("deleteClientName");
-	var description=document.getElementById("deleteDescription");
-	var executionCompany=document.getElementById("deleteExecutionCompany");
-	var deleteRequestNumber=document.getElementById("deleteRequestNumber").value;
-	ajaxRequest('request/getRequest',"POST","application/json",{betterId:deleteRequestNumber},(res)=>{
-		if(res.status==200){
-			res=JSON.parse(res.responseText);
-			if(res.type!="paymentRequest"){
-				alert("Request Not Found!");
-				executionPrice.value=0;
-				amount.value=0;
-				totalAmount.value=0;
-				remainingAmount.value=0;
-				clientName.value="";
-				description.value="";
-				executionDate.value="";
-				endDate.value="";
-				user.value="";
-				executionCompany.value="";
-			}
-			else{
-				var requestBody=JSON.parse(res.requestBody);
-				var date=new Date(requestBody.executionDate).toLocaleString().split(',');
-				var time=date[1];
-				date=date[0];
-				date=date.split('/');
-				date=date[2]+'-'+date[1]+'-'+date[0];
-				var date2=new Date(requestBody.endDate).toLocaleString().split(',');
-				var time=date2[1];
-				date2=date2[0];
-				date2=date2.split('/');
-				date2=date2[2]+'-'+date2[1]+'-'+date2[0];
-				executionDate.value=date;
-				endDate.value=date2;
-				executionPrice.value=requestBody.executionPrice;
-				amount.value=requestBody.amount;
-				totalAmount.value=requestBody.totalAmount;
-				remainingAmount.value=requestBody.remainingAmount;
-				clientName.value=requestBody.clientName;
-				description.value=requestBody.description;
-				user.value=res.employer.username;
-				executionCompany.value=requestBody.executionCompany;
-			}
-		
-		}
-		else{
-			alert(res.responseText);
-			executionPrice.value=0;
-			amount.value=0;
-			totalAmount.value=0;
-			remainingAmount.value=0;
-			clientName.value="";
-			description.value="";
-			executionDate.value="";
-			endDate.value="";
-			user.value="";
-			executionCompany.value="";
-
-		}
-
-	});
 }
 function edit(){
-	var editRequestNumber=document.getElementById("editRequestNumber").value;
+	var editRequestNumber=document.getElementById("editID").value;
 	var executionDate=document.getElementById("editExecutionDate").value;
 	var endDate=document.getElementById("editEndDate").value;
 	var executionPrice=document.getElementById("editExecutionPrice").value;
 	var amount=document.getElementById("editAmount").value;
 	var totalAmount=document.getElementById("editTotalAmount").value;
 	var remainingAmount=document.getElementById("editRemainingAmount").value;
-	var clientName=document.getElementById("editClientName").value;
+	var supplierName=document.getElementById("editsupplierName").value;
 	var description=document.getElementById("editDescription").value;
 	var executionCompany=document.getElementById("editExecutionCompany").value;
-	var type="paymentRequest";
-	if(executionDate==""||endDate==""||executionPrice==""||isNaN(amount)||isNaN(totalAmount)||isNaN(remainingAmount)||clientName==""||description==""){
+	var type="payment";
+	if(executionDate==""||endDate==""||executionPrice==""||isNaN(amount)||isNaN(totalAmount)||isNaN(remainingAmount)||supplierName==""||description==""){
 		alert("You Can't leave blank inputs!");
 	}
 	else{
@@ -883,51 +534,62 @@ function edit(){
 	requestBody.amount=amount;
 	requestBody.totalAmount=totalAmount;
 	requestBody.remainingAmount=remainingAmount;
-	requestBody.clientName=clientName;
+	requestBody.supplierName=supplierName;
 	requestBody.description=description;
 	requestBody.executionCompany=executionCompany;
 	var obj={
 		requestBody:requestBody,
-		betterId:editRequestNumber,
+		id:editRequestNumber,
 		type:type
 	}
-	
-	ajaxRequest('request/update',"POST","application/json",obj,(res)=>{
-		alert(res.responseText);
+
+	ajaxRequest('api/request',"PUT","application/json",obj,(res)=>{
+    if(res.status==200){
+      alert("Request has been updated successfully!");
+    }
+    else if(res.status==400){
+      alert("You can not edit this request!");
+    }
+    else{
+      alert("Internal server error,try again.");
+    }
 	});
 	}
 	return false;
 }
 function deleteRequest(){
-	var deleteRequestNumber=document.getElementById("deleteRequestNumber").value;
-	var type="paymentRequest";
+	var deleteRequestNumber=document.getElementById("deleteID").value;
+	var type="payment";
 	if(window.confirm("Are you sure that you want to delete it?")){
-		ajaxRequest('request/delete',"POST","application/json",{betterId:deleteRequestNumber,type:type},(res)=>{
+		ajaxRequest('api/request',"DELETE","application/json",{id:deleteRequestNumber,type:type},(res)=>{
 			alert(res.responseText);
 		});
 	}
 	return false;
 }
 function printShow(){
-	var showRequestNumber=document.getElementById("showRequestNumber").value;
-	ajaxRequest('request/getRequest',"POST","application/json",{betterId:showRequestNumber},(res)=>{
+	var showRequestNumber=document.getElementById("showID").value;
+  var type="payment";
+
+	ajaxRequest('api/request/frontGet',"POST","application/json",{id:showRequestNumber,type:type},(res)=>{
 		if(res.status!=200){
 				alert(res.responseText);}
 		else{
 			res=JSON.parse(res.responseText);
-			if(res.type=="paymentRequest"){
+			if(res.type=="payment" && res.status=="accepted"){
+        console.log(res);
 				var requestBody=JSON.parse(res.requestBody);
-				var date=new Date(res.date).toLocaleString().split(',');
+				var date=new Date(res.createdAt).toLocaleString().split(',');
 				var time=date[1];
 				date=date[0];
 				date=date.split('/');
 				date=date[2]+'-'+date[1]+'-'+date[0];
 				var temp=document.getElementById("temp");
 				temp.style.display="block";
-				var printClientName=document.getElementById("printClientName");
-				printClientName.innerHTML="اسم العميل : "+requestBody.clientName;
+				var printsupplierName=document.getElementById("printsupplierName");
+				printsupplierName.innerHTML="اسم المورد : "+requestBody.supplierName;
 				var dateTable=document.getElementById("printDate");
-				dateTable.innerHTML="التاريخ : "+new Date(res.date).toLocaleString().split(',')[0];
+				dateTable.innerHTML="التاريخ : "+new Date(res.createdAt).toLocaleString().split(',')[0];
 				var printDescription=document.getElementById("printDescription");
 				printDescription.innerHTML="البيان و نوع الخدمة : "+requestBody.description;
 				var printAmount=document.getElementById("printAmount");
@@ -939,7 +601,7 @@ function printShow(){
 				var printExecutionPrice=document.getElementById("printExecutionPrice");
 				printExecutionPrice.innerHTML="مبلغ التنفيذ : "+requestBody.executionPrice;
 				var printEmployer=document.getElementById("printEmployer");
-				printEmployer.innerHTML="اسم الموظف : "+res.employer.username;
+				printEmployer.innerHTML="اسم الموظف : "+res.employerUserAccount.username;
 				var printExecutionDate=document.getElementById("printExecutionDate");
 				printExecutionDate.innerHTML="تاريخ التنفيد : "+new Date(requestBody.executionDate).toLocaleString().split(',')[0];
 				var printExecutionCompany=document.getElementById("printExecutionCompany");
@@ -947,36 +609,17 @@ function printShow(){
 				var printEndDate=document.getElementById("printEndDate");
 				printEndDate.innerHTML="تاريخ نهاية الخدمة : "+new Date(requestBody.endDate).toLocaleString().split(',')[0];
 				var printRequestNumber=document.getElementById("printRequestNumber");
-				printRequestNumber.innerHTML="رقم الطلب :"+res.betterId;
+				printRequestNumber.innerHTML="رقم الطلب :"+res.id;
 				window.print();
 				temp.style.display="none";
 			}
 			else{
-				alert("Request Not Found!");
+				alert("Request Not Found OR Not Accepted Yet!");
 			}
 		}
 
 	});
 	return false;
-}
-
-//sidebar things
-
-var dropdown = document.getElementsByClassName("dropdown-btn");
-var i;
-
-for (i = 0; i < dropdown.length; i++) {
-  dropdown[i].addEventListener("click", function() {
-	  this.classList.toggle("active");
-	  var dropdownContent = this.nextElementSibling;
-	  dropdownContent.classList.remove("unactive");
-	  if (dropdownContent.style.display === "block") {
-		  dropdownContent.style.display = "none";
-		
-	  } else {
-	  dropdownContent.style.display = "block";
-	  }
-  });
 }
 </script>
 </body>

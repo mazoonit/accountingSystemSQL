@@ -5,7 +5,12 @@
 <link rel="stylesheet" href="/static/style.css">
 <link rel="stylesheet" href="/static/sidenavStyle.css">
 <link rel="stylesheet" href="/static/topbarStyle.css">
-
+<head>
+	<style>
+		#showAllDiv{border-collapse:collapse;}
+		#showAllDiv td{border:1px solid #000;padding:15px;}
+	</style>
+</head>
 <body>
 <%-include('sidenav.ejs')%>
 <div class="main" id="container">
@@ -13,7 +18,8 @@
 		<div style="background-color:#173f5f;border-radius:5px;padding:10px;">
 			<a class="y" id="tab1-add">Add <i class="fas fa-plus-circle"></i></a>
 			<a class="y unactive" id="tab1-edit">Edit <i class="fas fa-edit"></i></a>
-			<a class="y unactive" id="tab1-delete">Delete <i class="fas fa-trash-alt"></i></a>
+			<a class="y unactive" id="tab1-changePassword">Change Password <i class="fas fa-edit"></i></a>
+			<a class="y unactive" id="tab1-showAll">Show All<i class="fas fa-file"></i></a>
 		</div>
 		<section id="add" class="tabsec">
 			<h1 style="text-align:Center;">User</h1>
@@ -27,14 +33,14 @@
 				    <input type="text" id="addUsername"/>
 				</td>
 			    </tr>
-			    <tr>
-				<td>
-				    <p>Password</p>
-				</td>
-				<td>
-				    <input type="text" id="addPassword"/>
-				</td>
-			    </tr>
+			  <tr>
+					<td>
+					    <p>Password</p>
+					</td>
+					<td>
+					    <input type="password" id="addPassword"/>
+					</td>
+			  </tr>
 			    <tr>
 				<td colspan="1">
 				    <p>Daily Entry</p>
@@ -53,93 +59,66 @@
 				<td colspan="3">
 					<input type="checkbox" id="addCashAdd" style="display:inline-block;">Add
 					<input type="checkbox" id="addCashEdit" style="display:inline-block;">Edit
-					<input type="checkbox" id="addCashDelete" style="display:inline-block;">Delete
 					<input type="checkbox" id="addCashRead" style="display:inline-block;">Read
 				</td>
 			    </tr>
 			    <tr>
 				<td colspan="1">
-				    <p>Payment Entry</p>
+				    <p>Requests</p>
 				</td>
 				<td colspan="3">
-					<input type="checkbox" id="addPaymentEntryAdd" style="display:inline-block;">Add
-					<input type="checkbox" id="addPaymentEntryEdit" style="display:inline-block;">Edit
-					<input type="checkbox" id="addPaymentEntryDelete" style="display:inline-block;">Delete
-					<input type="checkbox" id="addPaymentEntryRead" style="display:inline-block;">Read
-				</td>
-			    </tr>
-			    <tr>
-				<td colspan="1">
-				    <p>Receive Entry</p>
-				</td>
-				<td colspan="3">
-					<input type="checkbox" id="addReceiveEntryAdd" style="display:inline-block;">Add
-					<input type="checkbox" id="addReceiveEntryEdit" style="display:inline-block;">Edit
-					<input type="checkbox" id="addReceiveEntryDelete" style="display:inline-block;">Delete
-					<input type="checkbox" id="addReceiveEntryRead" style="display:inline-block;">Read
-				</td>
-			    </tr>
-			    <tr>
-				<td colspan="1">
-				    <p>Payment Request</p>
-				</td>
-				<td colspan="3">
-					<input type="checkbox" id="addPaymentRequestAdd" style="display:inline-block;">Add
-					<input type="checkbox" id="addPaymentRequestEdit" style="display:inline-block;">Edit
-					<input type="checkbox" id="addPaymentRequestDelete" style="display:inline-block;">Delete
-					<input type="checkbox" id="addPaymentRequestRead" style="display:inline-block;">Read
+					<input type="checkbox" id="addRequests" style="display:inline-block;">Access
 				</td>
 
 			    </tr>
+					<td colspan="1">
+							<p>Accept Requests</p>
+					</td>
+					<td colspan="3">
+						<input type="checkbox" id="addAcceptRequests" style="display:inline-block;">Accept
+					</td>
+
+						</tr>
+
 			    <tr>
 				<td colspan="1">
-				    <p>Receive Request</p>
+				    <p>Users</p>
 				</td>
 				<td colspan="3">
-					<input type="checkbox" id="addReceiveRequestAdd" style="display:inline-block;">Add
-					<input type="checkbox" id="addReceiveRequestEdit" style="display:inline-block;">Edit
-					<input type="checkbox" id="addReceiveRequestDelete" style="display:inline-block;">Delete
-					<input type="checkbox" id="addReceiveRequestRead" style="display:inline-block;">Read
+					<input type="checkbox" id="addUsers" style="display:inline-block;">Audit
 				</td>
 			    </tr>
 			    <tr>
 				<td colspan="1">
-				    <p>User</p>
+				    <p>Accounts</p>
 				</td>
 				<td colspan="3">
-					<input type="checkbox" id="addUserAdd" style="display:inline-block;">Add
-					<input type="checkbox" id="addUserEdit" style="display:inline-block;">Edit
-					<input type="checkbox" id="addUserDelete" style="display:inline-block;">Delete
-					<input type="checkbox" id="addUserRead" style="display:inline-block;">Read
+					<input type="checkbox" id="addAccounts" style="display:inline-block;">Audit
 				</td>
 			    </tr>
 			    <tr>
 				<td colspan="1">
-				    <p>Account</p>
+				    <p>Currencies</p>
 				</td>
 				<td colspan="3">
-					<input type="checkbox" id="addAccountAdd" style="display:inline-block;">Add
-					<input type="checkbox" id="addAccountEdit" style="display:inline-block;">Edit
-					<input type="checkbox" id="addAccountDelete" style="display:inline-block;">Delete
-					<input type="checkbox" id="addAccountRead" style="display:inline-block;">Read
+					<input type="checkbox" id="addCurrencies" style="display:inline-block;">Audit
 				</td>
 			    </tr>
-			    <tr>
+					<tr>
 				<td colspan="1">
-				    <p>Currency</p>
+						<p>Employers</p>
 				</td>
 				<td colspan="3">
-					<input type="checkbox" id="addCurrencyAdd" style="display:inline-block;">Add
-					<input type="checkbox" id="addCurrencyDelete" style="display:inline-block;">Delete
-					<input type="checkbox" id="addCurrencyRead" style="display:inline-block;">Read
+					<input type="checkbox" id="addEmployers" style="display:inline-block;">Audit
 				</td>
-			    </tr>
+					</tr>
+
 			    <tr>
 				<td colspan="1">
 				    <p>Reports</p>
 				</td>
 				<td colspan="3">
-					<input type="checkbox" id="addReportsRead" style="display:inline-block;">Read
+					<input type="checkbox" id="addReports" style="display:inline-block;">Read
 				</td>
 			    </tr>
 
@@ -163,123 +142,124 @@
 				    <input type="text" onchange="editShow()" id="editUsername"/>
 				</td>
 			    </tr>
-			    <tr>
-				<td colspan="1">
-				    <p>Daily Entry</p>
-				</td>
-				<td colspan="3">
+					<tr>
+					<td colspan="1">
+					  <p>Daily Entry</p>
+					</td>
+					<td colspan="3">
 					<input type="checkbox" id="editDailyEntryAdd" style="display:inline-block;">Add
 					<input type="checkbox" id="editDailyEntryEdit" style="display:inline-block;">Edit
 					<input type="checkbox" id="editDailyEntryDelete" style="display:inline-block;">Delete
 					<input type="checkbox" id="editDailyEntryRead" style="display:inline-block;">Read
-				</td>
-			    </tr>
-			    <tr>
-				<td colspan="1">
-				    <p>Cash</p>
-				</td>
-				<td colspan="3">
+					</td>
+					</tr>
+					<tr>
+					<td colspan="1">
+					  <p>Cash</p>
+					</td>
+					<td colspan="3">
 					<input type="checkbox" id="editCashAdd" style="display:inline-block;">Add
 					<input type="checkbox" id="editCashEdit" style="display:inline-block;">Edit
-					<input type="checkbox" id="editCashDelete" style="display:inline-block;">Delete
 					<input type="checkbox" id="editCashRead" style="display:inline-block;">Read
-				</td>
-			    </tr>
-			    <tr>
-				<td colspan="1">
-				    <p>Payment Entry</p>
-				</td>
-				<td colspan="3">
-					<input type="checkbox" id="editPaymentEntryAdd" style="display:inline-block;">Add
-					<input type="checkbox" id="editPaymentEntryEdit" style="display:inline-block;">Edit
-					<input type="checkbox" id="editPaymentEntryDelete" style="display:inline-block;">Delete
-					<input type="checkbox" id="editPaymentEntryRead" style="display:inline-block;">Read
-				</td>
-			    </tr>
-			    <tr>
-				<td colspan="1">
-				    <p>Receive Entry</p>
-				</td>
-				<td colspan="3">
-					<input type="checkbox" id="editReceiveEntryAdd" style="display:inline-block;">Add
-					<input type="checkbox" id="editReceiveEntryEdit" style="display:inline-block;">Edit
-					<input type="checkbox" id="editReceiveEntryDelete" style="display:inline-block;">Delete
-					<input type="checkbox" id="editReceiveEntryRead" style="display:inline-block;">Read
-				</td>
-			    </tr>
-			    <tr>
-				<td colspan="1">
-				    <p>Payment Request</p>
-				</td>
-				<td colspan="3">
-					<input type="checkbox" id="editPaymentRequestAdd" style="display:inline-block;">Add
-					<input type="checkbox" id="editPaymentRequestEdit" style="display:inline-block;">Edit
-					<input type="checkbox" id="editPaymentRequestDelete" style="display:inline-block;">Delete
-					<input type="checkbox" id="editPaymentRequestRead" style="display:inline-block;">Read
-				</td>
+					</td>
+					</tr>
+					<tr>
+					<td colspan="1">
+					  <p>Requests</p>
+					</td>
+					<td colspan="3">
+					<input type="checkbox" id="editRequests" style="display:inline-block;">Access
+					</td>
 
-			    </tr>
-			    <tr>
-				<td colspan="1">
-				    <p>Receive Request</p>
-				</td>
-				<td colspan="3">
-					<input type="checkbox" id="editReceiveRequestAdd" style="display:inline-block;">Add
-					<input type="checkbox" id="editReceiveRequestEdit" style="display:inline-block;">Edit
-					<input type="checkbox" id="editReceiveRequestDelete" style="display:inline-block;">Delete
-					<input type="checkbox" id="editReceiveRequestRead" style="display:inline-block;">Read
-				</td>
-			    </tr>
-			    <tr>
-				<td colspan="1">
-				    <p>User</p>
-				</td>
-				<td colspan="3">
-					<input type="checkbox" id="editUserAdd" style="display:inline-block;">Add
-					<input type="checkbox" id="editUserEdit" style="display:inline-block;">Edit
-					<input type="checkbox" id="editUserDelete" style="display:inline-block;">Delete
-					<input type="checkbox" id="editUserRead" style="display:inline-block;">Read
-				</td>
-			    </tr>
-			    <tr>
-				<td colspan="1">
-				    <p>Account</p>
-				</td>
-				<td colspan="3">
-					<input type="checkbox" id="editAccountAdd" style="display:inline-block;">Add
-					<input type="checkbox" id="editAccountEdit" style="display:inline-block;">Edit
-					<input type="checkbox" id="editAccountDelete" style="display:inline-block;">Delete
-					<input type="checkbox" id="editAccountRead" style="display:inline-block;">Read
-				</td>
-			    </tr>
-			    <tr>
-				<td colspan="1">
-				    <p>Currency</p>
-				</td>
-				<td colspan="3">
-					<input type="checkbox" id="editCurrencyAdd" style="display:inline-block;">Add
-					<input type="checkbox" id="editCurrencyDelete" style="display:inline-block;">Delete
-					<input type="checkbox" id="editCurrencyRead" style="display:inline-block;">Read
-				</td>
-			    </tr>
-			    <tr>
-				<td colspan="1">
-				    <p>Reports</p>
-				</td>
-				<td colspan="3">
-					<input type="checkbox" id="editReportsRead" style="display:inline-block;">Read
-				</td>
-			    </tr>
+					</tr>
+					<td colspan="1">
+					    <p>Accept Requests</p>
+					</td>
+					<td colspan="3">
+					  <input type="checkbox" id="editAcceptRequests" style="display:inline-block;">Accept
+					</td>
 
+					  </tr>
+
+					<tr>
+					<td colspan="1">
+					  <p>Users</p>
+					</td>
+					<td colspan="3">
+					<input type="checkbox" id="editUsers" style="display:inline-block;">Audit
+					</td>
+					</tr>
+					<tr>
+					<td colspan="1">
+					  <p>Accounts</p>
+					</td>
+					<td colspan="3">
+					<input type="checkbox" id="editAccounts" style="display:inline-block;">Audit
+					</td>
+					</tr>
+					<tr>
+					<td colspan="1">
+					  <p>Currencies</p>
+					</td>
+					<td colspan="3">
+					<input type="checkbox" id="editCurrencies" style="display:inline-block;">Audit
+					</td>
+					</tr>
+					<tr>
+					<td colspan="1">
+					  <p>Employers</p>
+					</td>
+					<td colspan="3">
+					<input type="checkbox" id="editEmployers" style="display:inline-block;">Audit
+					</td>
+					</tr>
+
+					<tr>
+					<td colspan="1">
+					  <p>Reports</p>
+					</td>
+					<td colspan="3">
+					<input type="checkbox" id="editReports" style="display:inline-block;">Read
+					</td>
+					</tr>
 			    <tr>
 				    <td><button class="button" onClick="return editUser();">Edit</button></td>
 			   </tr>
 			</table>
 			</form>
 		</section>
+		<!--Change password-->
+		<section id="changePassword" class="tabsec" style="display:none;">
+			<h1>Change Password</h1>
+				<table>
+					<tbody>
+						<tr>
+							<td><p>Username</p></td>
+							<td><input type="text" id="changePasswordUsername"/></td>
+						</tr>
+						<tr>
+							<td><p>New Password</p></td>
+							<td><input type="password" id="changePasswordPassword"/></td>
+						</tr>
+						<tr>
+							<td>
+								<button class="button" onClick="return changePassword(event)">Change</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+		</section>
+
+
+
 		<!--Delete-->
-		<section id="delete" class="tabsec" style="display:none;">
-			<h1 style="text-align:Center;">Feature Disabled</h1>
+		<section id="showAll" class="tabsec" style="display:none;">
+			<h1 style="text-align:Center;">Show</h1>
+				<table id="showAllDiv" style="text-align:Center;margin:Auto;">
+					<tbody>
+					</tbody>
+				</table>
+			<button onclick="return showAll();" class="button">Show</button>
 		</section>
 </section>
 </div>
@@ -297,51 +277,23 @@ function addUser(){
 	var username=document.getElementById("addUsername").value;
 	var password=document.getElementById("addPassword").value;
 	var permissions={}
-	permissions.DailyEntryAdd=document.getElementById("addDailyEntryAdd").checked;
-	permissions.DailyEntryEdit=document.getElementById("addDailyEntryEdit").checked;
-	permissions.DailyEntryEdit=document.getElementById("addDailyEntryDelete").checked;
-	permissions.DailyEntryEdit=document.getElementById("addDailyEntryRead").checked;
+	permissions.dailyEntryAdd=document.getElementById("addDailyEntryAdd").checked;
+	permissions.dailyEntryEdit=document.getElementById("addDailyEntryEdit").checked;
+	permissions.dailyEntryDelete=document.getElementById("addDailyEntryDelete").checked;
+	permissions.dailyEntryRead=document.getElementById("addDailyEntryRead").checked;
 
-	permissions.PaymentEntryAdd=document.getElementById("addPaymentEntryAdd").checked;
-	permissions.PaymentEntryEdit=document.getElementById("addPaymentEntryEdit").checked;
-	permissions.PaymentEntryDelete=document.getElementById("addPaymentEntryDelete").checked;
-	permissions.PaymentEntryRead=document.getElementById("addPaymentEntryRead").checked;
+	permissions.cashAdd=document.getElementById("addCashAdd").checked;
+	permissions.cashEdit=document.getElementById("addCashEdit").checked;
+	permissions.cashRead=document.getElementById("addCashRead").checked;
+	permissions.acceptRequests=document.getElementById("addAcceptRequests").checked;
+	permissions.users=document.getElementById("addUsers").checked;
+	permissions.requests=document.getElementById("addRequests").checked;
 
-	permissions.ReceiveEntryAdd=document.getElementById("addReceiveEntryAdd").checked;
-	permissions.ReceiveEntryEdit=document.getElementById("addReceiveEntryEdit").checked;
-	permissions.ReceiveEntryDelete=document.getElementById("addReceiveEntryDelete").checked;
-	permissions.ReceiveEntryRead=document.getElementById("addReceiveEntryRead").checked;
+	permissions.accounts=document.getElementById("addAccounts").checked;
+	permissions.employers=document.getElementById("addEmployers").checked;
+	permissions.reports=document.getElementById("addReports").checked;
+	permissions.currencies=document.getElementById("addCurrencies").checked;
 
-	permissions.PaymentRequestAdd=document.getElementById("addPaymentRequestAdd").checked;
-	permissions.PaymentRequestEdit=document.getElementById("addPaymentRequestEdit").checked;
-	permissions.PaymentRequestDelete=document.getElementById("addPaymentRequestDelete").checked;
-	permissions.PaymentRequestRead=document.getElementById("addPaymentRequestRead").checked;
-
-	permissions.ReceiveRequestAdd=document.getElementById("addReceiveRequestAdd").checked;
-	permissions.ReceiveRequestEdit=document.getElementById("addReceiveRequestEdit").checked;
-	permissions.ReceiveRequestDelete=document.getElementById("addReceiveRequestDelete").checked;
-	permissions.ReceiveRequestRead=document.getElementById("addReceiveRequestRead").checked;
-
-	permissions.CashAdd=document.getElementById("addCashAdd").checked;
-	permissions.CashEdit=document.getElementById("addCashEdit").checked;
-	permissions.CashDelete=document.getElementById("addCashDelete").checked;
-	permissions.CashRead=document.getElementById("addCashRead").checked;
-
-	permissions.AccountAdd=document.getElementById("addAccountAdd").checked;
-	permissions.AccountEdit=document.getElementById("addAccountEdit").checked;
-	permissions.AccountDelete=document.getElementById("addAccountDelete").checked;
-	permissions.AccountRead=document.getElementById("addAccountRead").checked;
-
-	permissions.UserAdd=document.getElementById("addUserAdd").checked;
-	permissions.UserEdit=document.getElementById("addUserEdit").checked;
-	permissions.UserDelete=document.getElementById("addUserDelete").checked;
-	permissions.UserRead=document.getElementById("addUserRead").checked;
-
-	permissions.CurrencyAdd=document.getElementById("addCurrencyAdd").checked;
-	permissions.CurrencyDelete=document.getElementById("addCurrencyDelete").checked;
-	permissions.CurrencyRead=document.getElementById("addCurrencyRead").checked;
-
-	permissions.ReportsRead=document.getElementById("addReportsRead").checked;
 
 	var userObj={username:username,password:password,permissions:JSON.stringify(permissions)};
 	ajaxRequest('api/user',"POST","application/json",userObj,function(res){
@@ -352,51 +304,22 @@ function addUser(){
 function editUser(){
 	var username=document.getElementById("editUsername").value;
 	var permissions={}
-	permissions.DailyEntryAdd=document.getElementById("editDailyEntryAdd").checked;
-	permissions.DailyEntryEdit=document.getElementById("editDailyEntryEdit").checked;
-	permissions.DailyEntryEdit=document.getElementById("editDailyEntryDelete").checked;
-	permissions.DailyEntryEdit=document.getElementById("editDailyEntryRead").checked;
+	permissions.dailyEntryAdd=document.getElementById("editDailyEntryAdd").checked;
+	permissions.dailyEntryEdit=document.getElementById("editDailyEntryEdit").checked;
+	permissions.dailyEntryDelete=document.getElementById("editDailyEntryDelete").checked;
+	permissions.dailyEntryRead=document.getElementById("editDailyEntryRead").checked;
 
-	permissions.PaymentEntryAdd=document.getElementById("editPaymentEntryAdd").checked;
-	permissions.PaymentEntryEdit=document.getElementById("editPaymentEntryEdit").checked;
-	permissions.PaymentEntryDelete=document.getElementById("editPaymentEntryDelete").checked;
-	permissions.PaymentEntryRead=document.getElementById("editPaymentEntryRead").checked;
+	permissions.cashAdd=document.getElementById("editCashAdd").checked;
+	permissions.cashEdit=document.getElementById("editCashEdit").checked;
+	permissions.cashRead=document.getElementById("editCashRead").checked;
+	permissions.requests=document.getElementById("editRequests").checked;
 
-	permissions.ReceiveEntryAdd=document.getElementById("editReceiveEntryAdd").checked;
-	permissions.ReceiveEntryEdit=document.getElementById("editReceiveEntryEdit").checked;
-	permissions.ReceiveEntryDelete=document.getElementById("editReceiveEntryDelete").checked;
-	permissions.ReceiveEntryRead=document.getElementById("editReceiveEntryRead").checked;
-
-	permissions.PaymentRequestAdd=document.getElementById("editPaymentRequestAdd").checked;
-	permissions.PaymentRequestEdit=document.getElementById("editPaymentRequestEdit").checked;
-	permissions.PaymentRequestDelete=document.getElementById("editPaymentRequestDelete").checked;
-	permissions.PaymentRequestRead=document.getElementById("editPaymentRequestRead").checked;
-
-	permissions.ReceiveRequestAdd=document.getElementById("editReceiveRequestAdd").checked;
-	permissions.ReceiveRequestEdit=document.getElementById("editReceiveRequestEdit").checked;
-	permissions.ReceiveRequestDelete=document.getElementById("editReceiveRequestDelete").checked;
-	permissions.ReceiveRequestRead=document.getElementById("editReceiveRequestRead").checked;
-
-	permissions.CashAdd=document.getElementById("editCashAdd").checked;
-	permissions.CashEdit=document.getElementById("editCashEdit").checked;
-	permissions.CashDelete=document.getElementById("editCashDelete").checked;
-	permissions.CashRead=document.getElementById("editCashRead").checked;
-
-	permissions.AccountAdd=document.getElementById("editAccountAdd").checked;
-	permissions.AccountEdit=document.getElementById("editAccountEdit").checked;
-	permissions.AccountDelete=document.getElementById("editAccountDelete").checked;
-	permissions.AccountRead=document.getElementById("editAccountRead").checked;
-
-	permissions.UserAdd=document.getElementById("editUserAdd").checked;
-	permissions.UserEdit=document.getElementById("editUserEdit").checked;
-	permissions.UserDelete=document.getElementById("editUserDelete").checked;
-	permissions.UserRead=document.getElementById("editUserRead").checked;
-
-	permissions.CurrencyAdd=document.getElementById("editCurrencyAdd").checked;
-	permissions.CurrencyDelete=document.getElementById("editCurrencyDelete").checked;
-	permissions.CurrencyRead=document.getElementById("editCurrencyRead").checked;
-
-	permissions.ReportsRead=document.getElementById("editReportsRead").checked;
+	permissions.acceptRequests=document.getElementById("editAcceptRequests").checked;
+	permissions.users=document.getElementById("editUsers").checked;
+	permissions.accounts=document.getElementById("editAccounts").checked;
+	permissions.employers=document.getElementById("editEmployers").checked;
+	permissions.reports=document.getElementById("editReports").checked;
+	permissions.currencies=document.getElementById("editCurrencies").checked;
 
 	var userObj={username:username,permissions:JSON.stringify(permissions)};
 	ajaxRequest('api/user',"PUT","application/json",userObj,function(res){
@@ -411,51 +334,20 @@ function editShow(){
 		if(res.status=="200"){
 			res=JSON.parse(res.responseText);
 			var permissions=JSON.parse(res.permissions);
-			document.getElementById("editDailyEntryAdd").checked=permissions.DailyEntryAdd;
-			document.getElementById("editDailyEntryEdit").checked=permissions.DailyEntryEdit;
-			document.getElementById("editDailyEntryDelete").checked=Permissions.DailyEntryDelete;
-			document.getElementById("editDailyEntryRead").checked=permissions.DailyEntryRead;
-
-			document.getElementById("editPaymentEntryAdd").checked=permissions.PaymentEntryAdd;
-			document.getElementById("editPaymentEntryEdit").checked=permissions.PaymentEntryEdit;
-			document.getElementById("editPaymentEntryDelete").checked=permissions.PaymentEntryDelete;
-			document.getElementById("editPaymentEntryRead").checked=permissions.PaymentEntryRead;
-
-			document.getElementById("editReceiveEntryAdd").checked=permissions.ReceiveEntryAdd;
-			document.getElementById("editReceiveEntryEdit").checked=permissions.ReceiveEntryEdit;
-			document.getElementById("editReceiveEntryDelete").checked=permissions.ReceiveEntryDelete;
-			document.getElementById("editReceiveEntryRead").checked=permissions.ReceiveEntryRead;
-
-			document.getElementById("editPaymentRequestAdd").checked=permissions.PaymentRequestAdd;
-			document.getElementById("editPaymentRequestEdit").checked=permissions.PaymentRequestEdit;
-			document.getElementById("editPaymentRequestDelete").checked=permissions.PaymentRequestDelete;
-			document.getElementById("editPaymentRequestRead").checked=permissions.PaymentRequestRead;
-
-			document.getElementById("editReceiveRequestAdd").checked=permissions.ReceiveRequestAdd;
-			document.getElementById("editReceiveRequestEdit").checked=permissions.ReceiveRequestEdit;
-			document.getElementById("editReceiveRequestDelete").checked=permissions.ReceiveRequestDelete;
-			document.getElementById("editReceiveRequestRead").checked=permissions.ReceiveRequestRead;
-
-			document.getElementById("editCashAdd").checked=permissions.CashAdd;
-			document.getElementById("editCashEdit").checked=permissions.CashEdit;
-			document.getElementById("editCashDelete").checked=permissions.CashDelete;
-			document.getElementById("editCashRead").checked=permissions.CashRead;
-
-			document.getElementById("editAccountAdd").checked=permissions.AccountAdd;
-			document.getElementById("editAccountEdit").checked=permissions.AccountEdit;
-			document.getElementById("editAccountDelete").checked=permissions.AccountDelete;
-			document.getElementById("editAccountRead").checked=permissions.AccountRead;
-
-			document.getElementById("editUserAdd").checked=permissions.UserAdd;
-			document.getElementById("editUserEdit").checked=permissions.UserEdit;
-			document.getElementById("editUserDelete").checked=permissions.UserDelete;
-			document.getElementById("editUserRead").checked=permissions.UserRead;
-
-			document.getElementById("editCurrencyAdd").checked=permissions.CurrencyAdd;
-			document.getElementById("editCurrencyDelete").checked=permissions.CurrencyDelete;
-			document.getElementById("editCurrencyRead").checked=permissions.CurrencyRead;
-
-			document.getElementById("editReportsRead").checked=permissions.ReportsRead;
+			document.getElementById("editDailyEntryAdd").checked=permissions.dailyEntryAdd;
+			document.getElementById("editDailyEntryEdit").checked=permissions.dailyEntryEdit;
+			document.getElementById("editDailyEntryDelete").checked=Permissions.dailyEntryDelete;
+			document.getElementById("editDailyEntryRead").checked=permissions.dailyEntryRead;
+			document.getElementById("editCashAdd").checked=permissions.cashAdd;
+			document.getElementById("editCashEdit").checked=permissions.cashEdit;
+			document.getElementById("editCashRead").checked=permissions.cashRead;
+			document.getElementById("editRequests").checked=permissions.requests;
+			document.getElementById("editAcceptRequests").checked=permissions.acceptRequests;
+			document.getElementById("editUsers").checked=permissions.users;
+			document.getElementById("editAccounts").checked=permissions.accounts;
+			document.getElementById("editCurrencies").checked=permissions.currencies;
+			document.getElementById("editEmployers").checked=permissions.employers;
+			document.getElementById("editReports").checked=permissions.reports;
 		}
 		else{
 			alert(res.responseText);
@@ -463,54 +355,52 @@ function editShow(){
 			document.getElementById("editDailyEntryEdit").checked=false;
 			document.getElementById("editDailyEntryDelete").checked=false;
 			document.getElementById("editDailyEntryRead").checked=false;
-
-			document.getElementById("editPaymentEntryAdd").checked=false;
-			document.getElementById("editPaymentEntryEdit").checked=false;
-			document.getElementById("editPaymentEntryDelete").checked=false;
-			document.getElementById("editPaymentEntryRead").checked=false;
-
-			document.getElementById("editReceiveEntryAdd").checked=false;
-			document.getElementById("editReceiveEntryEdit").checked=false;
-			document.getElementById("editReceiveEntryDelete").checked=false;
-			document.getElementById("editReceiveEntryRead").checked=false;
-
-			document.getElementById("editPaymentRequestAdd").checked=false;
-			document.getElementById("editPaymentRequestEdit").checked=false;
-			document.getElementById("editPaymentRequestDelete").checked=false;
-			document.getElementById("editPaymentRequestRead").checked=false;
-
-			document.getElementById("editReceiveRequestAdd").checked=false;
-			document.getElementById("editReceiveRequestEdit").checked=false;
-			document.getElementById("editReceiveRequestDelete").checked=false;
-			document.getElementById("editReceiveRequestRead").checked=false;
-
 			document.getElementById("editCashAdd").checked=false;
 			document.getElementById("editCashEdit").checked=false;
-			document.getElementById("editCashDelete").checked=false;
 			document.getElementById("editCashRead").checked=false;
-
-			document.getElementById("editAccountAdd").checked=false;
-			document.getElementById("editAccountEdit").checked=false;
-			document.getElementById("editAccountDelete").checked=false;
-			document.getElementById("editAccountRead").checked=false;
-
-			document.getElementById("editUserAdd").checked=false;
-			document.getElementById("editUserEdit").checked=false;
-			document.getElementById("editUserDelete").checked=false;
-			document.getElementById("editUserRead").checked=false;
-
-			document.getElementById("editCurrencyAdd").checked=false;
-			document.getElementById("editCurrencyDelete").checked=false;
-			document.getElementById("editCurrencyRead").checked=false;
-
-			document.getElementById("editReportsRead").checked=false;
+			document.getElementById("editRequests").checked=false;
+			document.getElementById("editAcceptRequests").checked=false;
+			document.getElementById("editUsers").checked=false;
+			document.getElementById("editAccounts").checked=false;
+			document.getElementById("editCurrencies").checked=false;
+			document.getElementById("editEmployers").checked=false;
+			document.getElementById("editReports").checked=false;
 		}
 
 
 	});
 	return false;
+}
 
+function changePassword(){
+	var newPassword=document.getElementById("changePasswordPassword").value;
+	var username=document.getElementById("changePasswordUsername").value;
+	ajaxRequest('api/user/changePassword',"POST","application/json",{newPassword:newPassword,username:username},function(res){
+		alert(res.responseText);
+	});
+}
 
+function showAll(){
+	ajaxRequest("api/user","GET","application/json",{},(res)=>{
+		if(res.status==200){
+			var showAllDiv=document.getElementById("showAllDiv");
+			showAllDiv.innerHTML="<tr><td>Seq</td><td>Username</td></tr>";
+			res=JSON.parse(res.responseText);
+			for(var i=0;i<res.length;i++){
+				var tr=document.createElement("tr");
+				var th1=document.createElement("td");
+				var th2=document.createElement("td");
+				th1.innerHTML=i+1;
+				th2.innerHTML=res[i].username;
+				tr.appendChild(th1);
+				tr.appendChild(th2);
+				showAllDiv.appendChild(tr);
+			}
+		}
+		else{
+			alert(res.responseText);
+		}
+	});
 }
 </script>
 </body>

@@ -3,128 +3,10 @@
 <title>Requests</title>
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/sidenavStyle.css">
+<link rel="stylesheet" href="/static/topbarStyle.css">
+
 <style>
-
-.sidenav {
-  height: 100%;
-  width: 23%;
-  position: fixed;
-  z-index: 1;
-  top: 0;
-  left: 0;
-  background-color: #001E3B;
-  background-image: linear-gradient(#001E3B 0%, #001E3B 100%);
-  overflow-x: hidden;
-  padding-top: 20px;
-}
-.sidenav-cont{
-  width: 90%;
-  float: right;
-}
-
-.sidenav a, .dropdown-btn {
-
-  text-decoration: none;
-  font-size: 18px;
-  color: white;
-  opacity: 0.7;
-  display: block;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
-  outline: none;
-  border-bottom:1px solid #f3f3f3;
-  opacity: 1;
-  padding:4px;
-}
-.sidenav p{
-  text-decoration: none;
-  font-size: 25px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: #CCCCCC;
-  display: block;
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
-}
-img{
-  width: 50px;
-  height: auto;
-  vertical-align: middle;
-  padding-right: 15px;
-}
-
-.active {
-  background-color: rgba(95, 38, 255, 0.4);
-  color: white;
-  border-top-left-radius: 40px;
-}
-
-.active::after {
-    font-weight: 900;
-    display: inline-block;
-    padding-right: 15px;
-    font-size: 180%;
-    color: #034171;
-}
-
-.dropdown-container {
-  display: none;
-  background-color: rgba(95, 38, 255, 0.4);
-  opacity: 0.7;
-}
-
-.fa-caret-down {
-  float: right;
-  padding-right: 8px;
-}
-
-.sidenav a:hover, .dropdown-btn:hover{
-  color:#20639b;
-  opacity: 1;
-}
-.active:hover{
-  background-color: rgba(53, 164, 255, 0.6);
-  border-top-left-radius: 40px;
-  border-bottom-left-radius: 0;
-  opacity: 1;
-}
-.dropdown-container a:hover{
-  background-color: rgba(53, 164, 255, 0.6);
-  color:#fff;
-  border-radius: 0;
-  opacity: 1;
-}
-.dropdown-container a:last-child:hover{
-}
-
-
-
-.main {
-  margin-left:24%; 
-}
-.sidenav .unactive{
-	  background:none;
-	  opacity: 1;
-
-}
-.requestGo{
-	background-color: #1fc8db;
-	padding:10px 20px;
-
-}
-.ybutton{
-	display:inline-block;
-	background-color:rgba(53, 164, 255, 0.6);
-
-}
-.tabsec{background-color:#f3f3f3;padding:10px;border-radius:14px;}
-.unactive{background:#173f5f;}
-
-
 table,th,td{
 	border:none;
 	padding:0px;
@@ -147,58 +29,17 @@ table,th,td{
     position: absolute;
     left: 0;
     top: 0;
-    
+
   }
 }
-a{background-color:#20639b;}
-.y{padding:10px;padding-left:30px;padding-right:30px;margin:0;cursor:pointer;color:#fff;}
-.y:hover{background-color:#20639b;}
-.canNotEdit{border:1px solid #20639b;}
-.canNotEdit:hover{border:1px solid #20639b;}
-button{margin:0;}
 </style>
 <body>
-<div class="sidenav">
-  <div class="sidenav-cont" id="menu">
-	  <p>Geekions</p>
-	  <a class="dropdown-btn unactive">System Settings<i class="fa fa-caret-down"></i></a>
-	  <div class="dropdown-container">
-		  <a href="/accountPage" >Accounts</a>
-		  <a href="/currency" >Currencies</a>
-		  <a href="/user" >Users</a>
-		  <a href="/employer" >Employers</a>
-	  </div>
-	  <a class="dropdown-btn unactive">Daily Entries<i class="fa fa-caret-down"></i></a>
-	  <div class="dropdown-container">
-		  <a href="/dailyEntry" >Daily Entry</a>
-		  <a href="/receiveEntry" >Recieve Entry</a>
-		  <a href="/paymentEntry" >Payment Entry</a>
-	  </div>
-	  <a class="dropdown-btn unactive">Requests<i class="fa fa-caret-down"></i></a>
-	  <div class="dropdown-container">
-		  <a href="/receiveRequest" >Recieve Request</a>
-		  <a href="/paymentRequest" >Payment Request</a>
-		  <a href="/requests" >Pending Requests</a>
-	  </div>
-	  <a class="dropdown-btn unactive">Airline Movement<i class="fa fa-caret-down"></i></a>
-	  <div class="dropdown-container">
-		  <a href="/ticketEntry" >BSP Ticket</a>
-		  <a href="/lowcostticketEntry" >Lowcost Ticket</a>
-	  </div>
-	  <a class="dropdown-btn unactive">Reports<i class="fa fa-caret-down"></i></a>
-	  <div class="dropdown-container">
-		  <a href="/reports" >Accounting Reports</a>
-		  <a href="/bspReports" >BSP Reports</a>
-		  <a href="/lowcostReports" >Lowcost Reports</a>
-	  </div>
-	  <a href="/logout">Logout</a>
-  </div>
-</div>
+  <%-include('sidenav.ejs')%>
 
 <div class="main" id="container">
 <section id="content-tab1">
 		<%
-				var date=new Date(request.date).toLocaleString().split(',');
+				var date=new Date(request.createdAt).toLocaleString().split(',');
 				var time=date[1];
 				date=date[0];
 				date=date.split('/');
@@ -211,24 +52,32 @@ button{margin:0;}
 <div style="text-align:Center;margin:auto;width:99%;" dir="rtl" id="temp">
 	<table style="width:100%;padding-bottom:40px;border:2px solid #000;border-collapse:collapse;">
 		<tr>
-			<%if(request.type=="receiveRequest"){%>
+			<%if(request.type=="receive"){%>
 			<td colspan="4" style="border:2px solid #000;padding:10px;text-align:center;" id="cashTable"><p style="font-size:25px;"><strong>امر توريد / مطالبة</strong></p></td>
 			<%}%>
-			<%if(request.type=="paymentRequest"){%>
+			<%if(request.type=="payment"){%>
 			<td colspan="4" style="border:2px solid #000;padding:10px;text-align:center;" id="cashTable"><p style="font-size:25px;"><strong>اذن صرف</strong></p></td>
 			<%}%>
 		</tr>
 		<tr>
-			<td colspan="2" style="border:2px solid #000;padding:10px;" id="printClientName"><strong>اسم العميل : </strong>
-			<%=JSON.parse(request.requestBody).clientName%>			
-			</td>
+      <%if(request.type=="receive"){%>
+        <td colspan="2" style="border:2px solid #000;padding:10px;" id="printClientName"><strong>اسم العميل : </strong>
+  			<%=JSON.parse(request.requestBody).clientName%>
+  			</td>
+      <%}%>
+      <%if(request.type=="payment"){%>
+        <td colspan="2" style="border:2px solid #000;padding:10px;" id="printClientName"><strong>اسم العميل : </strong>
+  			<%=JSON.parse(request.requestBody).supplierName%>
+  			</td>
+      <%}%>
+
 			<td colspan="2" style="border:2px solid #000;padding:10px;" id="printDate"><strong>التاريخ : </strong>
-			<%=date%>			
+			<%=date%>
 			</td>
 		</tr>
 		<tr>
 			<td colspan="4" style="border:2px solid #000;padding:15px;" id="printAmount"><strong>القيمة الموردة : </strong>
-			<%=JSON.parse(request.requestBody).amount%>			
+			<%=JSON.parse(request.requestBody).amount%>
 			</td>
 		</tr>
 
@@ -239,36 +88,36 @@ button{margin:0;}
 		</tr>
 		<tr>
 			<td colspan="2" id="printExecutionDate" style="border:2px solid #000;padding:10px;"><strong>تاريخ تنفيذ الخدمة : </strong>
-			<%=JSON.parse(request.requestBody).executionDate%>			
+			<%=JSON.parse(request.requestBody).executionDate%>
 			</td>
 			<td colspan="2" id="printEndDate" style="border:2px solid #000;padding:10px;"><strong>تاريخ نهاية الخدمة: </strong>
-			<%=JSON.parse(request.requestBody).endDate%>						
+			<%=JSON.parse(request.requestBody).endDate%>
 			</td>
 		</tr>
 		<tr>
 			<td colspan="2" id="printTotalAmount" style="border:2px solid #000;padding:10px;"><strong>المبلغ الاجمالي : </strong>
-			<%=JSON.parse(request.requestBody).totalAmount%>						
+			<%=JSON.parse(request.requestBody).totalAmount%>
 			</td>
 			<td colspan="2" id="printRemainingAmount" style="border:2px solid #000;padding:10px;"><strong>المبلغ المتبقي: </strong>
-			<%=JSON.parse(request.requestBody).remainingAmount%>			
+			<%=JSON.parse(request.requestBody).remainingAmount%>
 			</td>
 		</tr>
 		<tr>
 			<td colspan="2" id="printExecutionPrice" style="border:2px solid #000;padding:15px;"><strong>سعر التنفيذ : </strong>
-			<%=JSON.parse(request.requestBody).executionPrice%>			
+			<%=JSON.parse(request.requestBody).executionPrice%>
 			</td>
 			<td colspan="2" id="printEmployer" style="border:2px solid #000;padding:15px;"><strong>اسم الموظف : </strong>
-			<%=request.employer.username%>			
+			<%=request.employerUserAccount.username%>
 			</td>
 		</tr>
 			<tr>
 			<td style="border:2px solid #000;padding:15px;">
-				<strong>رقم الطلب : <%=request.betterId%></strong>
+				<strong>رقم الطلب : <%=request.id%></strong>
 			</td>
 		<%if(request.status=="accepted"){%>
 				<td colspan="2" id="printExecutionPrice" style="border:2px solid #000;padding:15px;"><strong>اسم المراجع : </strong>
-				<%if(request.auditor){%>
-					<%=request.auditor.username%>	
+				<%if(request.auditorUserAccount){%>
+					<%=request.auditorUserAccount.username%>
 				<%}%>
 				</td>
 		<%}%>
@@ -291,60 +140,32 @@ button{margin:0;}
 
 <script src="/static/jquery-min.js"></script>
 <script src="/static/frontendlib.js"></script>
+<script src="/static/topbarFunction.js"></script>
 
-<!--jquery for sidebar bardo-->
-<script>
-$(document).ready(function(){
-        $('.date').val(new Date().toISOString().substr(0, 10));
-	$(".y").click(function(){
-		var id=$(this).attr("id");
-		id=id.split('-');
-		console.log(id);
-		$("#content-"+id[0]+" section").hide();
-		$(this).removeClass("unactive").siblings().addClass("unactive");
-		$("#content-"+id[0]+" #"+id[1]).fadeIn(1000);
-	});
-});
 
-</script>
 <!--vainlia javascript-->
 <script>
 function acceptRequest(){
-	var deleteRequestNumber=<%=request.betterId%>;
-	ajaxRequest('/request/accept',"POST","application/json",{betterId:deleteRequestNumber},(res)=>{
-		alert(res.responseText);
-	});
-	return false;
-}
-
-
-function deleteRequest(){
-	var deleteRequestNumber=<%=request.betterId%>;
-	if(window.confirm("Are you sure that you want to delete it ?")){
-		ajaxRequest('/request/delete',"POST","application/json",{betterId:deleteRequestNumber},(res)=>{
+	var deleteRequestNumber=<%=request.id%>;
+	if(window.confirm("Are you sure that you want to accept it ?")){
+		ajaxRequest('/api/request/accept',"POST","application/json",{id:deleteRequestNumber,type:"<%=request.type%>"},(res)=>{
 			alert(res.responseText);
+			location.reload();
 		});
 	}
 	return false;
 }
 
-//sidebar things
 
-var dropdown = document.getElementsByClassName("dropdown-btn");
-var i;
-
-for (i = 0; i < dropdown.length; i++) {
-  dropdown[i].addEventListener("click", function() {
-	  this.classList.toggle("active");
-	  var dropdownContent = this.nextElementSibling;
-	  dropdownContent.classList.remove("unactive");
-	  if (dropdownContent.style.display === "block") {
-		  dropdownContent.style.display = "none";
-		
-	  } else {
-	  dropdownContent.style.display = "block";
-	  }
-  });
+function deleteRequest(){
+	var deleteRequestNumber=<%=request.id%>;
+	if(window.confirm("Are you sure that you want to delete it ?")){
+		ajaxRequest('/api/request',"DELETE","application/json",{id:deleteRequestNumber,type:"<%=request.type%>"},(res)=>{
+			alert(res.responseText);
+			location.reload();
+		});
+	}
+	return false;
 }
 </script>
 </body>

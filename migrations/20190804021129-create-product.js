@@ -65,13 +65,14 @@ module.exports = {
         type: Sequelize.FLOAT
       },
       productObj: {
-        type: Sequelize.STRING
+        type: Sequelize.TEXT
       },
       productType: {
         type: Sequelize.STRING
       },
       entryId: {
         type: Sequelize.INTEGER,
+        unique:true,
         references:{
           model:'moves',
           key:'id'

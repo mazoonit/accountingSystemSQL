@@ -36,6 +36,29 @@ router.post('/getBalances',function(req,res,next){
   });
 });
 
+router.post('/getISBalances',function(req,res,next){
+  var fromDate=req.body.fromDate;
+  var toDate=req.body.toDate;
+  reports.getISBalances(fromDate,toDate).then((result)=>{
+    res.status(200).send(result);
+  }).catch(()=>{
+    res.status(500).send("Error");
+  });
+});
+
+
+router.post('/getTrialBalance',function(req,res,next){
+  var fromDate=req.body.fromDate;
+  var toDate=req.body.toDate;
+  reports.getTrialBalanceBalances(fromDate,toDate).then((result)=>{
+    res.status(200).send(result);
+  }).catch(()=>{
+    res.status(500).send("Error");
+  });
+});
+
+
+
 
 router.post('/getCharactersticReport',function(req,res,next){
   var character=req.body.character;
@@ -48,12 +71,37 @@ router.post('/getCharactersticReport',function(req,res,next){
   });
 });
 
+router.post('/getMajorAccountReport',function(req,res,next){
+  var major=req.body.major;
+  var fromDate=req.body.fromDate;
+  var toDate=req.body.toDate;
+  reports.getGeneralLedgerReport(major,fromDate,toDate).then((result)=>{
+    res.status(200).send(result);
+  }).catch((err)=>{
+    console.log(err);
+    res.status(500).send(err);
+  });
+});
+
+
 router.post('/getCashCover',function(req,res,next){
   var cashAccount=req.body.cashAccount;
   var date=req.body.date;
   reports.getCashCover(cashAccount,date).then((cashCoverData)=>{
     res.status(200).send(cashCoverData);
   }).catch((error)=>{
+    console.log(error);
+    res.status(500).send(error);
+  })
+});
+
+router.post('/getReceiptsReport',function(req,res,next){
+  var from=req.body.fromDate;
+  var to=req.body.toDate;
+  reports.getReceiptsReport(from,to).then((receipts)=>{
+    res.status(200).send(receipts);
+  }).catch((error)=>{
+    console.log(error);
     res.status(500).send(error);
   })
 });

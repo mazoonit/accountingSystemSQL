@@ -5,7 +5,7 @@ var models=require('../models');
 
 
 router.post('/frontGet',function(req,res,next){
-  var id=req.body.id
+  var id=req.body.id;
   var type=req.body.productType;
   product.getProduct(id,type).then((productObj)=>{
     if(productObj){
@@ -19,6 +19,23 @@ router.post('/frontGet',function(req,res,next){
   });
 });
 
+router.post('/frontGetByMoveId',function(req,res,next){
+  var moveId=req.body.moveId;
+  var type=req.body.productType;
+  product.getProductByMoveId(moveId,type).then((productObj)=>{
+    if(productObj){
+      res.status(200).send(productObj);
+    }
+    else{
+      res.status(404).send("Product not found!");
+    }
+  }).catch((error)=>{
+    console.log(error);
+    res.status(500).send(error);
+  });
+});
+
+
 
 router.post('/',function(req,res,next){
   var productObj=req.body;
@@ -29,6 +46,23 @@ router.post('/',function(req,res,next){
     res.status(500).send(err);
   });
 });
+
+router.put('/',function(req,res,next){
+  var productObj=req.body;
+  productObj.userId=req.session.user.id;
+  product.editProduct(productObj).then((flag)=>{
+    if(flag){
+      res.status(200).send("Product has been updated successfully!");
+    }
+    else{
+      res.status(404).send("Product not found!");
+    }
+  }).catch((err)=>{
+    console.log(err);
+    res.status(500).send(err);
+  });
+});
+
 
 
 

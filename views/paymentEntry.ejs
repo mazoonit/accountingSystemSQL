@@ -507,7 +507,7 @@ function show(e){
   var targetID=e.target.id;
   var tabID=targetID.slice(0,targetID.length-2);
 	var editReceiptNumber=document.getElementById(targetID).value;
-	ajaxRequest('api/receipt/frontGet',"POST","application/json",{id:editReceiptNumber,type:"paymentReceipt"},(res)=>{
+	ajaxRequest('api/paymentReceipt/frontGet',"POST","application/json",{id:editReceiptNumber},(res)=>{
     if(res.status!="200"){
 				alert(res.responseText);
 				var dateInput=document.getElementById(tabID+"Date");
@@ -567,7 +567,7 @@ function show(e){
 
 function printShow(){
 	var showReceiptNumber=document.getElementById("showID").value;
-	ajaxRequest('api/receipt/frontGet',"POST","application/json",{id:showReceiptNumber,type:"paymentReceipt"},(res)=>{
+	ajaxRequest('api/paymentReceipt/frontGet',"POST","application/json",{id:showReceiptNumber},(res)=>{
 		if(res.status!="200"){
 				alert(res.responseText);}
 		else{
@@ -638,93 +638,97 @@ function addPaymentReceipt(){
 	var currency=document.getElementById("addCurrencyCode").value;
 	var currencyName=document.getElementById("addCurrencyCodeDiv").value;
 	var exchangeRate=document.getElementById("addExchangeRate").value;
-	var type="paymentReceipt";
-	var receiptEntry={
-		accountId:account,
-		amount:amount,
-		description:description,
-		cashAccount:cashBetterId,
-		descriptionFromTo:descriptionFromTo,
-		type:type,
-		currencyId:currency,
-		exchangeRate:exchangeRate};
-	var promises=[];
-	promises.push(ajaxPromise("api/currency/frontGet","POST","application/json",{id:currency}));
-	promises.push(ajaxPromise("api/account/frontGet","POST","application/json",{id:account}));
-	promises.push(ajaxPromise("api/account/frontGet","POST","application/json",{id:cashBetterId}));
-	Promise.all(promises).then((res)=>{
-		let flag=true;
-		for(var i=0;i<res.length;i++){
-			if(res[i].status!="200"){
-				flag=false;
-				alert(res[i].responseText);
+	if(account=="" || cashBetterId=="" || isNaN(amount) || description=="" || descriptionFromTo=="" || exchangeRate==""){
+		alert("fill the blank fields!");
+	}
+	else{
+		var receiptEntry={
+			accountId:account,
+			amount:amount,
+			description:description,
+			cashAccount:cashBetterId,
+			descriptionFromTo:descriptionFromTo,
+			currencyId:currency,
+			exchangeRate:exchangeRate};
+		var promises=[];
+		promises.push(ajaxPromise("api/currency/frontGet","POST","application/json",{id:currency}));
+		promises.push(ajaxPromise("api/account/frontGet","POST","application/json",{id:account}));
+		promises.push(ajaxPromise("api/account/frontGet","POST","application/json",{id:cashBetterId}));
+		Promise.all(promises).then((res)=>{
+			let flag=true;
+			for(var i=0;i<res.length;i++){
+				if(res[i].status!="200"){
+					flag=false;
+					alert(res[i].responseText);
+				}
 			}
-		}
-		if(flag==true){
-			ajaxRequest("api/receipt","POST","application/json",{receiptObj:receiptEntry},(res)=>{
-				if(res.status==200){
-					console.log(res.responseText);
-					res=JSON.parse(res.responseText);
-					alert("Receipt has been added successfully!");
-					if(window.confirm("Do you want to print it?")){
-						var date=new Date(res.createdAt).toLocaleString().split(',');
-						var time=date[1];
-						date=date[0];
-						date=date.split('/');
-						date=date[2]+'-'+date[1]+'-'+date[0];
-						var temp=document.getElementById("temp");
-						temp.style.display="block";
-						var idHeader=document.getElementById("idHeader");
-						var idHeader2=document.getElementById("idHeader2");
-						idHeader.innerHTML="رقم :"+res.id;
-						idHeader2.innerHTML="رقم :"+res.id;
-						var amountHeader=document.getElementById("amountHeader");
-						var amountHeader2=document.getElementById("amountHeader2");
-						amountHeader.innerHTML="مبلغ و قدره : "+parseFloat(res.amount).toFixed(2)+"   "+res.currency.abb;
-						amountHeader2.innerHTML="مبلغ و قدره : "+parseFloat(res.amount).toFixed(2)+"   "+res.currency.abb;
-						var cashTable=document.getElementById("cashTable");
-						var cashTable2=document.getElementById("cashTable2");
-						cashTable.innerHTML="رقم الخزينة : "+res.cashAcc.id+"   "+res.cashAcc.name;
-						cashTable2.innerHTML="رقم الخزينة : "+res.cashAcc.id+"   "+res.cashAcc.name;
-						var printDateTable=document.getElementById("printDateTable");
-						var printDateTable2=document.getElementById("printDateTable2");
-						printDateTable.innerHTML="تاريخ الطباعة : "+new Date().toLocaleString().split(',')[0];
-						printDateTable2.innerHTML="تاريخ الطباعة : "+new Date().toLocaleString().split(',')[0];
-						var dateTable=document.getElementById("dateTable");
-						var dateTable2=document.getElementById("dateTable2");
-						dateTable.innerHTML="التاريخ : "+new Date(res.createdAt).toLocaleString().split(',')[0];
-						dateTable2.innerHTML="التاريخ : "+new Date(res.createdAt).toLocaleString().split(',')[0];
-						var descriptionFromToTable=document.getElementById("descriptionFromToTable");
-						var descriptionFromToTable2=document.getElementById("descriptionFromToTable2");
-						descriptionFromToTable.innerHTML="يصرف الى : "+res.descriptionFromTo;
-						descriptionFromToTable2.innerHTML="يصرف الى : "+res.descriptionFromTo;
-						var amountTable=document.getElementById("amountTable");
-						var amountTable2=document.getElementById("amountTable2");
-						amountTable.innerHTML="فقط : "+tafqeet(res.amount)+" "+res.currency.name;
-						amountTable2.innerHTML="فقط : "+tafqeet(res.amount)+" "+res.currency.name;
-						var descriptionTable=document.getElementById("descriptionTable");
-						var descriptionTable2=document.getElementById("descriptionTable2");
-						descriptionTable.innerHTML="وذلك قيمة : "+res.description;
-						descriptionTable2.innerHTML="وذلك قيمة : "+res.description;
-						var accountTable=document.getElementById("accountTable");
-						var accountTable2=document.getElementById("accountTable2");
-						accountTable.innerHTML="رقم الحساب : "+res.account.id;
-						accountTable2.innerHTML="رقم الحساب : "+res.account.id;
-						var employerTable=document.getElementById("employerTable");
-						var employerTable2=document.getElementById("employerTable2");
-						employerTable.innerHTML="امين الخزينة : "+res.user.username;
-						employerTable2.innerHTML="امين الخزينة : "+res.user.username;
-						window.print();
-						temp.style.display="none";
+			if(flag==true){
+				ajaxRequest("api/paymentReceipt","POST","application/json",{receiptObj:receiptEntry},(res)=>{
+					if(res.status==200){
+						console.log(res.responseText);
+						res=JSON.parse(res.responseText);
+						alert("Receipt has been added successfully!");
+						if(window.confirm("Do you want to print it?")){
+							var date=new Date(res.createdAt).toLocaleString().split(',');
+							var time=date[1];
+							date=date[0];
+							date=date.split('/');
+							date=date[2]+'-'+date[1]+'-'+date[0];
+							var temp=document.getElementById("temp");
+							temp.style.display="block";
+							var idHeader=document.getElementById("idHeader");
+							var idHeader2=document.getElementById("idHeader2");
+							idHeader.innerHTML="رقم :"+res.id;
+							idHeader2.innerHTML="رقم :"+res.id;
+							var amountHeader=document.getElementById("amountHeader");
+							var amountHeader2=document.getElementById("amountHeader2");
+							amountHeader.innerHTML="مبلغ و قدره : "+parseFloat(res.amount).toFixed(2)+"   "+res.currency.abb;
+							amountHeader2.innerHTML="مبلغ و قدره : "+parseFloat(res.amount).toFixed(2)+"   "+res.currency.abb;
+							var cashTable=document.getElementById("cashTable");
+							var cashTable2=document.getElementById("cashTable2");
+							cashTable.innerHTML="رقم الخزينة : "+res.cashAcc.id+"   "+res.cashAcc.name;
+							cashTable2.innerHTML="رقم الخزينة : "+res.cashAcc.id+"   "+res.cashAcc.name;
+							var printDateTable=document.getElementById("printDateTable");
+							var printDateTable2=document.getElementById("printDateTable2");
+							printDateTable.innerHTML="تاريخ الطباعة : "+new Date().toLocaleString().split(',')[0];
+							printDateTable2.innerHTML="تاريخ الطباعة : "+new Date().toLocaleString().split(',')[0];
+							var dateTable=document.getElementById("dateTable");
+							var dateTable2=document.getElementById("dateTable2");
+							dateTable.innerHTML="التاريخ : "+new Date(res.createdAt).toLocaleString().split(',')[0];
+							dateTable2.innerHTML="التاريخ : "+new Date(res.createdAt).toLocaleString().split(',')[0];
+							var descriptionFromToTable=document.getElementById("descriptionFromToTable");
+							var descriptionFromToTable2=document.getElementById("descriptionFromToTable2");
+							descriptionFromToTable.innerHTML="يصرف الى : "+res.descriptionFromTo;
+							descriptionFromToTable2.innerHTML="يصرف الى : "+res.descriptionFromTo;
+							var amountTable=document.getElementById("amountTable");
+							var amountTable2=document.getElementById("amountTable2");
+							amountTable.innerHTML="فقط : "+tafqeet(res.amount)+" "+res.currency.name;
+							amountTable2.innerHTML="فقط : "+tafqeet(res.amount)+" "+res.currency.name;
+							var descriptionTable=document.getElementById("descriptionTable");
+							var descriptionTable2=document.getElementById("descriptionTable2");
+							descriptionTable.innerHTML="وذلك قيمة : "+res.description;
+							descriptionTable2.innerHTML="وذلك قيمة : "+res.description;
+							var accountTable=document.getElementById("accountTable");
+							var accountTable2=document.getElementById("accountTable2");
+							accountTable.innerHTML="رقم الحساب : "+res.account.id;
+							accountTable2.innerHTML="رقم الحساب : "+res.account.id;
+							var employerTable=document.getElementById("employerTable");
+							var employerTable2=document.getElementById("employerTable2");
+							employerTable.innerHTML="امين الخزينة : "+res.user.username;
+							employerTable2.innerHTML="امين الخزينة : "+res.user.username;
+							window.print();
+							temp.style.display="none";
+							location.reload();
 
+						}
 					}
-				}
-				else{
-					alert("Not valid insert,Check the cash balance!");
-				}
-			});
-		}
-	});
+					else{
+						alert("Not valid insert,Check the cash balance!");
+					}
+				});
+			}
+		});
+	}
 	return false;
 }
 function edit(){
@@ -738,42 +742,44 @@ function edit(){
 	var currency=document.getElementById("editCurrencyCode").value;
 	var currencyName=document.getElementById("editCurrencyCodeDiv").value;
 	var exchangeRate=document.getElementById("editExchangeRate").value;
-
-	var type="paymentReceipt";
-	var editObj={
-		currencyId:currency,
-		amount:parseFloat(amount),
-		description:description,
-		descriptionFromTo:descriptionFromTo,
-		cashAccount:cash,
-		accountId:account,
-		id:betterId,
-		type:type,
-		exchangeRate:parseFloat(exchangeRate)
-	};
-	var promises=[];
-	promises.push(ajaxPromise("api/currency/frontGet","POST","application/json",{id:currency}));
-	promises.push(ajaxPromise("api/account/frontGet","POST","application/json",{id:account}));
-	promises.push(ajaxPromise("api/account/frontGet","POST","application/json",{id:cash}));
-	Promise.all(promises).then((res)=>{
-		let flag=true;
-		for(var i=0;i<res.length;i++){
-			if(res[i].status!="200"){
-				flag=false;
-				alert(res[i].responseText);
+	if(account=="" || cash=="" || isNaN(amount) || description=="" || descriptionFromTo=="" || exchangeRate==""){
+		alert("fill the blank fields!");
+	}
+	else{
+		var editObj={
+			currencyId:currency,
+			amount:parseFloat(amount),
+			description:description,
+			descriptionFromTo:descriptionFromTo,
+			cashAccount:cash,
+			accountId:account,
+			id:betterId,
+			exchangeRate:parseFloat(exchangeRate)
+		};
+		var promises=[];
+		promises.push(ajaxPromise("api/currency/frontGet","POST","application/json",{id:currency}));
+		promises.push(ajaxPromise("api/account/frontGet","POST","application/json",{id:account}));
+		promises.push(ajaxPromise("api/account/frontGet","POST","application/json",{id:cash}));
+		Promise.all(promises).then((res)=>{
+			let flag=true;
+			for(var i=0;i<res.length;i++){
+				if(res[i].status!="200"){
+					flag=false;
+					alert(res[i].responseText);
+				}
 			}
-		}
-		if(flag==true){
-			ajaxRequest("api/receipt","PUT","application/json",{receiptObj:editObj,type:"paymentReceipt"},(res)=>{
-				if(res.status=="200"){
-					alert("Receipt has been edited successfully!");
-				}
-				else{
-					alert("Not valid edit,Check the cash balance!");
-				}
-			});
-		}
-	});
+			if(flag==true){
+				ajaxRequest("api/paymentReceipt","PUT","application/json",{receiptObj:editObj},(res)=>{
+					if(res.status=="200"){
+						alert("Receipt has been edited successfully!");
+					}
+					else{
+						alert("Not valid edit,Check the cash balance!");
+					}
+				});
+			}
+		});
+	}
 	return false;
 }
 </script>
