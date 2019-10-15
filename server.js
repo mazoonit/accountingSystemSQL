@@ -22,7 +22,12 @@ var routes=require('./routes/routes.js');
 var gets=require('./routes/gets.js');
 var accountingReports=require('./routes/accountingReports.js');
 
+<<<<<<< HEAD
 var reports=require('./decryptoric/reports.js');
+=======
+//var reports=require('./decryptoric/reports.js');
+//var product=require('./decryptoric/product.js');
+>>>>>>> 5d001ea27850172147cc6769137b4f8268aa03f2
 var Sequelize=require('sequelize');
 const Op = Sequelize.Op;
 
@@ -57,7 +62,10 @@ app.use('/api/request',request);
 app.use('/',routes);
 app.use('/',gets);
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5d001ea27850172147cc6769137b4f8268aa03f2
 app.use(function (req, res, next) {
   var err = new Error('File Not Found');
   err.status = 404;
@@ -71,4 +79,8 @@ app.use(function (err, req, res, next) {
   res.send(err.message);
 });
 
+<<<<<<< HEAD
 httpserver.listen(3000,()=>{console.log("Server is up and running sir.");});
+=======
+httpserver.listen(3000,()=>{console.log("Server is up and running sir.");console.log("Server is up sir!");});
+>>>>>>> 5d001ea27850172147cc6769137b4f8268aa03f2

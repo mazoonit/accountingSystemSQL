@@ -1,7 +1,7 @@
 {
   "development": {
-    "username": "decryptor007",
-    "password": "Stark2559",
+    "username": your username,
+    "password": your database password,
     "database": "seqAcc",
     "host": "127.0.0.1",
     "dialect": "mysql",
